@@ -1,3 +1,4 @@
+use bevy_math::Vec3;
 use crate::bubbles::Game;
 
 mod bubbles;
@@ -17,7 +18,6 @@ pub extern "C" fn add_extern(a: usize, b: usize) -> usize {
 #[no_mangle]
 pub extern "C" fn get_float_array() -> *const f32 {
     let mut game = Game::new();
-    game.start();
     game.update();
     let resource = game.world.get_resource::<Vec<f32>>().unwrap();
 
@@ -81,11 +81,11 @@ pub extern "C" fn create_game() -> *mut Game {
     Box::into_raw(game)
 }
 
-#[no_mangle]
-pub extern "C" fn start_game(game: *mut Game) {
-    let game = unsafe { &mut *game };
-    game.start();
-}
+//#[no_mangle]
+//pub extern "C" fn start_game(game: *mut Game) {
+//    let game = unsafe { &mut *game };
+//    game.start();
+//}
 
 #[no_mangle]
 pub extern "C" fn update_game(game: *mut Game) {
@@ -103,6 +103,17 @@ pub extern "C" fn get_bubble_positions(game: *mut Game) -> *const f32 {
     //std::mem::forget(resource);
 
     resource.as_ptr()
+}
+
+// feed in a float array
+#[no_mangle]
+pub extern "C" fn set_push_position(game: *mut Game, x: f32, y: f32, z: f32) {
+    let game = unsafe { &mut *game };
+
+    let mut push_points = Vec::new();
+    push_points.push(Vec3::new(x, y, z));
+
+    game.set_push_points(push_points);
 }
 
 
@@ -128,9 +139,6 @@ mod tests {
     fn interop_tests() {
         let a = 3;
         let game = create_game();
-        {
-            start_game(game);
-        }
         {
             update_game(game);
         }
@@ -185,7 +193,6 @@ mod tests {
     #[test]
     fn real_test() {
         let mut game = bubbles::Game::new();
-        game.start();
         game.update();
         let mut iter = game.get_positions_iter();
 
