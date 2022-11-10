@@ -1,0 +1,38 @@
+[package]
+name = "untitled7"
+version = "0.1.0"
+edition = "2021"
+
+
+#[lib]
+#name = "mandelbrot"
+#crate-type = ["cdylib"]
+# example command to build this crate into a unity plugin that works in windows
+# cargo build --target x86_64-pc-windows-msvc --release
+
+# build this into a static wasm library that can be used with unity webgl build
+[lib]
+crate-type = ["cdylib", "staticlib"]
+name = "mandelbrot"
+path = "src/lib.rs"
+# example command to build this crate into a unity plugin that works in webgl
+
+# compile to wasm
+# cargo build --target wasm32-unknown-unknown --release
+
+# compile to wasm, and then copy the output to the unity project
+# cargo build --target wasm32-unknown-unknown --release && cp target/wasm32-unknown-unknown/release/mandelbrot.wasm ../Assets/Plugins/WebGL/
+
+# compile to dll, and then copy the output to the unity project
+# cargo build --target x86_64-pc-windows-msvc --release && cp target/x86_64-pc-windows-msvc/release/mandelbrot.dll ../Assets/Plugins/x86_64/
+
+
+
+
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+bevy_ecs = "0.8.1"
+bevy_math = "0.8.1"
+rand = "0.8.5"
