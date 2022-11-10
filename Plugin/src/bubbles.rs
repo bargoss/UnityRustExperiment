@@ -87,21 +87,29 @@ fn start_new_world() {
 }
 
 #[derive(Component, Clone ,Debug, Default)]
-pub struct BubblePoint {
+pub struct Bubble {
     pub effect_radius: f32,
-    pub target_distance: f32,
-    pub velocity: Vec3,
-    pub position: Vec3,
+    pub target_distance: f32
 }
+#[derive(Component, Clone ,Debug, Default)]
+pub struct Position {
+    pub value: Vec3
+}
+#[derive(Component, Clone ,Debug, Default)]
+pub struct Velocity {
+    pub value: Vec3
+}
+
+
 #[derive(Bundle, Clone, Default)]
 pub struct BubblePointBundle {
-    pub bubble_point: BubblePoint,
+    pub bubble: Bubble,
+    pub position: Position,
+    pub velocity: Velocity,
 }
 fn create_bubble_points(mut commands: Commands) {
     let bundle = BubblePointBundle {
-        bubble_point: BubblePoint {
-            position: Vec3::new(0.0, 0.0, 0.0),
-            velocity: Vec3::new(0.0, 0.0, 0.0),
+        bubble: Bubble {
             effect_radius: 1.0,
             target_distance: 1.0,
         },
@@ -116,37 +124,50 @@ fn create_bubble_points(mut commands: Commands) {
             0.0,
         );
         let mut bundle_clone = bundle.clone();
-        bundle_clone.bubble_point.position = position;
+        bundle_clone.position.value = position;
 
         commands.spawn_bundle(bundle_clone);
     }
 }
-fn handle_bubble_velocities(mut query: Query<(&mut BubblePoint)>) {
-    for mut bubble_point in query.iter_mut() {
-        let vel = bubble_point.velocity.clone();
-        bubble_point.position += vel;
-        bubble_point.velocity *= 0.95;
+fn handle_bubble_velocities(mut query: Query<(&mut Position, &mut Velocity)>) {
+    for (mut position, mut velocity) in query.iter_mut() {
+        position.value += velocity.value;
+        velocity.value *= 0.95;
     }
 }
-fn handle_bubble_forces(mut query: Query<(&mut BubblePoint)>,){
+fn handle_bubble_forces(mut query: Query<(&Bubble, &Position, &mut Velocity)>,){
     let mut combinations = query.iter_combinations_mut();
-    while let Some([mut bp0, mut bp1]) = combinations.fetch_next() {
-        let distance = bp0.position.distance(bp1.position);
-        if distance < bp0.effect_radius {
-            let direction = bp0.position - bp1.position;
-            let force = direction.normalize() * (bp0.effect_radius - distance) * 0.01; //0.1;
-            bp0.velocity += force;
-            bp1.velocity -= force;
+    while let Some([(bubble1, position1, mut velocity1), (bubble2, position2, mut velocity2)]) = combinations.fetch_next() {
+        let distance = position1.value.distance(position2.value);
+        let effect_radius = bubble1.effect_radius + bubble2.effect_radius;
+        if distance < effect_radius {
+            let force = (effect_radius - distance) / effect_radius;
+            let direction = (position1.value - position2.value).normalize();
+            velocity1.value += direction * force;
+            velocity2.value -= direction * force;
         }
     }
 }
 
+//fn handle_bubble_forces2(mut query: Query<(&mut BubblePoint)>,){
+//    let mut combinations = query.iter_combinations_mut();
+//    while let Some([mut bp0, mut bp1]) = combinations.fetch_next() {
+//        let distance = bp0.position.distance(bp1.position);
+//        if distance < bp0.effect_radius {
+//            let direction = bp0.position - bp1.position;
+//            let force = direction.normalize() * (bp0.effect_radius - distance) * 0.01; //0.1;
+//            bp0.velocity += force;
+//            bp1.velocity -= force;
+//        }
+//    }
+//}
+
 // also takes a Vec3 vector and writes the bubble_positions, which is a Vec<Vec3> in the game resource
-fn update_position_views(mut query: Query<(&BubblePoint)>, mut bubble_positions: ResMut<Vec<f32>>) {
+fn update_position_views(mut query: Query<(&Position)>, mut bubble_positions: ResMut<Vec<f32>>) {
     bubble_positions.clear();
     for bubble_point in query.iter() {
-        bubble_positions.push(bubble_point.position.x);
-        bubble_positions.push(bubble_point.position.y);
-        bubble_positions.push(bubble_point.position.z);
+        bubble_positions.push(bubble_point.value.x);
+        bubble_positions.push(bubble_point.value.y);
+        bubble_positions.push(bubble_point.value.z);
     }
 }

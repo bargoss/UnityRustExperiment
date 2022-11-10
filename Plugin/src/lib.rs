@@ -138,7 +138,7 @@ mod tests {
         // update game 100 times and measure time
 
         let mut total_duration = 0;
-        let iterations = 1;
+        let iterations = 10;
         for _ in 0..iterations {
             let elapsed = time_it(|| {
                 update_game(game);
