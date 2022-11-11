@@ -10,34 +10,35 @@ public class RustDLL : MonoBehaviour
     //delegate int MultiplyFloat(float number, float multiplyBy);
     //delegate void DoSomething(string words);
     delegate IntPtr create_game();
-    delegate void start_game(IntPtr game);
     delegate void update_game(IntPtr game);
     delegate IntPtr get_bubble_positions(IntPtr game);
+    //pub extern "C" fn get_float_array_value(array_id:i32, index:i32) -> f32
+    delegate float get_float_array_value(int array_id, int index);
 
     public IntPtr CreateGame()
     {
-        return Native.Invoke<IntPtr, create_game>(nativeLibraryPtr, "Hello, World!");
-    }
-    public void StartGame(IntPtr game)
-    {
-        Native.Invoke<IntPtr, start_game>(nativeLibraryPtr, game);
+        return Native.Invoke<IntPtr, create_game>(nativeLibraryPtr);
     }
     public void UpdateGame(IntPtr game)
     {
-        Native.Invoke<IntPtr, update_game>(nativeLibraryPtr, game);
+        Native.Invoke<update_game>(nativeLibraryPtr, game);
     }
     public Vector3[] GetBubblePositions(IntPtr game)
     {
         var ptr = Native.Invoke<IntPtr, get_bubble_positions>(nativeLibraryPtr, game);
-        var floatArray = new float[500 * 3];
-        Marshal.Copy(ptr, floatArray, 0, 500 * 3);
-        var vecArray = new Vector3[500];
-        for (var i = 0; i < 500; i++)
-        {
-            vecArray[i] = new Vector3(floatArray[i * 3], floatArray[i * 3 + 1], floatArray[i * 3 + 2]);
-        }
-
-        return vecArray;
+        //var floatArray = new float[500 * 3];
+        //Marshal.Copy(ptr, floatArray, 0, 500 * 3);
+        //var vecArray = new Vector3[500];
+        //for (var i = 0; i < 500; i++)
+        //{
+        //    vecArray[i] = new Vector3(floatArray[i * 3], floatArray[i * 3 + 1], floatArray[i * 3 + 2]);
+        //}
+        //return vecArray;
+        return Array.Empty<Vector3>();
+    }
+    public float GetFloatArrayValue(int array_id, int index)
+    {
+        return Native.Invoke<float, get_float_array_value>(nativeLibraryPtr, array_id, index);
     }
     
  
@@ -57,7 +58,10 @@ public class RustDLL : MonoBehaviour
     private void Start()
     {
         game = CreateGame();
-        StartGame(game);
+        print("0: " + GetFloatArrayValue(0, 0));
+        print("1: " + GetFloatArrayValue(0, 1));
+        print("2: " + GetFloatArrayValue(0, 2));
+        print("3: " + GetFloatArrayValue(0, 3));
     }
 
     private float msSum = 0;
@@ -73,9 +77,7 @@ public class RustDLL : MonoBehaviour
         measureCount++;
         
         Debug.Log("Average execution time: " + msSum / measureCount);
-        
         var positions = GetBubblePositions(game);
-        // display the bubbles with debug drawrays
         for (int i = 0; i < positions.Length; i++)
         {
             Debug.DrawRay(positions[i], Vector3.forward, Color.red, 0);
@@ -89,7 +91,7 @@ public class RustDLL : MonoBehaviour
         watch.Stop();
         return (int)watch.ElapsedMilliseconds;
     }
- 
+    
     void OnApplicationQuit()
     {
         if (nativeLibraryPtr == IntPtr.Zero) return;

@@ -7,13 +7,18 @@ use bevy_ecs::world::World;
 use bevy_math::Vec3;
 
 const BUBBLE_COUNT: usize = 500;
+// use macro
+const BUBBLE_COUNT_3: usize = 1500;
 
 pub struct Game{
     pub world: bevy_ecs::prelude::World,
     pub update_schedule: Schedule,
-    pub positions_floats: Box<[f32; BUBBLE_COUNT * 3]>,
 }
 // impl
+
+pub struct PositionFloatBuffer{
+    pub value: [f32; BUBBLE_COUNT_3]
+}
 
 impl Game {
     pub fn new() -> Game {
@@ -21,7 +26,13 @@ impl Game {
         // this inserts the resource by its type i think, so we wont be able to have another resource of the same type
         // correct way to do this is probably to have a resource that is a hashmap of resources
         // or to create a new new resource type for each resource
-        world.insert_resource(Vec::<f32>::new()); // bubble positions for viewing
+        // f32 array that is in a box
+
+        // create PositionFloatBuffer instance
+        let mut position_float_buffer = PositionFloatBuffer{
+            value: [0.0; BUBBLE_COUNT_3]
+        };
+        world.insert_resource(position_float_buffer); // bubble positions for viewing
         world.insert_resource(BubblePushPoints{ points: Vec::new(), });
 
         let mut create_bubble_points_stage = SystemStage::parallel();
@@ -33,13 +44,13 @@ impl Game {
 
         let mut update_schedule = Schedule::default();
         let mut handle_bubble_velocities_stage = SystemStage::parallel();
-        //handle_bubble_velocities_stage.add_system(handle_bubble_velocities);
+        handle_bubble_velocities_stage.add_system(handle_bubble_velocities);
         update_schedule.add_stage("handle_bubble_velocities", handle_bubble_velocities_stage);
 
         let mut handle_bubble_forces_stage = SystemStage::parallel();
-        //handle_bubble_forces_stage.add_system(handle_bubble_interactions);
-        //handle_bubble_forces_stage.add_system(handle_bubble_pull_to_center);
-        //handle_bubble_forces_stage.add_system(handle_bubble_push);
+        handle_bubble_forces_stage.add_system(handle_bubble_interactions);
+        handle_bubble_forces_stage.add_system(handle_bubble_pull_to_center);
+        handle_bubble_forces_stage.add_system(handle_bubble_push);
         update_schedule.add_stage("handle_bubble_forces", handle_bubble_forces_stage);
 
 
@@ -52,7 +63,6 @@ impl Game {
         Game {
             world,
             update_schedule,
-            positions_floats: [0.0; BUBBLE_COUNT*3].into(),
         }
     }
 
@@ -61,10 +71,15 @@ impl Game {
         self.update_schedule.run(&mut self.world);
     }
 
-    // get the Vec<Vec3> resource, return its iterator
+
+    pub fn get_positions_arr(&mut self) ->  [f32; BUBBLE_COUNT_3] {
+        let resource = self.world.get_resource::<PositionFloatBuffer>().unwrap();
+        resource.value
+    }
+
     pub fn get_positions_iter(&mut self) -> impl Iterator<Item = &f32> {
-        let resource = self.world.get_resource::<Vec<f32>>().unwrap();
-        resource.iter()
+        let resource = self.world.get_resource::<PositionFloatBuffer>().unwrap();
+        resource.value.iter()
     }
 
     pub fn set_push_points(&mut self, points: Vec<Vec3>) {
@@ -193,11 +208,11 @@ fn handle_bubble_push(mut query: Query<(&Position, &mut Velocity)>, push_points:
 //}
 
 // also takes a Vec3 vector and writes the bubble_positions, which is a Vec<Vec3> in the game resource
-fn update_position_views(mut query: Query<(&Position)>, mut bubble_positions: ResMut<Vec<f32>>) {
-    bubble_positions.clear();
-    for bubble_point in query.iter() {
-        bubble_positions.push(bubble_point.value.x);
-        bubble_positions.push(bubble_point.value.y);
-        bubble_positions.push(bubble_point.value.z);
+
+fn update_position_views(mut query: Query<(&Position)>, mut bubble_positions: ResMut<PositionFloatBuffer>) {
+    for (i, position) in query.iter_mut().enumerate() {
+        bubble_positions.value[i*3] = position.value.x;
+        bubble_positions.value[i*3+1] = position.value.y;
+        bubble_positions.value[i*3+2] = position.value.z;
     }
 }

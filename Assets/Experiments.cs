@@ -129,7 +129,7 @@ public class RustPlugin{
     
     #if UNITY_EDITOR
         [DllImport("mandelbrot")]
-    #else
+#else
             [DllImport("__Internal")]
     #endif
     public static extern void start_game(IntPtr game);

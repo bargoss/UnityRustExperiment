@@ -1,5 +1,5 @@
 use bevy_math::Vec3;
-use crate::bubbles::Game;
+use crate::bubbles::{Game, PositionFloatBuffer};
 
 mod bubbles;
 
@@ -97,12 +97,12 @@ pub extern "C" fn update_game(game: *mut Game) {
 #[no_mangle]
 pub extern "C" fn get_bubble_positions(game: *mut Game) -> *const f32 {
     let game = unsafe { &mut *game };
-    let resource = game.world.get_resource::<Vec<f32>>().unwrap();
+    let resource = game.world.get_resource::<PositionFloatBuffer>().unwrap();
 
     // tell the copiler not to drop this array
     //std::mem::forget(resource);
 
-    resource.as_ptr()
+    resource.value.as_ptr()
 }
 
 // feed in a float array
