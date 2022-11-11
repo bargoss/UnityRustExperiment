@@ -3,6 +3,41 @@ use crate::bubbles::{Game, PositionFloatBuffer};
 
 mod bubbles;
 
+//native array struct for interop with size and array
+#[repr(C)]
+pub struct NativeArrayFloat{
+    pub size: usize,
+    pub value: [f32; 1500]
+}
+
+
+#[no_mangle]
+pub extern "C" fn get_float_array_ptr_2() -> *const NativeArrayFloat {
+    // create a new NativeArrayFloat instance on heap and return a pointer to it
+    let native_array_float = NativeArrayFloat{
+        size: 1500,
+        value: [0.0; 1500]
+    };
+    Box::into_raw(Box::new(native_array_float))
+}
+
+// do it with just [f32; 1500] and return a pointer to it
+#[no_mangle]
+pub extern "C" fn get_float_array_ptr() -> *const [f32; 1500] {
+    // create a new NativeArrayFloat instance on heap and return a pointer to it
+    //let native_array_float = [0.0; 1500];
+    //Box::into_raw(Box::new(native_array_float))
+    // do it but also tell compiler to not drop it
+    let native_array_float = Box::leak(Box::new([0.0; 1500]));
+    //set some elements
+    native_array_float[0] = 7.0;
+    native_array_float[1] = 8.0;
+    native_array_float[2] = 9.0;
+    native_array_float[3] = 10.0;
+    native_array_float[4] = 11.0;
+    native_array_float
+}
+
 pub fn add(left: usize, right: usize) -> usize {
     left + right
 }
@@ -29,7 +64,7 @@ pub extern "C" fn get_float_array() -> *const f32 {
 
 
 
-// takes array id and index
+
 #[no_mangle]
 pub extern "C" fn get_float_array_value(array_id:i32, index:i32) -> f32 {
     let mut float_array = [0.0; 5];
@@ -40,6 +75,9 @@ pub extern "C" fn get_float_array_value(array_id:i32, index:i32) -> f32 {
     float_array[4] = 5.1;
     float_array[index as usize]
 }
+
+
+
 #[no_mangle]
 pub extern "C" fn get_int_array_value(array_id:i32, index:i32) -> i32 {
     let mut int_array = [0; 5];
@@ -93,14 +131,11 @@ pub extern "C" fn update_game(game: *mut Game) {
     game.update();
 }
 
-//return game.positions_floats pointer
+// give f32 array to c#
 #[no_mangle]
 pub extern "C" fn get_bubble_positions(game: *mut Game) -> *const f32 {
     let game = unsafe { &mut *game };
     let resource = game.world.get_resource::<PositionFloatBuffer>().unwrap();
-
-    // tell the copiler not to drop this array
-    //std::mem::forget(resource);
 
     resource.value.as_ptr()
 }
@@ -135,9 +170,9 @@ mod tests {
         start.elapsed().as_millis()
     }
 
+    // ignored test
     #[test]
     fn interop_tests() {
-        let a = 3;
         let game = create_game();
         {
             update_game(game);
@@ -158,6 +193,7 @@ mod tests {
 
 
         let positions = get_bubble_positions(game);
+        let raw_address_value = positions as usize;
         let positions = unsafe { std::slice::from_raw_parts(positions, 10) };
         let pos0 = positions[0];
         let pos1 = positions[1];
@@ -194,7 +230,7 @@ mod tests {
     fn real_test() {
         let mut game = bubbles::Game::new();
         game.update();
-        let mut iter = game.get_positions_iter();
+        let iter = game.get_positions_iter();
 
         // tolist
         let mut list = Vec::new();
@@ -203,7 +239,7 @@ mod tests {
         }
 
         game.update();
-        let mut iter = game.get_positions_iter();
+        let iter = game.get_positions_iter();
         let mut list2 = Vec::new();
         for i in iter {
             list2.push(i.clone());
@@ -220,8 +256,6 @@ mod tests {
 
         // assert average_distance > 0.001
         assert!(average_distance > 0.001);
-
-        let sdad = 3;
     }
 
 }

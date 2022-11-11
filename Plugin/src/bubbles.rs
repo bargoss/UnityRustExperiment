@@ -29,7 +29,7 @@ impl Game {
         // f32 array that is in a box
 
         // create PositionFloatBuffer instance
-        let mut position_float_buffer = PositionFloatBuffer{
+        let position_float_buffer = PositionFloatBuffer{
             value: [0.0; BUBBLE_COUNT_3]
         };
         world.insert_resource(position_float_buffer); // bubble positions for viewing
@@ -121,9 +121,9 @@ pub struct BubblePointBundle {
     pub velocity: Velocity,
 }
 
-pub struct CreateBubblePointsParams {
-    pub count: usize,
-}
+//pub struct CreateBubblePointsParams {
+//    pub count: usize,
+//}
 
 fn create_bubble_points(mut commands: Commands) {
     let bundle = BubblePointBundle {
@@ -209,7 +209,7 @@ fn handle_bubble_push(mut query: Query<(&Position, &mut Velocity)>, push_points:
 
 // also takes a Vec3 vector and writes the bubble_positions, which is a Vec<Vec3> in the game resource
 
-fn update_position_views(mut query: Query<(&Position)>, mut bubble_positions: ResMut<PositionFloatBuffer>) {
+fn update_position_views(mut query: Query<&Position>, mut bubble_positions: ResMut<PositionFloatBuffer>) {
     for (i, position) in query.iter_mut().enumerate() {
         bubble_positions.value[i*3] = position.value.x;
         bubble_positions.value[i*3+1] = position.value.y;

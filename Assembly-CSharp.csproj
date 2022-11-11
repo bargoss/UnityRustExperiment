@@ -41,7 +41,7 @@
     <ImplicitlyExpandDesignTimeFacades>false</ImplicitlyExpandDesignTimeFacades>
   </PropertyGroup>
   <ItemGroup>
-     <Compile Include="Assets\RustDLL.cs" />
+     <Compile Include="Assets\RustDll.cs" />
      <Compile Include="Assets\Experiments.cs" />
      <Compile Include="Assets\Native.cs" />
      <Reference Include="UnityEngine">

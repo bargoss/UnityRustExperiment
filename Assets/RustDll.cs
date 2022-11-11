@@ -9,6 +9,7 @@ public class RustDLL : MonoBehaviour
  
     //delegate int MultiplyFloat(float number, float multiplyBy);
     //delegate void DoSomething(string words);
+    delegate IntPtr get_float_array_ptr();
     delegate IntPtr create_game();
     delegate void update_game(IntPtr game);
     delegate IntPtr get_bubble_positions(IntPtr game);
@@ -25,6 +26,8 @@ public class RustDLL : MonoBehaviour
     }
     public Vector3[] GetBubblePositions(IntPtr game)
     {
+        var arrayPtr = Native.Invoke<IntPtr, get_float_array_ptr>(nativeLibraryPtr);
+        
         var ptr = Native.Invoke<IntPtr, get_bubble_positions>(nativeLibraryPtr, game);
         //var floatArray = new float[500 * 3];
         //Marshal.Copy(ptr, floatArray, 0, 500 * 3);
