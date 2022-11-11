@@ -33,13 +33,13 @@ impl Game {
 
         let mut update_schedule = Schedule::default();
         let mut handle_bubble_velocities_stage = SystemStage::parallel();
-        handle_bubble_velocities_stage.add_system(handle_bubble_velocities);
+        //handle_bubble_velocities_stage.add_system(handle_bubble_velocities);
         update_schedule.add_stage("handle_bubble_velocities", handle_bubble_velocities_stage);
 
         let mut handle_bubble_forces_stage = SystemStage::parallel();
-        handle_bubble_forces_stage.add_system(handle_bubble_interactions);
-        handle_bubble_forces_stage.add_system(handle_bubble_pull_to_center);
-        handle_bubble_forces_stage.add_system(handle_bubble_push);
+        //handle_bubble_forces_stage.add_system(handle_bubble_interactions);
+        //handle_bubble_forces_stage.add_system(handle_bubble_pull_to_center);
+        //handle_bubble_forces_stage.add_system(handle_bubble_push);
         update_schedule.add_stage("handle_bubble_forces", handle_bubble_forces_stage);
 
 

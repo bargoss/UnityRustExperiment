@@ -156,3 +156,8 @@ public class RustPlugin{
         return floatArray;
     }
 }
+
+/* 
+ * Native dll invocation helper by Francis R. Griffiths-Keam
+ * www.runningdimensions.com/blog
+ */
