@@ -29,10 +29,7 @@ impl Game {
         // f32 array that is in a box
 
         // create PositionFloatBuffer instance
-        let position_float_buffer = PositionFloatBuffer{
-            value: [0.0; BUBBLE_COUNT * 3]
-        };
-        world.insert_resource(position_float_buffer); // bubble positions for viewing
+        world.insert_resource(PositionFloatBuffer{ value: [0.0; BUBBLE_COUNT * 3] });
         world.insert_resource(BubblePushPoints{ points: Vec::new(), });
 
         let mut create_bubble_points_stage = SystemStage::parallel();
