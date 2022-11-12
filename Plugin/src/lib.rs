@@ -118,41 +118,14 @@ pub extern "C" fn get_int_array_value(array_id:i32, index:i32) -> i32 {
     int_array[index as usize]
 }
 
-// c# side:
-// [DllImport("bevy_rust_test.dll", CallingConvention = CallingConvention.Cdecl)]
-// public static extern IntPtr get_vec3_array();
-//
-// public static Vector3[] GetVec3Array()
-// {
-//     IntPtr ptr = get_vec3_array();
-//     Vector3[] vec3Array = new Vector3[5];
-//     Marshal.Copy(ptr, vec3Array, 0, 5);
-//     return vec3Array;
-// }
 
-// pub struct Game{
-//     pub world: bevy_ecs::prelude::World,
-//     pub start_schedule: Schedule,
-//     pub update_schedule: Schedule,
-// }
 
-// extern function that creates a Game
 #[no_mangle]
 pub extern "C" fn create_game() -> *mut Game {
-    //let game = Box::new(Game::new());
-    //Box::into_raw(game)
-
-    // do it but dont drop the "Game"
     let game = Box::new(Game::new());
     std::mem::forget(&game);
     Box::into_raw(game)
 }
-
-//#[no_mangle]
-//pub extern "C" fn start_game(game: *mut Game) {
-//    let game = unsafe { &mut *game };
-//    game.start();
-//}
 
 #[no_mangle]
 pub extern "C" fn update_game(game: *mut Game) {

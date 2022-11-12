@@ -8,7 +8,7 @@ use bevy_math::Vec3;
 
 const BUBBLE_COUNT: usize = 500;
 // use macro
-const BUBBLE_COUNT_3: usize = 1500;
+//const BUBBLE_COUNT_3: usize = 1500;
 
 pub struct Game{
     pub world: bevy_ecs::prelude::World,
@@ -17,7 +17,7 @@ pub struct Game{
 // impl
 
 pub struct PositionFloatBuffer{
-    pub value: [f32; BUBBLE_COUNT_3]
+    pub value: [f32; BUBBLE_COUNT * 3]
 }
 
 impl Game {
@@ -30,7 +30,7 @@ impl Game {
 
         // create PositionFloatBuffer instance
         let position_float_buffer = PositionFloatBuffer{
-            value: [0.0; BUBBLE_COUNT_3]
+            value: [0.0; BUBBLE_COUNT * 3]
         };
         world.insert_resource(position_float_buffer); // bubble positions for viewing
         world.insert_resource(BubblePushPoints{ points: Vec::new(), });
@@ -43,22 +43,16 @@ impl Game {
 
 
         let mut update_schedule = Schedule::default();
-        let mut handle_bubble_velocities_stage = SystemStage::parallel();
-        handle_bubble_velocities_stage.add_system(handle_bubble_velocities);
-        update_schedule.add_stage("handle_bubble_velocities", handle_bubble_velocities_stage);
+        let mut update_bubble_velocities_stage = SystemStage::parallel();
+        update_bubble_velocities_stage.add_system(handle_bubble_interactions);
+        update_bubble_velocities_stage.add_system(handle_bubble_pull_to_center);
+        update_bubble_velocities_stage.add_system(handle_bubble_push);
+        update_schedule.add_stage("handle_bubble_velocities", update_bubble_velocities_stage);
 
-        let mut handle_bubble_forces_stage = SystemStage::parallel();
-        handle_bubble_forces_stage.add_system(handle_bubble_interactions);
-        handle_bubble_forces_stage.add_system(handle_bubble_pull_to_center);
-        handle_bubble_forces_stage.add_system(handle_bubble_push);
-        update_schedule.add_stage("handle_bubble_forces", handle_bubble_forces_stage);
-
-
-
-        //update_position_views
-        let mut update_position_views_stage = SystemStage::parallel();
-        update_position_views_stage.add_system(update_position_views);
-        update_schedule.add_stage("update_position_views", update_position_views_stage);
+        let mut update_bubble_positions_stage = SystemStage::parallel();
+        update_bubble_positions_stage.add_system(handle_bubble_velocities);
+        update_bubble_positions_stage.add_system(update_position_views);
+        update_schedule.add_stage("handle_bubble_positions", update_bubble_positions_stage);
 
         Game {
             world,
@@ -72,7 +66,7 @@ impl Game {
     }
 
 
-    pub fn get_positions_arr(&mut self) ->  [f32; BUBBLE_COUNT_3] {
+    pub fn get_positions_arr(&mut self) ->  [f32; BUBBLE_COUNT * 3] {
         let resource = self.world.get_resource::<PositionFloatBuffer>().unwrap();
         resource.value
     }
@@ -173,7 +167,7 @@ fn handle_bubble_pull_to_center(mut query: Query<(&Position, &mut Velocity)>){
         let center = Vec3::new(0.0, 0.0, 0.0);
         let delta_to_center = center - position.value;
         let direction = delta_to_center.normalize();
-        let force = 1.5;
+        let force = 0.05;
         velocity.value += direction * force;
     }
 }
@@ -186,7 +180,7 @@ fn handle_bubble_push(mut query: Query<(&Position, &mut Velocity)>, push_points:
             if sqr_distance < 2.0 {
                 let direction = delta_to_push_point.normalize();
                 let force = 2.0 - sqr_distance;
-                velocity.value += direction * force;
+                //velocity.value += direction * force;
             }
         }
     }
