@@ -11,31 +11,60 @@ pub struct NativeArrayFloat{
 }
 
 
-#[no_mangle]
-pub extern "C" fn get_float_array_ptr_2() -> *const NativeArrayFloat {
-    // create a new NativeArrayFloat instance on heap and return a pointer to it
-    let native_array_float = NativeArrayFloat{
-        size: 1500,
-        value: [0.0; 1500]
-    };
-    Box::into_raw(Box::new(native_array_float))
-}
 
-// do it with just [f32; 1500] and return a pointer to it
+
+pub static mut OUTPUT: [i32; 3000] = [0; 3000];
+
 #[no_mangle]
-pub extern "C" fn get_float_array_ptr() -> *const [f32; 1500] {
-    // create a new NativeArrayFloat instance on heap and return a pointer to it
-    //let native_array_float = [0.0; 1500];
-    //Box::into_raw(Box::new(native_array_float))
-    // do it but also tell compiler to not drop it
-    let native_array_float = Box::leak(Box::new([0.0; 1500]));
-    //set some elements
-    native_array_float[0] = 7.0;
-    native_array_float[1] = 8.0;
-    native_array_float[2] = 9.0;
-    native_array_float[3] = 10.0;
-    native_array_float[4] = 11.0;
-    native_array_float
+pub extern "C" fn get_int_array_ptr() -> *const i32 {
+    unsafe{
+        OUTPUT[0] = 1;
+        OUTPUT[1] = 2;
+        OUTPUT[2] = 3;
+        OUTPUT[3] = 4;
+        OUTPUT[4] = 5;
+        OUTPUT[5] = 6;
+        OUTPUT[6] = 7;
+        OUTPUT[7] = 8;
+        OUTPUT[8] = 9;
+        OUTPUT[9] = 10;
+        OUTPUT[10] = 11;
+        OUTPUT[11] = 12;
+        OUTPUT[12] = 13;
+        OUTPUT[13] = 14;
+        OUTPUT[14] = 15;
+        OUTPUT[15] = 16;
+        OUTPUT[16] = 17;
+        OUTPUT[17] = 18;
+        OUTPUT[18] = 19;
+        OUTPUT[19] = 20;
+        OUTPUT[20] = 21;
+        OUTPUT[21] = 22;
+        OUTPUT[22] = 23;
+        OUTPUT[23] = 24;
+        OUTPUT[24] = 25;
+        OUTPUT[25] = 26;
+        OUTPUT[26] = 27;
+        OUTPUT[27] = 28;
+        OUTPUT[28] = 29;
+        OUTPUT[29] = 30;
+        OUTPUT[30] = 31;
+        OUTPUT[31] = 32;
+        OUTPUT[32] = 33;
+        OUTPUT[33] = 34;
+        OUTPUT[34] = 35;
+        OUTPUT[35] = 36;
+        OUTPUT[36] = 37;
+        OUTPUT[37] = 38;
+        OUTPUT[38] = 39;
+        OUTPUT[39] = 40;
+        OUTPUT[40] = 41;
+        OUTPUT[41] = 42;
+        OUTPUT[42] = 43;
+        OUTPUT[43] = 44;
+        OUTPUT[44] = 45;
+        OUTPUT.as_ptr()
+    }
 }
 
 pub fn add(left: usize, right: usize) -> usize {
@@ -168,6 +197,14 @@ mod tests {
         let start = std::time::Instant::now();
         action();
         start.elapsed().as_millis()
+    }
+
+    #[test]
+    fn get_int_array_ptr_test() {
+        let arr_ptr = get_int_array_ptr();
+        // print the int value of this
+        println!("arr_ptr: {}", arr_ptr as usize);
+
     }
 
     // ignored test

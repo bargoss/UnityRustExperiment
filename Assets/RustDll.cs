@@ -9,7 +9,7 @@ public class RustDLL : MonoBehaviour
  
     //delegate int MultiplyFloat(float number, float multiplyBy);
     //delegate void DoSomething(string words);
-    delegate IntPtr get_float_array_ptr();
+    delegate IntPtr get_int_array_ptr();
     delegate IntPtr create_game();
     delegate void update_game(IntPtr game);
     delegate IntPtr get_bubble_positions(IntPtr game);
@@ -25,18 +25,18 @@ public class RustDLL : MonoBehaviour
         Native.Invoke<update_game>(nativeLibraryPtr, game);
     }
     public Vector3[] GetBubblePositions(IntPtr game)
-    {
-        var arrayPtr = Native.Invoke<IntPtr, get_float_array_ptr>(nativeLibraryPtr);
+    {        
+        var arrayPtr = Native.Invoke<IntPtr, get_int_array_ptr>(nativeLibraryPtr);
         
         var ptr = Native.Invoke<IntPtr, get_bubble_positions>(nativeLibraryPtr, game);
-        //var floatArray = new float[500 * 3];
-        //Marshal.Copy(ptr, floatArray, 0, 500 * 3);
-        //var vecArray = new Vector3[500];
-        //for (var i = 0; i < 500; i++)
-        //{
-        //    vecArray[i] = new Vector3(floatArray[i * 3], floatArray[i * 3 + 1], floatArray[i * 3 + 2]);
-        //}
-        //return vecArray;
+        var floatArray = new float[500 * 3];
+        Marshal.Copy(ptr, floatArray, 0, 500 * 3);
+        var vecArray = new Vector3[500];
+        for (var i = 0; i < 500; i++)
+        {
+            vecArray[i] = new Vector3(floatArray[i * 3], floatArray[i * 3 + 1], floatArray[i * 3 + 2]);
+        }
+        return vecArray;
         return Array.Empty<Vector3>();
     }
     public float GetFloatArrayValue(int array_id, int index)
