@@ -15,7 +15,12 @@ public class RustDLL : MonoBehaviour
     delegate IntPtr get_bubble_positions(IntPtr game);
     //pub extern "C" fn get_float_array_value(array_id:i32, index:i32) -> f32
     delegate float get_float_array_value(int array_id, int index);
+    delegate void apply_bubble_push(IntPtr game, float x, float y, float z);
 
+    public void ApplyBubblePush(Vector3 pos)
+    {
+        Native.Invoke<apply_bubble_push>(nativeLibraryPtr, game, pos.x, pos.y, pos.z);
+    }
     public IntPtr CreateGame()
     {
         return Native.Invoke<IntPtr, create_game>(nativeLibraryPtr);
@@ -72,19 +77,49 @@ public class RustDLL : MonoBehaviour
     
     void Update()
     {
+        var mousePos = GetMouseWorldPos();
+        Debug.DrawRay(mousePos, Vector3.up, Color.blue);
+        Debug.DrawRay(mousePos, Vector3.right, Color.blue);
+        Debug.DrawRay(mousePos, Vector3.forward, Color.blue);
+        
+        ApplyBubblePush(mousePos);
+        
         float executionTime = MeasureExecutionTime(() =>
         {
             UpdateGame(game);
         });
         msSum += executionTime;
         measureCount++;
-        
+
         Debug.Log("Average execution time: " + msSum / measureCount);
+        //var positions = GetBubblePositions(game);
+        //for (int i = 0; i < positions.Length; i++)
+        //{
+        //    Debug.DrawRay(positions[i], Vector3.forward, Color.red, 0);
+        //}
+        DrawBubblesNice();
+    }
+
+    public Mesh BubbleMesh;
+    public Material BubbleMaterial;
+    private Matrix4x4[] _matrices = new Matrix4x4[500];
+    public void DrawBubblesNice()
+    {
         var positions = GetBubblePositions(game);
         for (int i = 0; i < positions.Length; i++)
         {
-            Debug.DrawRay(positions[i], Vector3.forward, Color.red, 0);
+            _matrices[i] = Matrix4x4.TRS(positions[i], Quaternion.identity, Vector3.one * 3);
         }
+        // use default sphere
+        Graphics.DrawMeshInstanced(BubbleMesh, 0, BubbleMaterial, _matrices);
+    }
+
+    Vector3 GetMouseWorldPos()
+    {
+        var plane = new Plane(Vector3.forward, Vector3.zero);
+        var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        plane.Raycast(ray, out var distance);
+        return ray.GetPoint(distance);
     }
     
     int MeasureExecutionTime(Action action)

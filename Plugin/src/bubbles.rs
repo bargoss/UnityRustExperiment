@@ -7,6 +7,7 @@ use bevy_ecs::world::World;
 use bevy_math::Vec3;
 
 const BUBBLE_COUNT: usize = 500;
+const DELTA_TIME: f32 = 0.5;
 // use macro
 //const BUBBLE_COUNT_3: usize = 1500;
 
@@ -40,13 +41,13 @@ impl Game {
 
 
         let mut update_schedule = Schedule::default();
-        let mut update_bubble_velocities_stage = SystemStage::parallel();
+        let mut update_bubble_velocities_stage = SystemStage::single_threaded();
         update_bubble_velocities_stage.add_system(handle_bubble_interactions);
         update_bubble_velocities_stage.add_system(handle_bubble_pull_to_center);
         update_bubble_velocities_stage.add_system(handle_bubble_push);
         update_schedule.add_stage("handle_bubble_velocities", update_bubble_velocities_stage);
 
-        let mut update_bubble_positions_stage = SystemStage::parallel();
+        let mut update_bubble_positions_stage = SystemStage::single_threaded();
         update_bubble_positions_stage.add_system(handle_bubble_velocities);
         update_bubble_positions_stage.add_system(update_position_views);
         update_schedule.add_stage("handle_bubble_positions", update_bubble_positions_stage);
@@ -85,8 +86,8 @@ impl Game {
 
 
 // resource with a Vec<Vec3> for bubble push points
-struct BubblePushPoints {
-    points: Vec<Vec3>,
+pub struct BubblePushPoints {
+    pub points: Vec<Vec3>,
 }
 
 
@@ -142,7 +143,7 @@ fn create_bubble_points(mut commands: Commands) {
 fn handle_bubble_velocities(mut query: Query<(&mut Position, &mut Velocity)>) {
     for (mut position, mut velocity) in query.iter_mut() {
         position.value += velocity.value;
-        velocity.value *= 0.95;
+        velocity.value *= 0.95 * DELTA_TIME;
     }
 }
 fn handle_bubble_interactions(mut query: Query<(&Bubble, &Position, &mut Velocity)>,){
@@ -153,8 +154,8 @@ fn handle_bubble_interactions(mut query: Query<(&Bubble, &Position, &mut Velocit
         if distance < effect_radius {
             let force = (effect_radius - distance) / effect_radius;
             let direction = (position1.value - position2.value).normalize();
-            velocity1.value += direction * force;
-            velocity2.value -= direction * force;
+            velocity1.value += direction * force * DELTA_TIME;
+            velocity2.value -= direction * force * DELTA_TIME;
         }
     }
 }
@@ -165,22 +166,25 @@ fn handle_bubble_pull_to_center(mut query: Query<(&Position, &mut Velocity)>){
         let delta_to_center = center - position.value;
         let direction = delta_to_center.normalize();
         let force = 0.05;
-        velocity.value += direction * force;
+        velocity.value += direction * force * DELTA_TIME;
     }
 }
 
-fn handle_bubble_push(mut query: Query<(&Position, &mut Velocity)>, push_points: Res<BubblePushPoints>){
+fn handle_bubble_push(mut query: Query<(&Position, &mut Velocity)>, mut push_points: ResMut<BubblePushPoints>){
     for (position, mut velocity) in query.iter_mut() {
         for push_point in push_points.points.iter() {
-            let delta_to_push_point = *push_point - position.value;
+            let delta_to_push_point = position.value - *push_point;
             let sqr_distance = delta_to_push_point.length_squared();
-            if sqr_distance < 2.0 {
+            let effect_radius = 15.0;
+            if sqr_distance < effect_radius * effect_radius {
                 let direction = delta_to_push_point.normalize();
-                let force = 2.0 - sqr_distance;
-                //velocity.value += direction * force;
+                velocity.value += direction * 0.2 * DELTA_TIME;
             }
         }
     }
+
+    // clear the push points
+    push_points.points.clear();
 }
 
 

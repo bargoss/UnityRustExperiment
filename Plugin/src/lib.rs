@@ -1,5 +1,5 @@
 use bevy_math::Vec3;
-use crate::bubbles::{Game, PositionFloatBuffer};
+use crate::bubbles::{BubblePushPoints, Game, PositionFloatBuffer};
 
 mod bubbles;
 
@@ -140,6 +140,13 @@ pub extern "C" fn get_bubble_positions(game: *mut Game) -> *const f32 {
     let resource = game.world.get_resource::<PositionFloatBuffer>().unwrap();
 
     resource.value.as_ptr()
+}
+
+#[no_mangle]
+pub extern "C" fn apply_bubble_push(game: *mut Game, x: f32, y: f32, z:f32) {
+    let game = unsafe { &mut *game };
+    let mut resource = game.world.get_resource_mut::<BubblePushPoints>().unwrap();
+    resource.points.push(Vec3::new(x, y, z));
 }
 
 // feed in a float array
