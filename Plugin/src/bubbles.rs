@@ -36,7 +36,8 @@ impl Game {
         // create PositionFloatBuffer instance
         world.insert_resource(PositionFloatBuffer{ value: [0.0; BUBBLE_COUNT * 3] });
         world.insert_resource(BubblePushPoints{ points: Vec::new(), });
-        world.insert_resource(LookUpGrids::<u32>::new(5.0));
+        let lookup_grids = LookUpGrids::<u32>::new(1.0);
+        world.insert_resource(lookup_grids);
 
         let mut create_bubble_points_stage = SystemStage::parallel();
         create_bubble_points_stage.add_system(create_bubble_points);
@@ -47,8 +48,9 @@ impl Game {
 
         let mut update_schedule = Schedule::default();
 
-        let mut pre_update_stage = SystemStage::parallel();
+        let mut pre_update_stage = SystemStage::single_threaded();
         pre_update_stage.add_system(update_lookup_grids);
+        update_schedule.add_stage("pre_update", pre_update_stage);
 
         let mut update_bubble_velocities_stage = SystemStage::parallel();
         update_bubble_velocities_stage.add_system(handle_bubble_interactions);
@@ -157,33 +159,40 @@ fn handle_bubble_velocities(mut query: Query<(&mut Position, &mut Velocity)>) {
 
 // a system that iterates entities with their id
 fn update_lookup_grids(mut query: Query<(&Position, Entity)>, mut lookup_grids: ResMut<LookUpGrids<u32>>) {
+    lookup_grids.clear();
     for (position, entity) in query.iter_mut() {
         lookup_grids.add(entity.id(), position.value);
     }
 }
 
-fn handle_bubble_interactions(mut query: Query<(&Bubble, &Position, &mut Velocity)>, lookup_grids: Res<LookUpGrids<u32>>) {
-    for (bubble1, position1, mut velocity1) in query.iter_mut() {
-        let mut total_force = Vec3::ZERO;
+// query for
+fn handle_bubble_interactions(
+    mut read_query: Query<(&Bubble, &Position)>,
+    mut write_query : Query<(&Bubble, &Position, &mut Velocity)>,
+    lookup_grids: Res<LookUpGrids<u32>>) {
+    //iter with lookup_grids.get_all_neighbours()
+    //for (bubble, position, mut velocity) in query.iter_mut()
+    for (id_a, id_b) in lookup_grids.get_all_neighbours(){
+        let entity_a = Entity::from_raw(id_a.clone());
+        let entity_b = Entity::from_raw(id_b.clone());
 
-        // map to first item in tuple
-        let neighbours = lookup_grids.get_neighbours(position1.value).map(|x| x.0);
-        for entity_id in neighbours {
-            // get the component from entity id
-            let entity = Entity::from_raw(entity_id);
-            // query.get_component::<Bubble>(entity);
-            let bubble2 = query.get_component::<Bubble>(entity).unwrap();
-            let position2 = query.get_component::<Position>(entity).unwrap();
-            let distance = position1.value.distance(position2.value);
-            let effect_radius = bubble1.effect_radius + bubble2.effect_radius;
-            if distance < effect_radius {
-                let force = (effect_radius - distance) / effect_radius;
-                let direction = (position1.value - position2.value).normalize();
-                velocity1.value += direction * force * DELTA_TIME;
-                //velocity2.value -= direction * force * DELTA_TIME;
-            }
+        let (bubble_a, position_a) = read_query.get(entity_a).unwrap();
+        let (bubble_b, position_b) = read_query.get(entity_b).unwrap();
+
+        let distance = position_a.value.distance(position_b.value);
+        let effect_radius = bubble_a.effect_radius + bubble_b.effect_radius;
+        if distance < effect_radius {
+            let mut velocity_a = write_query.get_mut(entity_a).unwrap().2;
+            //let mut velocity_b = write_query.get_mut(entity_b).unwrap().2;
+
+            let direction = (position_a.value - position_b.value).normalize();
+            let force = (effect_radius - distance) * 0.1;
+            velocity_a.value += direction * force;
+            //velocity_b.value -= direction * force;
         }
+
     }
+
 }
 
 //use get_many_mut not to fight the borrow checker

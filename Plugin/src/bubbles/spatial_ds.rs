@@ -6,9 +6,9 @@
 use std::collections::HashMap;
 use bevy_math::Vec3;
 
-#[derive(Default, Copy, Clone)]
+#[derive(Default, Copy, Clone, Debug)]
 struct GridContent<T> {
-    arr: [(T, Vec3); 10],
+    arr: [T; 10],
     len: usize,
 }
 
@@ -22,18 +22,19 @@ impl<T> GridContent<T> where T: Copy + Default,
         }
     }
 
-    fn add(&mut self, item: T, pos: Vec3) {
+    fn add(&mut self, item: T) {
         if self.len < self.arr.len() {
-            self.arr[self.len] = (item, pos);
+            self.arr[self.len] = item;
             self.len += 1;
         }
     }
 
-    fn iter(&self) -> impl Iterator<Item = &(T, Vec3)> {
+    fn iter(&self) -> impl Iterator<Item = &T> {
         self.arr.iter().take(self.len)
     }
 }
 
+#[derive(Debug)]
 pub struct LookUpGrids<T>{
     grid_size: f32,
     grids: HashMap<(i32, i32), GridContent<T>>,
@@ -51,10 +52,11 @@ impl<T> LookUpGrids<T> where T: Copy + Default{
         // add new elements to grids
         let (x, y) = self.get_grid(position);
         let grid = self.grids.entry((x, y)).or_insert(GridContent::new());
+        grid.add(item);
     }
 
     // return iterator for grid neighbours
-    pub fn get_neighbours(&self, position: Vec3) -> impl Iterator<Item = &(T,Vec3)> {
+    pub fn get_neighbours(&self, position: Vec3) -> impl Iterator<Item = &T> {
         let (x, y) = self.get_grid(position);
         let mut result = Vec::new();
         for i in -1..2 {
@@ -62,6 +64,42 @@ impl<T> LookUpGrids<T> where T: Copy + Default{
                 if let Some(grid) = self.grids.get(&(x + i, y + j)) {
                     for element in grid.arr.iter() {
                         result.push(element);
+                    }
+                }
+            }
+        }
+        result.into_iter()
+    }
+
+
+    pub fn get_all_neighbours(&self) -> impl Iterator<Item = (&T, &T)> {
+        let neighbour_deltas = [-1, 1];
+        let mut result = Vec::new();
+        for my_grid_key in self.grids.keys() {
+            // my grid:
+            let my_grid = self.grids.get(my_grid_key).unwrap();
+            for i in 0..my_grid.len {
+                //for j in 0..i{
+                for j in 0..my_grid.len {
+                    if i != j {
+                        result.push((&my_grid.arr[i], &my_grid.arr[j]));
+                    }
+                }
+            }
+
+
+
+            // neighbour grids:
+            for i in neighbour_deltas.iter() {
+                let my_grid_key = (my_grid_key.0, my_grid_key.1);
+                for j in neighbour_deltas.iter() {
+                    let neighbor_grid_key = (my_grid_key.0 + i, my_grid_key.1 + j);
+                    if let Some(neighbour_grid) = self.grids.get(&neighbor_grid_key) {
+                        for my_element in self.grids.get(&my_grid_key).unwrap().iter() {
+                            for neighbour_element in neighbour_grid.iter() {
+                                result.push((my_element, neighbour_element));
+                            }
+                        }
                     }
                 }
             }
@@ -89,22 +127,27 @@ mod spatial_tests {
     use super::*;
 
     #[test]
-    fn test() {
+    fn print_all_neighborsfsdfds(){
+        let grids = create_test_structure();
 
-        let mut grids = LookUpGrids::new(2.0);
-        for i in 0..10 {
-            for j in 0..10 {
-                grids.add((i + 10*j), Vec3::new((i as f32) * 0.5, (j as f32) * 0.5, 0.0));
-            }
+        println!("dasdas start");
+        for (a, b) in grids.get_all_neighbours() {
+            println!("{:?} {:?} dasdas", a, b);
         }
+        println!("dasdas end");
+    }
+
+    #[test]
+    fn test() {
+        let grids = create_test_structure();
 
         let mut count = 0;
         let mut neighbours = grids.get_neighbours(Vec3::new(0.0, 0.0, 0.0));
 
         let a = -0.0;
-        for (_, neighbour_pos) in grids.get_neighbours(Vec3::new(a, a, 0.0)) {
+        for neighbor in grids.get_neighbours(Vec3::new(a, a, 0.0)) {
             count += 1;
-            println!("{:?}", neighbour_pos);
+            println!("{:?}", neighbor);
         }
 
         println!("count: {}", count);
@@ -114,6 +157,17 @@ mod spatial_tests {
 
 
 
+    }
+
+    fn create_test_structure() -> LookUpGrids<i32> {
+        let mut grids = LookUpGrids::new(2.0);
+        let a = 2.0;
+        for i in 0..20 {
+            for j in 0..20 {
+                grids.add((i + 20 * j), Vec3::new((i as f32) * a, (j as f32) * a, 0.0));
+            }
+        }
+        grids
     }
 
     #[test]

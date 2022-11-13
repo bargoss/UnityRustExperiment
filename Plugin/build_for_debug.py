@@ -19,4 +19,4 @@ except:
 # in more pythonic way
 
 # get input from user
-input("Press Enter to continue...")
+#input("Press Enter to continue...")
