@@ -10,8 +10,9 @@ use bevy_ecs::world::World;
 use bevy_math::Vec3;
 use crate::bubbles::spatial_ds::LookUpGrids;
 
-const BUBBLE_COUNT: usize = 500;
+//const BUBBLE_COUNT: usize = 500;
 const DELTA_TIME: f32 = 0.5;
+const POSITION_FLOAT_BUFFER_SIZE: usize = 50000*3;
 // use macro
 //const BUBBLE_COUNT_3: usize = 1500;
 
@@ -22,11 +23,15 @@ pub struct Game{
 // impl
 
 pub struct PositionFloatBuffer{
-    pub value: [f32; BUBBLE_COUNT * 3]
+    pub value: [f32; POSITION_FLOAT_BUFFER_SIZE]
+}
+
+pub struct WorldParams{
+    pub bubble_count: usize,
 }
 
 impl Game {
-    pub fn new() -> Game {
+    pub fn new(world_params: WorldParams) -> Game {
         let mut world = World::new();
         // this inserts the resource by its type i think, so we wont be able to have another resource of the same type
         // correct way to do this is probably to have a resource that is a hashmap of resources
@@ -34,7 +39,8 @@ impl Game {
         // f32 array that is in a box
 
         // create PositionFloatBuffer instance
-        world.insert_resource(PositionFloatBuffer{ value: [0.0; BUBBLE_COUNT * 3] });
+        world.insert_resource(world_params);
+        world.insert_resource(PositionFloatBuffer{ value: [0.0; POSITION_FLOAT_BUFFER_SIZE] });
         world.insert_resource(BubblePushPoints{ points: Vec::new(), });
         let lookup_grids = LookUpGrids::<u32>::new(3.0);
         world.insert_resource(lookup_grids);
@@ -77,7 +83,7 @@ impl Game {
     }
 
 
-    pub fn get_positions_arr(&mut self) ->  [f32; BUBBLE_COUNT * 3] {
+    pub fn get_positions_arr(&mut self) ->  [f32; POSITION_FLOAT_BUFFER_SIZE] {
         let resource = self.world.get_resource::<PositionFloatBuffer>().unwrap();
         resource.value
     }
@@ -128,7 +134,7 @@ pub struct BubblePointBundle {
 
 
 
-fn create_bubble_points(mut commands: Commands) {
+fn create_bubble_points(mut commands: Commands, world_params: Res<WorldParams>) {
     let bundle = BubblePointBundle {
         bubble: Bubble {
             effect_radius: 1.0,
@@ -138,7 +144,7 @@ fn create_bubble_points(mut commands: Commands) {
     };
 
     // spawn 20 in random positions
-    for _ in 0..BUBBLE_COUNT {
+    for _ in 0..world_params.bubble_count {
         let position = Vec3::new(
             rand::random::<f32>() * 10.0 - 5.0,
             rand::random::<f32>() * 10.0 - 5.0,

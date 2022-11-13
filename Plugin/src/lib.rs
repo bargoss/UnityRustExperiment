@@ -1,5 +1,5 @@
 use bevy_math::Vec3;
-use crate::bubbles::{BubblePushPoints, Game, PositionFloatBuffer};
+use crate::bubbles::{BubblePushPoints, Game, PositionFloatBuffer, WorldParams};
 
 mod bubbles;
 
@@ -78,19 +78,6 @@ pub extern "C" fn add_extern(a: usize, b: usize) -> usize {
 }
 
 
-// return a pointer to this array:
-#[no_mangle]
-pub extern "C" fn get_float_array() -> *const f32 {
-    let mut game = Game::new();
-    game.update();
-    let resource = game.world.get_resource::<Vec<f32>>().unwrap();
-
-    // tell the copiler not to drop this array
-    std::mem::forget(resource);
-
-    resource.as_ptr()
-}
-
 
 
 
@@ -121,8 +108,8 @@ pub extern "C" fn get_int_array_value(array_id:i32, index:i32) -> i32 {
 
 
 #[no_mangle]
-pub extern "C" fn create_game() -> *mut Game {
-    let game = Box::new(Game::new());
+pub extern "C" fn create_game(bubble_count : usize) -> *mut Game {
+    let game = Box::new(Game::new(WorldParams{bubble_count}));
     std::mem::forget(&game);
     Box::into_raw(game)
 }
@@ -190,7 +177,7 @@ mod tests {
     // ignored test
     #[test]
     fn interop_tests() {
-        let game = create_game();
+        let game = create_game(500);
         {
             update_game(game);
         }
@@ -245,7 +232,7 @@ mod tests {
 
     #[test]
     fn real_test() {
-        let mut game = bubbles::Game::new();
+        let mut game = bubbles::Game::new(WorldParams{bubble_count: 500});
         game.update();
         let iter = game.get_positions_iter();
 
