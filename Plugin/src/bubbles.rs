@@ -38,6 +38,7 @@ impl Game {
         world.insert_resource(BubblePushPoints{ points: Vec::new(), });
         let lookup_grids = LookUpGrids::<u32>::new(3.0);
         world.insert_resource(lookup_grids);
+        world.insert_resource(Vec::<(u32, u32)>::new()); // buffer for iterating over neighbor pair ids
 
         let mut create_bubble_points_stage = SystemStage::parallel();
         create_bubble_points_stage.add_system(create_bubble_points);
@@ -171,10 +172,10 @@ fn update_lookup_grids(mut query: Query<(&Position, Entity)>, mut lookup_grids: 
 fn handle_bubble_interactions(
     mut read_query: Query<(&Bubble, &Position)>,
     mut write_query : Query<(&Bubble, &Position, &mut Velocity)>,
-    lookup_grids: Res<LookUpGrids<u32>>) {
-
-    let buffer = &mut Vec::<(u32, u32)>::new();
-    lookup_grids.get_all_neighbours(buffer);
+    lookup_grids: Res<LookUpGrids<u32>>,
+    mut buffer: ResMut<Vec::<(u32, u32)>> // for neighbor pair ids
+) {
+    lookup_grids.get_all_neighbours(&mut buffer);
 
     for (id_a, id_b) in buffer.iter(){
         let entity_a = Entity::from_raw(id_a.clone());
