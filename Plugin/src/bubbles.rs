@@ -165,14 +165,18 @@ fn update_lookup_grids(mut query: Query<(&Position, Entity)>, mut lookup_grids: 
     }
 }
 
+
+
 // query for
 fn handle_bubble_interactions(
     mut read_query: Query<(&Bubble, &Position)>,
     mut write_query : Query<(&Bubble, &Position, &mut Velocity)>,
     lookup_grids: Res<LookUpGrids<u32>>) {
-    //iter with lookup_grids.get_all_neighbours()
-    //for (bubble, position, mut velocity) in query.iter_mut()
-    for (id_a, id_b) in lookup_grids.get_all_neighbours(){
+
+    let buffer = &mut Vec::<(u32, u32)>::new();
+    lookup_grids.get_all_neighbours(buffer);
+
+    for (id_a, id_b) in buffer.iter(){
         let entity_a = Entity::from_raw(id_a.clone());
         let entity_b = Entity::from_raw(id_b.clone());
 
