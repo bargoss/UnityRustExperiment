@@ -36,7 +36,7 @@ impl Game {
         // create PositionFloatBuffer instance
         world.insert_resource(PositionFloatBuffer{ value: [0.0; BUBBLE_COUNT * 3] });
         world.insert_resource(BubblePushPoints{ points: Vec::new(), });
-        world.insert_resource(LookUpGrids::<usize>::new(5.0));
+        world.insert_resource(LookUpGrids::<u32>::new(5.0));
 
         let mut create_bubble_points_stage = SystemStage::parallel();
         create_bubble_points_stage.add_system(create_bubble_points);
@@ -46,13 +46,17 @@ impl Game {
 
 
         let mut update_schedule = Schedule::default();
-        let mut update_bubble_velocities_stage = SystemStage::single_threaded();
+
+        let mut pre_update_stage = SystemStage::parallel();
+        pre_update_stage.add_system(update_lookup_grids);
+
+        let mut update_bubble_velocities_stage = SystemStage::parallel();
         update_bubble_velocities_stage.add_system(handle_bubble_interactions);
         update_bubble_velocities_stage.add_system(handle_bubble_pull_to_center);
         update_bubble_velocities_stage.add_system(handle_bubble_push);
         update_schedule.add_stage("handle_bubble_velocities", update_bubble_velocities_stage);
 
-        let mut update_bubble_positions_stage = SystemStage::single_threaded();
+        let mut update_bubble_positions_stage = SystemStage::parallel();
         update_bubble_positions_stage.add_system(handle_bubble_velocities);
         update_bubble_positions_stage.add_system(update_position_views);
         update_schedule.add_stage("handle_bubble_positions", update_bubble_positions_stage);
@@ -150,7 +154,50 @@ fn handle_bubble_velocities(mut query: Query<(&mut Position, &mut Velocity)>) {
         velocity.value *= 0.95 * DELTA_TIME;
     }
 }
-fn handle_bubble_interactions(mut query: Query<(&Bubble, &Position, &mut Velocity)>,){
+
+// a system that iterates entities with their id
+fn update_lookup_grids(mut query: Query<(&Position, Entity)>, mut lookup_grids: ResMut<LookUpGrids<u32>>) {
+    for (position, entity) in query.iter_mut() {
+        lookup_grids.add(entity.id(), position.value);
+    }
+}
+
+fn handle_bubble_interactions(mut query: Query<(&Bubble, &Position, &mut Velocity)>, lookup_grids: Res<LookUpGrids<u32>>) {
+    for (bubble1, position1, mut velocity1) in query.iter_mut() {
+        let mut total_force = Vec3::ZERO;
+
+        // map to first item in tuple
+        let neighbours = lookup_grids.get_neighbours(position1.value).map(|x| x.0);
+        for entity_id in neighbours {
+            // get the component from entity id
+            let entity = Entity::from_raw(entity_id);
+            // query.get_component::<Bubble>(entity);
+            let bubble2 = query.get_component::<Bubble>(entity).unwrap();
+            let position2 = query.get_component::<Position>(entity).unwrap();
+            let distance = position1.value.distance(position2.value);
+            let effect_radius = bubble1.effect_radius + bubble2.effect_radius;
+            if distance < effect_radius {
+                let force = (effect_radius - distance) / effect_radius;
+                let direction = (position1.value - position2.value).normalize();
+                velocity1.value += direction * force * DELTA_TIME;
+                //velocity2.value -= direction * force * DELTA_TIME;
+            }
+        }
+    }
+}
+
+//use get_many_mut not to fight the borrow checker
+fn handle_bubble_interactions3(mut query: Query<(&Bubble, &Position, &mut Velocity)>, lookup_grids: Res<LookUpGrids<u32>>) {
+    let a = query.get_mut(Entity::from_raw(0));
+    for (bubble1, position1, mut velocity1) in query.get_mut(Entity::from_raw(0)){
+
+    }
+}
+
+
+fn handle_bubble_interactions2(mut query: Query<(&Bubble, &Position, &mut Velocity)>, lookup_grids: Res<LookUpGrids<usize>>){
+    for (bubble1, position1, mut velocity1) in query.iter_mut() {}
+
     let mut combinations = query.iter_combinations_mut();
     while let Some([(bubble1, position1, mut velocity1), (bubble2, position2, mut velocity2)]) = combinations.fetch_next() {
         let distance = position1.value.distance(position2.value);
