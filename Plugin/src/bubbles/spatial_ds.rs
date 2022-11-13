@@ -72,16 +72,16 @@ impl<T> LookUpGrids<T> where T: Copy + Default{
     }
 
 
-    pub fn get_all_neighbours(&self) -> impl Iterator<Item = (&T, &T)> {
+    pub fn get_all_neighbours(&self) -> impl Iterator<Item = (T, T)> {
         let neighbour_deltas = [(1,0), (1,1), (0,1), (-1,1)];
-        let mut result = Vec::<(&T, &T)>::new();
+        let mut result = Vec::<(T, T)>::new();
         for my_grid_key in self.grids.keys() {
             // my grid:
             let my_grid = self.grids.get(my_grid_key).unwrap();
             for i in 0..my_grid.len {
                 //for j in 0..i{
                 for j in 0..i {
-                    result.push((&my_grid.arr[i], &my_grid.arr[j]));
+                    result.push((my_grid.arr[i], my_grid.arr[j]));
                 }
             }
 
@@ -90,7 +90,7 @@ impl<T> LookUpGrids<T> where T: Copy + Default{
                 if let Some(neighbour_grid) = self.grids.get(neighbor_grid_key) {
                     for my_element in self.grids.get(&my_grid_key).unwrap().iter() {
                         for neighbour_element in neighbour_grid.iter() {
-                            result.push((my_element, neighbour_element));
+                            result.push((my_element.clone(), neighbour_element.clone()));
                         }
                     }
                 }
