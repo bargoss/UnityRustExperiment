@@ -190,9 +190,11 @@ fn handle_bubble_interactions(
         let (bubble_a, position_a) = read_query.get(entity_a).unwrap();
         let (bubble_b, position_b) = read_query.get(entity_b).unwrap();
 
-        let distance = position_a.value.distance(position_b.value);
+        let distance_sqr = position_a.value.distance_squared(position_b.value);
         let effect_radius = bubble_a.effect_radius + bubble_b.effect_radius;
-        if distance < effect_radius {
+        let effect_radius_sqr = effect_radius * effect_radius;
+        if distance_sqr < effect_radius_sqr {
+            let distance = position_a.value.distance(position_b.value);
             let direction = (position_a.value - position_b.value).normalize();
             let force = (effect_radius - distance) * 0.1;
 
