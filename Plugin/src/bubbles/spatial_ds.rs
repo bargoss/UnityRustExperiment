@@ -8,7 +8,7 @@ use bevy_math::Vec3;
 
 #[derive(Default, Copy, Clone, Debug)]
 struct GridContent<T> {
-    arr: [T; 10],
+    arr: [T; 20],
     len: usize,
 }
 
@@ -73,32 +73,24 @@ impl<T> LookUpGrids<T> where T: Copy + Default{
 
 
     pub fn get_all_neighbours(&self) -> impl Iterator<Item = (&T, &T)> {
-        let neighbour_deltas = [-1, 1];
-        let mut result = Vec::new();
+        let neighbour_deltas = [(1,0), (1,1), (0,1), (-1,1)];
+        let mut result = Vec::<(&T, &T)>::new();
         for my_grid_key in self.grids.keys() {
             // my grid:
             let my_grid = self.grids.get(my_grid_key).unwrap();
             for i in 0..my_grid.len {
                 //for j in 0..i{
-                for j in 0..my_grid.len {
-                    if i != j {
-                        result.push((&my_grid.arr[i], &my_grid.arr[j]));
-                    }
+                for j in 0..i {
+                    result.push((&my_grid.arr[i], &my_grid.arr[j]));
                 }
             }
 
-
-
-            // neighbour grids:
-            for i in neighbour_deltas.iter() {
-                let my_grid_key = (my_grid_key.0, my_grid_key.1);
-                for j in neighbour_deltas.iter() {
-                    let neighbor_grid_key = (my_grid_key.0 + i, my_grid_key.1 + j);
-                    if let Some(neighbour_grid) = self.grids.get(&neighbor_grid_key) {
-                        for my_element in self.grids.get(&my_grid_key).unwrap().iter() {
-                            for neighbour_element in neighbour_grid.iter() {
-                                result.push((my_element, neighbour_element));
-                            }
+            for(i,j) in neighbour_deltas{
+                let neighbor_grid_key = &(my_grid_key.0 + i, my_grid_key.1 + j);
+                if let Some(neighbour_grid) = self.grids.get(neighbor_grid_key) {
+                    for my_element in self.grids.get(&my_grid_key).unwrap().iter() {
+                        for neighbour_element in neighbour_grid.iter() {
+                            result.push((my_element, neighbour_element));
                         }
                     }
                 }

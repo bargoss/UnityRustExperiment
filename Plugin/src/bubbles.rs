@@ -36,7 +36,7 @@ impl Game {
         // create PositionFloatBuffer instance
         world.insert_resource(PositionFloatBuffer{ value: [0.0; BUBBLE_COUNT * 3] });
         world.insert_resource(BubblePushPoints{ points: Vec::new(), });
-        let lookup_grids = LookUpGrids::<u32>::new(1.0);
+        let lookup_grids = LookUpGrids::<u32>::new(3.0);
         world.insert_resource(lookup_grids);
 
         let mut create_bubble_points_stage = SystemStage::parallel();
@@ -182,13 +182,13 @@ fn handle_bubble_interactions(
         let distance = position_a.value.distance(position_b.value);
         let effect_radius = bubble_a.effect_radius + bubble_b.effect_radius;
         if distance < effect_radius {
-            let mut velocity_a = write_query.get_mut(entity_a).unwrap().2;
-            //let mut velocity_b = write_query.get_mut(entity_b).unwrap().2;
-
             let direction = (position_a.value - position_b.value).normalize();
             let force = (effect_radius - distance) * 0.1;
+
+            let mut velocity_a = write_query.get_mut(entity_a).unwrap().2;
             velocity_a.value += direction * force;
-            //velocity_b.value -= direction * force;
+            let mut velocity_b = write_query.get_mut(entity_b).unwrap().2;
+            velocity_b.value -= direction * force;
         }
 
     }
