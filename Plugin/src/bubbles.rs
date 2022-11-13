@@ -1,10 +1,14 @@
+mod spatial_ds;
+
 use bevy_ecs;
 use bevy_ecs::bundle::Bundle;
 use bevy_ecs::component::Component;
+use bevy_ecs::entity::Entity;
 use bevy_ecs::prelude::{Commands, Query, Res, ResMut, Schedule, SystemStage};
 use bevy_ecs::schedule::Stage;
 use bevy_ecs::world::World;
 use bevy_math::Vec3;
+use crate::bubbles::spatial_ds::LookUpGrids;
 
 const BUBBLE_COUNT: usize = 500;
 const DELTA_TIME: f32 = 0.5;
@@ -32,6 +36,7 @@ impl Game {
         // create PositionFloatBuffer instance
         world.insert_resource(PositionFloatBuffer{ value: [0.0; BUBBLE_COUNT * 3] });
         world.insert_resource(BubblePushPoints{ points: Vec::new(), });
+        world.insert_resource(LookUpGrids::<usize>::new(5.0));
 
         let mut create_bubble_points_stage = SystemStage::parallel();
         create_bubble_points_stage.add_system(create_bubble_points);
@@ -51,6 +56,7 @@ impl Game {
         update_bubble_positions_stage.add_system(handle_bubble_velocities);
         update_bubble_positions_stage.add_system(update_position_views);
         update_schedule.add_stage("handle_bubble_positions", update_bubble_positions_stage);
+
 
         Game {
             world,
@@ -113,9 +119,7 @@ pub struct BubblePointBundle {
     pub velocity: Velocity,
 }
 
-//pub struct CreateBubblePointsParams {
-//    pub count: usize,
-//}
+
 
 fn create_bubble_points(mut commands: Commands) {
     let bundle = BubblePointBundle {
