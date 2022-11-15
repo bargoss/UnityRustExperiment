@@ -64,17 +64,6 @@ namespace DefaultNamespace
     #if UNITY_EDITOR
     public class AddExtern
     {
-        [DllImport("__Internal", CallingConvention = CallingConvention.Cdecl)]
-        public static extern int add_extern(int a, int b);
-
-        public static int Call(int a, int b)
-        {
-            return add_extern(a, b);
-        }
-    }
-    #else
-    public class AddExtern
-    {
         delegate int add_extern(int a, int b);
         
         public static int Call(int a, int b)
@@ -85,6 +74,17 @@ namespace DefaultNamespace
             return result;
         }
     }
+    #else
+    public class AddExtern
+    {
+        [DllImport("__Internal", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int add_extern(int a, int b);
+
+        public static int Call(int a, int b)
+        {
+            return add_extern(a, b);
+        }
+    }
     #endif
     
     // code generator that returns code like above that takes in the delegate and returns the result
@@ -93,30 +93,40 @@ namespace DefaultNamespace
     {
         public static string GenerateCode(string dllName, string methodName, Type returnType, Type[] parameterTypes)
         {
+            // define a multiline string
             var code = new StringBuilder();
+            //using System;
+            //using System.Runtime.InteropServices;
+            code.AppendLine("using System;");
+            code.AppendLine("System.Runtime.InteropServices;");
             code.AppendLine("#if UNITY_EDITOR");
-            code.AppendLine($"public class {methodName}");
-            code.AppendLine("{");
-            code.AppendLine($"[DllImport(\"__Internal\", CallingConvention = CallingConvention.Cdecl)]");
-            code.AppendLine($"public static extern {returnType.Name} {methodName}({string.Join(", ", parameterTypes.Select(x => $"{x.Name} {x.Name.ToLower() + Random.Range(0,99999)}"))});");
-            code.AppendLine($"public static {returnType.Name} Call({string.Join(", ", parameterTypes.Select(x => $"{x.Name} {x.Name.ToLower() + Random.Range(0,99999)}"))})");
-            code.AppendLine("{");
-            code.AppendLine($"return {methodName}_extern({string.Join(", ", parameterTypes.Select(x => $"{x.Name.ToLower()}"))});");
-            code.AppendLine("}");
-            code.AppendLine("}");
+            code.AppendLine("  public class AddExtern");
+            code.AppendLine("        public class AddExtern");
+            code.AppendLine("        {");
+            code.AppendLine("            delegate int add_extern(int a, int b);");
+            code.AppendLine("        ");
+            code.AppendLine("            public static int Call(int a, int b)");
+            code.AppendLine("            {");
+            code.AppendLine("                var lib = LibraryCall.LoadLibrary(\"mandelbrot\");");
+            code.AppendLine("                var result = LibraryCall.Invoke<int, add_extern>(lib, a, b);");
+            code.AppendLine("                LibraryCall.FreeLibrary(lib);");
+            code.AppendLine("                return result;");
+            code.AppendLine("            }");
+            code.AppendLine("        }");
             code.AppendLine("#else");
-            code.AppendLine($"public class {methodName}");
-            code.AppendLine("{");
-            code.AppendLine($"delegate {returnType.Name} {methodName}({string.Join(", ", parameterTypes.Select(x => $"{x.Name} {x.Name.ToLower()}"))});");
-            code.AppendLine($"public static {returnType.Name} Call({string.Join(", ", parameterTypes.Select(x => $"{x.Name} {x.Name.ToLower()}"))})");
-            code.AppendLine("{");
-            code.AppendLine($"var lib = LibraryCall.LoadLibrary(\"{dllName}\");");
-            code.AppendLine($"var result = LibraryCall.Invoke<{returnType.Name}, {methodName}>(lib, {string.Join(", ", parameterTypes.Select(x => $"{x.Name.ToLower()}"))});");
-            code.AppendLine($"LibraryCall.FreeLibrary(lib);");
-            code.AppendLine("return result;");
-            code.AppendLine("}");
-            code.AppendLine("}");
+            code.AppendLine("    public class AddExtern");
+            code.AppendLine("    {");
+            code.AppendLine("        [DllImport(\"__Internal\", CallingConvention = CallingConvention.Cdecl)]");
+            code.AppendLine("        public static extern int add_extern(int a, int b);");
+            code.AppendLine("");
+            code.AppendLine("        public static int Call(int a, int b)");
+            code.AppendLine("        {");
+            code.AppendLine("            return add_extern(a, b);");
+            code.AppendLine("        }");
+            code.AppendLine("    }");
             code.AppendLine("#endif");
+            
+            // return the code
             return code.ToString();
         }
     }
