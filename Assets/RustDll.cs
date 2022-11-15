@@ -100,7 +100,7 @@ public class RustDLL : MonoBehaviour
         msSum += executionTime;
         measureCount++;
 
-        Debug.Log("Average execution time: " + msSum / measureCount);
+        //Debug.Log("Average execution time: " + msSum / measureCount);
         //var positions = GetBubblePositions(game);
         //for (int i = 0; i < positions.Length; i++)
         //{
