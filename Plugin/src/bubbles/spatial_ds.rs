@@ -117,6 +117,8 @@ impl<T> LookUpGrids<T> where T: Copy + Default{
 mod spatial_tests {
     use super::*;
 
+    // ignore
+    #[ignore]
     #[test]
     fn print_all_neighborsfsdfds(){
         let grids = create_test_structure();

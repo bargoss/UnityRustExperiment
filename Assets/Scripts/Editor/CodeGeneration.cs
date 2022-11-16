@@ -107,20 +107,24 @@ public class DLLInterface
         code += @"
     [DllImport(""__Internal"", CallingConvention = CallingConvention.Cdecl)]
     public static extern replace_returnType replace_methodName(replace_paramsStrWithTypes);
-    public static replace_returnType replace_Call(replace_paramsStr)
+    public static replace_returnType replace_Call(replace_paramsStrWithTypes)
     {
         return replace_methodName(replace_paramsStr);
     }
 #endif
 
 ";
-            code = code.Replace("replace_returnType", returnType.Name)
+            code = code.Replace("replace_returnType", returnType == typeof(void) ? "void":returnType.Name)
             .Replace("replace_methodName", methodName)
             .Replace("replace_paramsStrWithTypes", paramsStrWithTypes)
             .Replace("replace_paramsStr", paramsStr)
             .Replace("replace_dllName", dllName)
             .Replace("replace_Call", callName);
 
+            if (returnType == typeof(void))
+            {
+                code = code.Replace("return ", "");
+            }
         return code;
 
 

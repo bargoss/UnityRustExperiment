@@ -42,11 +42,10 @@
   </PropertyGroup>
   <ItemGroup>
      <Compile Include="Assets\Scripts\RustDLL.cs" />
-     <Compile Include="Assets\Scripts\Experiments.cs" />
-     <Compile Include="Assets\Scripts\Native.cs" />
-     <Compile Include="Assets\Scripts\Generated\GeneratedCode.cs" />
-     <Compile Include="Assets\Scripts\LibraryCall.cs" />
      <Compile Include="Assets\Scripts\GameBackend.cs" />
+     <Compile Include="Assets\Scripts\LibraryCall.cs" />
+     <Compile Include="Assets\Scripts\Generated\GeneratedCode.cs" />
+     <Compile Include="Assets\Scripts\Native.cs" />
      <Reference Include="UnityEngine">
      <HintPath>C:\Program Files\Unity\Hub\Editor\2021.3.4f1\Editor\Data\Managed\UnityEngine\UnityEngine.dll</HintPath>
      </Reference>

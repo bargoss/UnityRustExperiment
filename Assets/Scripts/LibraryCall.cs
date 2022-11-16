@@ -2,6 +2,7 @@
 using System.Runtime.InteropServices;
 using UnityEngine;
 
+#if UNITY_EDITOR
 public class LibraryCall
 {
     public static T Invoke<T, T2>(IntPtr library, params object[] pars)
@@ -40,3 +41,4 @@ public class LibraryCall
     [DllImport("kernel32")]
     public static extern IntPtr GetProcAddress(IntPtr hModule, string procedureName);
 }
+#endif

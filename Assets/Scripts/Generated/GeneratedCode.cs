@@ -31,7 +31,7 @@ public class DLLInterface
 
     [DllImport("__Internal", CallingConvention = CallingConvention.Cdecl)]
     public static extern IntPtr create_game(Int32 a);
-    public static IntPtr CreateGameNative(a)
+    public static IntPtr CreateGameNative(Int32 a)
     {
         return create_game(a);
     }
@@ -48,10 +48,10 @@ public class DLLInterface
 #else
 
     [DllImport("__Internal", CallingConvention = CallingConvention.Cdecl)]
-    public static extern Void update_game(IntPtr a);
-    public static Void UpdateGameNative(a)
+    public static extern void update_game(IntPtr a);
+    public static void UpdateGameNative(IntPtr a)
     {
-        return update_game(a);
+        update_game(a);
     }
 #endif
 
@@ -69,7 +69,7 @@ public class DLLInterface
 
     [DllImport("__Internal", CallingConvention = CallingConvention.Cdecl)]
     public static extern IntPtr get_bubble_positions(IntPtr a);
-    public static IntPtr GetBubblePositionsNative(a)
+    public static IntPtr GetBubblePositionsNative(IntPtr a)
     {
         return get_bubble_positions(a);
     }
@@ -86,10 +86,10 @@ public class DLLInterface
 #else
 
     [DllImport("__Internal", CallingConvention = CallingConvention.Cdecl)]
-    public static extern Void apply_bubble_push(IntPtr a, Single b, Single c, Single d);
-    public static Void ApplyBubblePush(a, b, c, d)
+    public static extern void apply_bubble_push(IntPtr a, Single b, Single c, Single d);
+    public static void ApplyBubblePush(IntPtr a, Single b, Single c, Single d)
     {
-        return apply_bubble_push(a, b, c, d);
+        apply_bubble_push(a, b, c, d);
     }
 #endif
 
