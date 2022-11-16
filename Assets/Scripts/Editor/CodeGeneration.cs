@@ -46,7 +46,20 @@ using System;
 using System.Runtime.InteropServices;
 public class DLLInterface
 {
-private static IntPtr lib = LibraryCall.LoadLibrary(""replace_dllName"");
+#if UNITY_EDITOR
+ private static IntPtr lib;
+ private static void Init()
+ {
+     lib = LibraryCall.LoadLibrary(""replace_dllName"");
+ }
+ private static void Cleanup()
+ {
+     LibraryCall.FreeLibrary(lib);
+ }
+#else
+private static void Init(){}
+private static void Cleanup(){}
+#endif
 ".Replace("replace_dllName", dllName);
         return code;
     }
@@ -63,17 +76,40 @@ private static IntPtr lib = LibraryCall.LoadLibrary(""replace_dllName"");
         var paramsStrWithTypes = string.Join(", ", parameterTypes.Select((t, i) => $"{t.Name} {parameters[i]}"));
         var paramsStr = string.Join(", ", parameterTypes.Select((t, i) => $"{parameters[i]}"));
 
-        string code = @"
+        string code = "";
+        string withReturnType = @"
 
 #if UNITY_EDITOR
     delegate replace_returnType replace_methodName(replace_paramsStrWithTypes);
     public static replace_returnType replace_Call(replace_paramsStrWithTypes)
     {
         var result = LibraryCall.Invoke<replace_returnType, replace_methodName>(lib, replace_paramsStr);
-        LibraryCall.FreeLibrary(lib);
+        //LibraryCall.FreeLibrary(lib);
         return result;
     }
 #else
+";
+        string withVoidReturnType = @"
+#if UNITY_EDITOR
+    delegate void replace_methodName(replace_paramsStrWithTypes);
+    public static void replace_Call(replace_paramsStrWithTypes)
+    {
+        LibraryCall.Invoke<replace_methodName>(lib, replace_paramsStr);
+        //LibraryCall.FreeLibrary(lib);
+    }
+#else
+";
+
+        if (returnType == typeof(void))
+        {
+            code += withVoidReturnType;
+        }
+        else
+        {
+            code += withReturnType;
+        }
+        
+        code += @"
     [DllImport(""__Internal"", CallingConvention = CallingConvention.Cdecl)]
     public static extern replace_returnType replace_methodName(replace_paramsStrWithTypes);
     public static replace_returnType replace_Call(replace_paramsStr)
@@ -82,8 +118,8 @@ private static IntPtr lib = LibraryCall.LoadLibrary(""replace_dllName"");
     }
 #endif
 
-"
-            .Replace("replace_returnType", returnType.Name)
+";
+            code = code.Replace("replace_returnType", returnType.Name)
             .Replace("replace_methodName", methodName)
             .Replace("replace_paramsStrWithTypes", paramsStrWithTypes)
             .Replace("replace_paramsStr", paramsStr)
