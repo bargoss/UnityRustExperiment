@@ -4,18 +4,18 @@ using System.Runtime.InteropServices;
 public class DLLInterface
 {
 #if UNITY_EDITOR
- private static IntPtr lib;
- private static void Init()
- {
-     lib = LibraryCall.LoadLibrary("mandelbrot");
- }
- private static void Cleanup()
- {
-     LibraryCall.FreeLibrary(lib);
- }
+    private static IntPtr lib;
+    public static void Init()
+    {
+        lib = LibraryCall.LoadLibrary("mandelbrot");
+    }
+    public static void Cleanup()
+    {
+        LibraryCall.FreeLibrary(lib);
+    }
 #else
-private static void Init(){}
-private static void Cleanup(){}
+    public static void Init(){}
+    public static void Cleanup(){}
 #endif
 
 

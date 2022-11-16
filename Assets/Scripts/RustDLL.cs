@@ -5,52 +5,9 @@ using UnityEngine;
 
 public class RustDLL : MonoBehaviour
 {
-    static IntPtr nativeLibraryPtr;
 
-    delegate IntPtr create_game(int bubble_count);
-    delegate void update_game(IntPtr game);
-    delegate IntPtr get_bubble_positions(IntPtr game);
-    delegate void apply_bubble_push(IntPtr game, float x, float y, float z);
-
-    public void ApplyBubblePush(Vector3 pos)
-    {
-        Native.Invoke<apply_bubble_push>(nativeLibraryPtr, game, pos.x, pos.y, pos.z);
-    }
-    public IntPtr CreateGame(int bubbleCount)
-    {
-        return Native.Invoke<IntPtr, create_game>(nativeLibraryPtr, bubbleCount);
-    }
-    public void UpdateGame(IntPtr game)
-    {
-        Native.Invoke<update_game>(nativeLibraryPtr, game);
-    }
-    public Vector3[] GetBubblePositions(IntPtr game)
-    {
-        var ptr = Native.Invoke<IntPtr, get_bubble_positions>(nativeLibraryPtr, game);
-        var floatArray = new float[bubbleCount * 3];
-        Marshal.Copy(ptr, floatArray, 0, bubbleCount * 3);
-        var vecArray = new Vector3[bubbleCount];
-        for (var i = 0; i < bubbleCount; i++)
-        {
-            vecArray[i] = new Vector3(floatArray[i * 3], floatArray[i * 3 + 1], floatArray[i * 3 + 2]);
-        }
-        return vecArray;
-    }
-    
-    
- 
- 
     void Awake()
     {
-        if (nativeLibraryPtr != IntPtr.Zero) return;
- 
-        nativeLibraryPtr = Native.LoadLibrary("mandelbrot");
-        if (nativeLibraryPtr == IntPtr.Zero)
-        {
-            Debug.LogError("Failed to load native library");
-        }
-
-
         // init matrix buffers
         var neededSpace = bubbleCount;
         while (neededSpace > 0)
@@ -60,8 +17,6 @@ public class RustDLL : MonoBehaviour
             neededSpace -= taking;
         }
     }
-
-    private IntPtr game;
     private void Start()
     {
         game = CreateGame(bubbleCount);

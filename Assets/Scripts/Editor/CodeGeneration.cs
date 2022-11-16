@@ -15,11 +15,6 @@ class CodeGeneration : Editor// : IPreprocessBuildWithReport
         Debug.Log("code generation started");
 
         
-        //delegate IntPtr create_game(int bubble_count);
-        //delegate void update_game(IntPtr game);
-        //delegate IntPtr get_bubble_positions(IntPtr game);
-        //delegate void apply_bubble_push(IntPtr game, float x, float y, float z);
-        
         var code = 
             CodeGenerator.GenerateHeader("mandelbrot") +
             CodeGenerator.GenerateDllCall("mandelbrot", "CreateGameNative","create_game", typeof(IntPtr),new[] { typeof(int) }) +
@@ -47,18 +42,18 @@ using System.Runtime.InteropServices;
 public class DLLInterface
 {
 #if UNITY_EDITOR
- private static IntPtr lib;
- private static void Init()
- {
-     lib = LibraryCall.LoadLibrary(""replace_dllName"");
- }
- private static void Cleanup()
- {
-     LibraryCall.FreeLibrary(lib);
- }
+    private static IntPtr lib;
+    public static void Init()
+    {
+        lib = LibraryCall.LoadLibrary(""replace_dllName"");
+    }
+    public static void Cleanup()
+    {
+        LibraryCall.FreeLibrary(lib);
+    }
 #else
-private static void Init(){}
-private static void Cleanup(){}
+    public static void Init(){}
+    public static void Cleanup(){}
 #endif
 ".Replace("replace_dllName", dllName);
         return code;
