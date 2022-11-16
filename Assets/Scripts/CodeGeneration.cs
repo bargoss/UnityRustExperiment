@@ -56,10 +56,10 @@ public class DLLInterface
         string code = @"
 
 #if UNITY_EDITOR
+    private static IntPtr lib = LibraryCall.LoadLibrary(""replace_dllName"");
     delegate replace_returnType replace_methodName(replace_paramsStrWithTypes);
     public static replace_returnType replace_Call(replace_paramsStrWithTypes)
     {
-        var lib = LibraryCall.LoadLibrary(""replace_dllName"");
         var result = LibraryCall.Invoke<replace_returnType, replace_methodName>(lib, replace_paramsStr);
         LibraryCall.FreeLibrary(lib);
         return result;

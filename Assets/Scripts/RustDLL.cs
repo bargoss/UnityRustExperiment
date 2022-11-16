@@ -6,15 +6,10 @@ using UnityEngine;
 public class RustDLL : MonoBehaviour
 {
     static IntPtr nativeLibraryPtr;
- 
-    //delegate int MultiplyFloat(float number, float multiplyBy);
-    //delegate void DoSomething(string words);
-    delegate IntPtr get_int_array_ptr();
+
     delegate IntPtr create_game(int bubble_count);
     delegate void update_game(IntPtr game);
     delegate IntPtr get_bubble_positions(IntPtr game);
-    //pub extern "C" fn get_float_array_value(array_id:i32, index:i32) -> f32
-    delegate float get_float_array_value(int array_id, int index);
     delegate void apply_bubble_push(IntPtr game, float x, float y, float z);
 
     public void ApplyBubblePush(Vector3 pos)
@@ -41,10 +36,7 @@ public class RustDLL : MonoBehaviour
         }
         return vecArray;
     }
-    public float GetFloatArrayValue(int array_id, int index)
-    {
-        return Native.Invoke<float, get_float_array_value>(nativeLibraryPtr, array_id, index);
-    }
+    
     
  
  
@@ -73,10 +65,6 @@ public class RustDLL : MonoBehaviour
     private void Start()
     {
         game = CreateGame(bubbleCount);
-        print("0: " + GetFloatArrayValue(0, 0));
-        print("1: " + GetFloatArrayValue(0, 1));
-        print("2: " + GetFloatArrayValue(0, 2));
-        print("3: " + GetFloatArrayValue(0, 3));
     }
 
     private float msSum = 0;
