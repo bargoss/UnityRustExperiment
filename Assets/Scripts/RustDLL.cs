@@ -1,31 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using DefaultNamespace;
 using UnityEngine;
 
 public class RustDLL : MonoBehaviour
 {
-
-    void Awake()
+    public int BubbleCount = 10000;
+    private IntPtr game;
+    
+    private void Start()
     {
-        // init matrix buffers
-        var neededSpace = bubbleCount;
+        // init buffers
+        var neededSpace = BubbleCount;
         while (neededSpace > 0)
         {
             var taking = Mathf.Min(neededSpace, 1000);
             _matrixBuffers.Add(new Matrix4x4[taking]);
             neededSpace -= taking;
         }
-    }
-    private void Start()
-    {
-        game = CreateGame(bubbleCount);
+
+        game = GameBackend.Instance.CreateGame(BubbleCount);
     }
 
     private float msSum = 0;
     private int measureCount = 0;
-
-    public int bubbleCount = 100;
     
     void Update()
     {
@@ -34,11 +33,12 @@ public class RustDLL : MonoBehaviour
         Debug.DrawRay(mousePos, Vector3.right, Color.blue);
         Debug.DrawRay(mousePos, Vector3.forward, Color.blue);
         
-        ApplyBubblePush(mousePos);
+        //DLLInterface.ApplyBubblePush(game,mousePos);
+        GameBackend.Instance.ApplyBubblePush(game, mousePos);
         
         float executionTime = MeasureExecutionTime(() =>
         {
-            UpdateGame(game);
+            GameBackend.Instance.UpdateGame(game);
         });
         msSum += executionTime;
         measureCount++;
@@ -57,7 +57,7 @@ public class RustDLL : MonoBehaviour
     private List<Matrix4x4[]> _matrixBuffers = new List<Matrix4x4[]>();
     public void DrawBubblesNice()
     {
-        var positions = GetBubblePositions(game);
+        var positions = GameBackend.Instance.GetBubblePositions(game, BubbleCount);
         for (int i = 0; i < positions.Length; i++)
         {
             int bufferIndex = i / 1000;
@@ -85,14 +85,5 @@ public class RustDLL : MonoBehaviour
         action();
         watch.Stop();
         return (int)watch.ElapsedMilliseconds;
-    }
-    
-    void OnApplicationQuit()
-    {
-        if (nativeLibraryPtr == IntPtr.Zero) return;
- 
-        Debug.Log(Native.FreeLibrary(nativeLibraryPtr)
-            ? "Native library successfully unloaded."
-            : "Native library could not be unloaded.");
     }
 }
