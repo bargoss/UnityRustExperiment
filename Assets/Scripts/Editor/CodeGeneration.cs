@@ -14,9 +14,18 @@ class CodeGeneration : Editor// : IPreprocessBuildWithReport
     {
         Debug.Log("code generation started");
 
+        
+        //delegate IntPtr create_game(int bubble_count);
+        //delegate void update_game(IntPtr game);
+        //delegate IntPtr get_bubble_positions(IntPtr game);
+        //delegate void apply_bubble_push(IntPtr game, float x, float y, float z);
+        
         var code = 
-            CodeGenerator.GenerateHeader() +  
-            CodeGenerator.GenerateDllCall("mandelbrot", "AddExtern","add_extern", typeof(int),new[] { typeof(int), typeof(int) }) +
+            CodeGenerator.GenerateHeader("mandelbrot") +
+            CodeGenerator.GenerateDllCall("mandelbrot", "CreateGameNative","create_game", typeof(IntPtr),new[] { typeof(int) }) +
+            CodeGenerator.GenerateDllCall("mandelbrot", "UpdateGameNative","update_game", typeof(void),new[] { typeof(IntPtr) }) +
+            CodeGenerator.GenerateDllCall("mandelbrot", "GetBubblePositionsNative","get_bubble_positions", typeof(IntPtr),new[] { typeof(IntPtr)}) +
+            CodeGenerator.GenerateDllCall("mandelbrot", "ApplyBubblePush","apply_bubble_push", typeof(void),new[] { typeof(IntPtr), typeof(float), typeof(float), typeof(float)}) +
             CodeGenerator.GenerateFooter();
         
         
@@ -30,14 +39,15 @@ class CodeGeneration : Editor// : IPreprocessBuildWithReport
 }
 public class CodeGenerator
 {
-    public static string GenerateHeader()
+    public static string GenerateHeader(string dllName)
     {
         var code = @"
 using System;
 using System.Runtime.InteropServices;
 public class DLLInterface
 {
-";
+private static IntPtr lib = LibraryCall.LoadLibrary(""replace_dllName"");
+".Replace("replace_dllName", dllName);
         return code;
     }
 
@@ -56,7 +66,6 @@ public class DLLInterface
         string code = @"
 
 #if UNITY_EDITOR
-    private static IntPtr lib = LibraryCall.LoadLibrary(""replace_dllName"");
     delegate replace_returnType replace_methodName(replace_paramsStrWithTypes);
     public static replace_returnType replace_Call(replace_paramsStrWithTypes)
     {
