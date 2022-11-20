@@ -105,7 +105,7 @@ public class DLLInterface
         }
         
         code += @"
-    [DllImport(""__Internal"", CallingConvention = CallingConvention.Cdecl)]
+    [DllImport(""__Internal"")]
     public static extern replace_returnType replace_methodName(replace_paramsStrWithTypes);
     public static replace_returnType replace_Call(replace_paramsStrWithTypes)
     {

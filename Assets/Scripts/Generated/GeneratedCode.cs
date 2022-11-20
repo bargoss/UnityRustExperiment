@@ -1,96 +1,50 @@
-
 using System;
 using System.Runtime.InteropServices;
-public class DLLInterface
+
+namespace Generated
 {
-#if UNITY_EDITOR
-    private static IntPtr lib;
-    public static void Init()
+    public class DLLInterface
     {
-        lib = LibraryCall.LoadLibrary("mandelbrot");
+
+        public static void Init(){}
+        public static void Cleanup(){}
+
+
+
+    
+        [DllImport("__Internal")]
+        public static extern IntPtr create_game(Int32 a);
+        public static IntPtr CreateGameNative(Int32 a)
+        {
+            return create_game(a);
+        }
+
+
+    
+
+        [DllImport("__Internal")]
+        public static extern void update_game(IntPtr a);
+        public static void UpdateGameNative(IntPtr a)
+        {
+            update_game(a);
+        }
+
+
+
+        [DllImport("__Internal")]
+        public static extern IntPtr get_bubble_positions(IntPtr a);
+        public static IntPtr GetBubblePositionsNative(IntPtr a)
+        {
+            return get_bubble_positions(a);
+        }
+    
+        [DllImport("__Internal")]
+        public static extern void apply_bubble_push(IntPtr game, float x, float y, float z);
+        public static void ApplyBubblePush(IntPtr game, float x, float y, float z)
+        {
+            apply_bubble_push(game, x, y, z);
+        }
+
+
     }
-    public static void Cleanup()
-    {
-        LibraryCall.FreeLibrary(lib);
-    }
-#else
-    public static void Init(){}
-    public static void Cleanup(){}
-#endif
-
-
-#if UNITY_EDITOR
-    delegate IntPtr create_game(Int32 a);
-    public static IntPtr CreateGameNative(Int32 a)
-    {
-        var result = LibraryCall.Invoke<IntPtr, create_game>(lib, a);
-        //LibraryCall.FreeLibrary(lib);
-        return result;
-    }
-#else
-
-    [DllImport("__Internal", CallingConvention = CallingConvention.Cdecl)]
-    public static extern IntPtr create_game(Int32 a);
-    public static IntPtr CreateGameNative(Int32 a)
-    {
-        return create_game(a);
-    }
-#endif
-
-
-#if UNITY_EDITOR
-    delegate void update_game(IntPtr a);
-    public static void UpdateGameNative(IntPtr a)
-    {
-        LibraryCall.Invoke<update_game>(lib, a);
-        //LibraryCall.FreeLibrary(lib);
-    }
-#else
-
-    [DllImport("__Internal", CallingConvention = CallingConvention.Cdecl)]
-    public static extern void update_game(IntPtr a);
-    public static void UpdateGameNative(IntPtr a)
-    {
-        update_game(a);
-    }
-#endif
-
-
-
-#if UNITY_EDITOR
-    delegate IntPtr get_bubble_positions(IntPtr a);
-    public static IntPtr GetBubblePositionsNative(IntPtr a)
-    {
-        var result = LibraryCall.Invoke<IntPtr, get_bubble_positions>(lib, a);
-        //LibraryCall.FreeLibrary(lib);
-        return result;
-    }
-#else
-
-    [DllImport("__Internal", CallingConvention = CallingConvention.Cdecl)]
-    public static extern IntPtr get_bubble_positions(IntPtr a);
-    public static IntPtr GetBubblePositionsNative(IntPtr a)
-    {
-        return get_bubble_positions(a);
-    }
-#endif
-
-
-#if UNITY_EDITOR
-    delegate void apply_bubble_push(IntPtr a, Single b, Single c, Single d);
-    public static void ApplyBubblePush(IntPtr a, Single b, Single c, Single d)
-    {
-        LibraryCall.Invoke<apply_bubble_push>(lib, a, b, c, d);
-        //LibraryCall.FreeLibrary(lib);
-    }
-#else
-
-    [DllImport("__Internal", CallingConvention = CallingConvention.Cdecl)]
-    public static extern void apply_bubble_push(IntPtr a, Single b, Single c, Single d);
-    public static void ApplyBubblePush(IntPtr a, Single b, Single c, Single d)
-    {
-        apply_bubble_push(a, b, c, d);
-    }
-#endif
-
 }
