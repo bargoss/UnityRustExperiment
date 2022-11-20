@@ -1,3 +1,4 @@
+use bevy_ecs::prelude::World;
 use bevy_math::Vec3;
 use crate::bubbles::{BubblePushPoints, Game, PositionFloatBuffer, WorldParams};
 
@@ -105,13 +106,22 @@ pub extern "C" fn get_int_array_value(array_id:i32, index:i32) -> i32 {
     int_array[index as usize]
 }
 
+#[no_mangle]
+pub extern "C" fn create_game2(bubble_count : usize) {
+    //create a vec<float> with 10 elements that go like 0 1 2 3 4 5 6 7 8 9
+    let mut vec = Vec::new();
+    for i in 0..100000 {
+        vec.push(i as i32);
+    }
+}
 
 
 #[no_mangle]
-pub extern "C" fn create_game(bubble_count : usize) -> *mut Game {
+pub extern "C" fn create_game(bubble_count : usize) {
     let game = Box::new(Game::new(WorldParams{bubble_count}));
-    std::mem::forget(&game);
-    Box::into_raw(game)
+
+    //std::mem::forget(&game);
+    //Box::into_raw(game)
 }
 
 #[no_mangle]

@@ -20,7 +20,7 @@ public class RustDLL : MonoBehaviour
             neededSpace -= taking;
         }
 
-        game = GameBackend.Instance.CreateGame(BubbleCount);
+        GameBackend.Instance.CreateGame(BubbleCount);
     }
 
     private float msSum = 0;
