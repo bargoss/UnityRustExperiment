@@ -9,8 +9,8 @@ public class Experiments : MonoBehaviour
     private IntPtr game;
     void Start()
     {
-        //var res = RustPlugin.add_extern(5, 8);
-        var res = 10;
+        var res = RustPlugin.add_extern(5, 8);
+        //var res = 10;
         
         // spawn that many cubes
         for (int i = 0; i < res; i++)
@@ -65,14 +65,14 @@ public class Experiments : MonoBehaviour
 
 
 public class RustPlugin{
-    /*
+    
 #if UNITY_EDITOR
     [DllImport("mandelbrot")]
 #else
     [DllImport("__Internal")]
 #endif
     public static extern int add_extern(int a, int b);
-    */
+    
 
     
     
