@@ -21,6 +21,15 @@ public class Experiments : MonoBehaviour
         }
         Debug.Log("result is: " + res);
 
+        var ptr_result = RustPlugin.ptr_test();
+        var floatarr = RustPlugin.GetFloatArray();
+        for (var index = 0; index < 5; index++)
+        {
+            var val = floatarr[index];
+            var cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            cube.transform.localScale = Vector3.one * 0.2f;
+            cube.transform.position = new Vector3(index, 2, 0);
+        }
 
 
         //game = RustPlugin.create_game();
@@ -71,6 +80,14 @@ public class RustPlugin{
 #else
     [DllImport("__Internal")]
 #endif
+    public static extern IntPtr ptr_test();
+    
+    
+#if UNITY_EDITOR
+    [DllImport("mandelbrot")]
+#else
+    [DllImport("__Internal")]
+#endif
     public static extern int add_extern(int a, int b);
     
 
@@ -90,23 +107,25 @@ public class RustPlugin{
     }
     */
     
-    /*
+    
     // unity side:
 #if UNITY_EDITOR
-    [DllImport("mandelbrot", CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("mandelbrot")]
 #else
-    [DllImport("__Internal", CallingConvention = CallingConvention.Cdecl)]
-#endif   
+    [DllImport("__Internal")]
+#endif
     public static extern IntPtr get_float_array();
-    
+
+
+
     public static float[] GetFloatArray()
     {
         var ptr = get_float_array();
-        var floatArray = new float[2000*3];
+        var floatArray = new float[5];
         Marshal.Copy(ptr, floatArray, 0, floatArray.Length);
         return floatArray;
     }
-    */
+    
 
     
 //#if UNITY_EDITOR

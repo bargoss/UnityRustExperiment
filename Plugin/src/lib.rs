@@ -13,19 +13,35 @@ pub extern "C" fn add_extern(a: usize, b: usize) -> usize {
 }
 
 
+// return a zero pointer
+#[no_mangle]
+pub extern "C" fn ptr_test() -> *const usize {
+    0 as *const usize
+}
+
 // return a pointer to this array:
 #[no_mangle]
 pub extern "C" fn get_float_array() -> *const f32 {
-    let mut game = Game::new();
-    game.start();
-    game.update();
-    let resource = game.world.get_resource::<Vec<f32>>().unwrap();
+    // create a vec with 5 elements
+    let mut vec = [0.0; 5];
+    vec[0] = 1.0;
+    vec[1] = 2.0;
+    vec[2] = 3.0;
+    vec[3] = 4.0;
+    vec[4] = 5.0;
 
-    // tell the copiler not to drop this array
-    std::mem::forget(resource);
-
-    resource.as_ptr()
+    // make the compiler forget about the vec so it doesnt drop it
+    let ptr = vec.as_ptr();
+    std::mem::forget(vec);
+    ptr
 }
+
+// get_float_array c# code that returns a pointer to the array:
+//[DllImport("bubbles.dll", CallingConvention = CallingConvention.Cdecl)]
+//public static extern IntPtr get_float_array();
+
+
+
 
 
 
