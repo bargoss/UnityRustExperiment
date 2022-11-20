@@ -9,7 +9,8 @@ public class Experiments : MonoBehaviour
     private IntPtr game;
     void Start()
     {
-        var res = RustPlugin.add_extern(5, 8);
+        //var res = RustPlugin.add_extern(5, 8);
+        var res = 10;
         
         // spawn that many cubes
         for (int i = 0; i < res; i++)
@@ -22,8 +23,8 @@ public class Experiments : MonoBehaviour
 
 
 
-        game = RustPlugin.create_game();
-        RustPlugin.start_game(game);
+        //game = RustPlugin.create_game();
+        //RustPlugin.start_game(game);
     }
     
     int MeasureExecutionTime(Action action)
@@ -40,14 +41,14 @@ public class Experiments : MonoBehaviour
     {
         float executionTime = MeasureExecutionTime(() =>
         {
-            RustPlugin.update_game(game);
+            //RustPlugin.update_game(game);
         });
         msSum += executionTime;
         measureCount++;
         
         Debug.Log("Average execution time: " + msSum / measureCount);
-        
-        var floats = RustPlugin.GetBubblePositions(game);
+
+        var floats = Array.Empty<float>(); //RustPlugin.GetBubblePositions(game);
         Vector3[] positions = new Vector3[floats.Length / 3];
         for (int i = 0; i < floats.Length; i += 3)
         {
@@ -64,12 +65,14 @@ public class Experiments : MonoBehaviour
 
 
 public class RustPlugin{
+    /*
 #if UNITY_EDITOR
     [DllImport("mandelbrot")]
 #else
     [DllImport("__Internal")]
 #endif
     public static extern int add_extern(int a, int b);
+    */
 
     
     
@@ -87,6 +90,7 @@ public class RustPlugin{
     }
     */
     
+    /*
     // unity side:
 #if UNITY_EDITOR
     [DllImport("mandelbrot", CallingConvention = CallingConvention.Cdecl)]
@@ -102,23 +106,25 @@ public class RustPlugin{
         Marshal.Copy(ptr, floatArray, 0, floatArray.Length);
         return floatArray;
     }
+    */
 
     
-#if UNITY_EDITOR
-    [DllImport("mandelbrot")]
-#else
-    [DllImport("__Internal")]
-#endif   
-    public static extern float get_float_array_value(int array_id, int index);
+//#if UNITY_EDITOR
+//    [DllImport("mandelbrot")]
+//#else
+//    [DllImport("__Internal")]
+//#endif   
+//    public static extern float get_float_array_value(int array_id, int index);
+//    
+//    
+//#if UNITY_EDITOR
+//    [DllImport("mandelbrot")]
+//#else
+//    [DllImport("__Internal")]
+//#endif   
+//    public static extern int get_int_array_value(int array_id, int index);
     
-    
-#if UNITY_EDITOR
-    [DllImport("mandelbrot")]
-#else
-    [DllImport("__Internal")]
-#endif   
-    public static extern int get_int_array_value(int array_id, int index);
-    
+    /*
     #if UNITY_EDITOR
         [DllImport("mandelbrot")]
     #else
@@ -155,4 +161,5 @@ public class RustPlugin{
         Marshal.Copy(ptr, floatArray, 0, 2000 * 3);
         return floatArray;
     }
+    */
 }
