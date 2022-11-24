@@ -46,7 +46,7 @@ impl Game {
         world.insert_resource(lookup_grids);
         world.insert_resource(Vec::<(u32, u32)>::new()); // buffer for iterating over neighbor pair ids
 
-        let mut create_bubble_points_stage = SystemStage::parallel();
+        let mut create_bubble_points_stage = SystemStage::single_threaded();
         create_bubble_points_stage.add_system(create_bubble_points);
         create_bubble_points_stage.run(&mut world);
 
@@ -59,13 +59,13 @@ impl Game {
         pre_update_stage.add_system(update_lookup_grids);
         update_schedule.add_stage("pre_update", pre_update_stage);
 
-        let mut update_bubble_velocities_stage = SystemStage::parallel();
+        let mut update_bubble_velocities_stage = SystemStage::single_threaded();
         update_bubble_velocities_stage.add_system(handle_bubble_interactions);
         update_bubble_velocities_stage.add_system(handle_bubble_pull_to_center);
         update_bubble_velocities_stage.add_system(handle_bubble_push);
         update_schedule.add_stage("handle_bubble_velocities", update_bubble_velocities_stage);
 
-        let mut update_bubble_positions_stage = SystemStage::parallel();
+        let mut update_bubble_positions_stage = SystemStage::single_threaded();
         update_bubble_positions_stage.add_system(handle_bubble_velocities);
         update_bubble_positions_stage.add_system(update_position_views);
         update_schedule.add_stage("handle_bubble_positions", update_bubble_positions_stage);
