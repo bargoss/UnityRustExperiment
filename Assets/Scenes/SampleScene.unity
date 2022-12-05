@@ -315,7 +315,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea794b5f547440a9aabe6118f2e592ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BubbleCount: 10000
+  BubbleCount: 1000
   BubbleMesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
   BubbleMaterial: {fileID: 2100000, guid: 52b4e1d615a2bf14883691f42e19eaf4, type: 2}
 --- !u!114 &963194231

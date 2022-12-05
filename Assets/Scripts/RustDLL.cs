@@ -35,6 +35,8 @@ public class RustDLL : MonoBehaviour
         
         //DLLInterface.ApplyBubblePush(game,mousePos);
         GameBackend.Instance.ApplyBubblePush(game, mousePos);
+        GameBackend.Instance.ApplyBubblePush(game, mousePos);
+        GameBackend.Instance.ApplyBubblePush(game, mousePos);
         
         float executionTime = MeasureExecutionTime(() =>
         {
