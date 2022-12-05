@@ -149,11 +149,12 @@ pub extern "C" fn set_push_position(game: *mut Game, x: f32, y: f32, z: f32) {
 
 
 
-
+static mut static_mut_var: f32 = 0.0;
 
 
 #[cfg(test)]
 mod tests {
+    use std::collections::HashMap;
     use super::*;
 
     //execute action, measure time
@@ -228,6 +229,28 @@ mod tests {
     fn it_works() {
         let result = add(2, 2);
         assert_eq!(result, 4);
+    }
+
+
+    #[derive(Debug)]
+    struct MyStruct {
+        my_int: i32,
+        my_array_boxed: Box<[i32; 99999]>,
+        my_hashmap: HashMap<i32, i32>,
+
+        // nullable int:
+        my_nullable_int: Option<i32>,
+    }
+
+    // edit something in it
+    fn process_struct(my_struct: &mut MyStruct) {
+        my_struct.my_int = 5;
+    }
+
+
+    #[test]
+    fn mustafe() {
+
     }
 
     /*

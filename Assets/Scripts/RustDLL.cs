@@ -6,11 +6,12 @@ using UnityEngine;
 
 public class RustDLL : MonoBehaviour
 {
-    public int BubbleCount = 10000;
+    public int BubbleCount = 5000;
     private IntPtr game;
     
     private void Start()
     {
+        Debug.LogError("start called");
         // init buffers
         var neededSpace = BubbleCount;
         while (neededSpace > 0)
@@ -20,7 +21,9 @@ public class RustDLL : MonoBehaviour
             neededSpace -= taking;
         }
 
+        Debug.LogError("calling CreateGame");
         game = GameBackend.Instance.CreateGame(BubbleCount);
+        Debug.LogError("calling CreateGame finished");
     }
 
     private float msSum = 0;
@@ -34,11 +37,15 @@ public class RustDLL : MonoBehaviour
         Debug.DrawRay(mousePos, Vector3.forward, Color.blue);
         
         //DLLInterface.ApplyBubblePush(game,mousePos);
+        Debug.LogError("calling ApplyBubblePush");
         GameBackend.Instance.ApplyBubblePush(game, mousePos);
+        Debug.LogError("calling ApplyBubblePush finished");
         
         float executionTime = MeasureExecutionTime(() =>
         {
+            Debug.LogError("calling UpdateGame");
             GameBackend.Instance.UpdateGame(game);
+            Debug.LogError("calling UpdateGame finished");
         });
         msSum += executionTime;
         measureCount++;
