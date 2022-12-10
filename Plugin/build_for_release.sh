@@ -15,3 +15,9 @@ cp target/wasm32-unknown-unknown/release/libmandelbrot.a ../Assets/Plugins/WebGL
 
 cross build --target aarch64-linux-android --release
 cp target/aarch64-linux-android/release/libmandelbrot.so ../Assets/Plugins/Android/
+
+
+
+#C:\Users\user\Downloads\RustExperiment\RuntimePlugins
+cargo rustc --target x86_64-pc-windows-msvc --release -- -C opt-level=3
+cp target/x86_64-pc-windows-msvc/release/mandelbrot.dll ../RuntimePlugins/

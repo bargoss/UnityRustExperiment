@@ -3,6 +3,61 @@ use crate::bubbles::{BubblePushPoints, Game, PositionFloatBuffer, WorldParams};
 
 mod bubbles;
 
+
+/*
+#include <Windows.h>
+#define NMEXPORT extern "C" __declspec(dllexport)
+enum NMDataType
+{
+dt_string, dt_widestring, dt_short,
+dt_integer, dt_long, dt_float,
+dt_double, dt_boolean, dt_pointer,
+dt_null, dt_unknown
+};
+NMEXPORT bool OnModuleLoaded() {
+return true;
+}
+NMEXPORT bool OnModuleUnloaded() {
+return true;
+}
+NMEXPORT bool OnActivated() {
+return true;
+}
+NMEXPORT bool OnDataReceived(char* dataName, NMDataType dataType, intptr_t dataPtr, long dataSize) {
+return true;
+}
+NMEXPORT bool OnConfigReceived(char* configName, char* configValue, NMDataType dataType) {
+return true;
+}
+
+*/
+// convert to rust:
+#[no_mangle]
+pub extern "C" fn OnModuleLoaded() -> bool {
+    return true;
+}
+#[no_mangle]
+pub extern "C" fn OnModuleUnloaded() -> bool {
+    return true;
+}
+#[no_mangle]
+pub extern "C" fn OnActivated() -> bool {
+    return true;
+}
+#[no_mangle]
+pub extern "C" fn OnDataReceived(data_name: *const i8, data_type: i32, data_ptr: *const i8, data_size: i32) -> bool {
+    return true;
+}
+#[no_mangle]
+pub extern "C" fn OnConfigReceived(config_name: *const i8, config_value: *const i8, data_type: i32) -> bool {
+    return true;
+}
+
+
+
+
+
+
 //native array struct for interop with size and array
 #[repr(C)]
 pub struct NativeArrayFloat{
