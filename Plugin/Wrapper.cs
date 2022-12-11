@@ -16,7 +16,7 @@ namespace Bubbles
 {
     public static partial class Interop
     {
-        public const string NativeLib = "mandelbrot";
+        public const string NativeLib = "game_2694777571";
 
         static Interop()
         {

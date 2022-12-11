@@ -13,5 +13,6 @@ cp target/x86_64-pc-windows-msvc/release/mandelbrot.dll ../Assets/Plugins/x86_64
 cp target/wasm32-unknown-unknown/release/libmandelbrot.a ../Assets/Plugins/WebGL/
 
 
+#arm64 android
 cross build --target aarch64-linux-android --release
 cp target/aarch64-linux-android/release/libmandelbrot.so ../Assets/Plugins/Android/

@@ -181,6 +181,8 @@ mod tests {
 
     #[test]
     fn generate_bindings(){
+        let postfix = rand::random::<u32>();
+        let dll_name = format!("game_{}", postfix);
 
         let my_inventory = InventoryBuilder::new()
             .register(function!(create_game))
@@ -190,7 +192,8 @@ mod tests {
             .register(function!(set_push_position))
             .inventory();
         let config = Config {
-            dll_name: "mandelbrot".to_string(),
+            // add postfix
+            dll_name: dll_name.to_string(),
             namespace_mappings: NamespaceMappings::new("Bubbles"),
             use_unsafe: Unsafe::UnsafeKeyword,
             ..Config::default()
@@ -221,14 +224,13 @@ mod tests {
             fs::remove_file(path).unwrap_or(());
         });
 
-        // copy the dll to the unity plugin folder
-        fs::copy(path_to_built_dll, format!("{}\\mandelbrot.dll", path_to_unity_plugin_folder)).unwrap();
+        //fs::copy(path_to_built_dll, format!("{}\\mandelbrot.dll", path_to_unity_plugin_folder)).unwrap();
+        // copy the dll to the unity plugin folder, add postfix to dll name
+        //fs::copy(path_to_built_dll, format!("{}\\mandelbrot_{}.dll", path_to_unity_plugin_folder, postfix)).unwrap();
+        fs::copy(path_to_built_dll, format!("{}\\{}.dll", path_to_unity_plugin_folder, dll_name)).unwrap();
+
         // copy the wrapper to the unity plugin folder
         fs::copy(path_to_wrapper, format!("{}\\Wrapper.cs", path_to_unity_plugin_folder)).unwrap();
-
-
-
-
 
 
 
