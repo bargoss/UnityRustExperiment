@@ -48,7 +48,7 @@ public class RustDLL : MonoBehaviour
 #endif
     }
     
-    void Update()
+    void FixedUpdate()
     {
         var mousePos = GetMouseWorldPos();
         Debug.DrawRay(mousePos, Vector3.up, Color.blue);
@@ -72,6 +72,11 @@ public class RustDLL : MonoBehaviour
         //    Debug.DrawRay(positions[i], Vector3.forward, Color.red, 0);
         //}
         //DrawBubblesNice();
+        
+    }
+
+    public void Update()
+    {
         DrawWithQuads();
     }
 

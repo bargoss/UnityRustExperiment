@@ -167,6 +167,8 @@ pub extern "C" fn set_push_position(game: GameExt, x: f32, y: f32, z: f32) {
 #[cfg(test)]
 mod tests {
     use std::fs;
+    use std::io::Read;
+    use interoptopus_backend_csharp::CSharpVisibility;
     use super::*;
 
     //execute action, measure time
@@ -202,6 +204,30 @@ mod tests {
             .add_overload_writer(Unity::new())
             //.add_overload_writer(DotNet::new())
             .write_file("Wrapper.cs");
+
+        /*
+        change the
+
+        public const string DllName = "game";
+
+        to:
+
+        #if UNITY_EDITOR
+        public const string DllName = "game_1234";
+        #else
+        public const string DllName = "mandelbrot";
+        #endif
+         */
+
+        let mut file = fs::File::open("Wrapper.cs").unwrap();
+        let mut contents = String::new();
+        file.read_to_string(&mut contents).unwrap();
+        let stringToReplace = format!("public const string NativeLib = \"{}\";", dll_name);
+        let stringToReplaceWith = format!("#if UNITY_EDITOR\npublic const string NativeLib = \"{}\";\n#else\npublic const string NativeLib = \"{}\";\n#endif", dll_name, "mandelbrot");
+        let contents = contents.replace(&stringToReplace, &stringToReplaceWith);
+        fs::write("Wrapper.cs", contents).unwrap();
+
+
 
         // move the build artifacts to unity plugins folder
         // path to here
