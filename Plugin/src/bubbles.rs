@@ -28,6 +28,8 @@ pub struct PositionFloatBuffer{
 
 pub struct WorldParams{
     pub bubble_count: usize,
+    pub neighbor_force: f32,
+    pub viscosity: f32,
 }
 
 impl Game {
@@ -190,22 +192,33 @@ fn handle_bubble_interactions(
         let (bubble_a, position_a) = read_query.get(entity_a).unwrap();
         let (bubble_b, position_b) = read_query.get(entity_b).unwrap();
 
-        let distance_sqr = position_a.value.distance_squared(position_b.value);
-        let effect_radius = bubble_a.effect_radius + bubble_b.effect_radius;
-        let effect_radius_sqr = effect_radius * effect_radius;
-        if distance_sqr < effect_radius_sqr {
-            let distance = position_a.value.distance(position_b.value);
-            let direction = (position_a.value - position_b.value).normalize();
-            let force = (effect_radius - distance) * 0.1;
+        let force = calculate_neighbour_force(
+            position_a.value,
+            position_b.value,
+            bubble_a,
+            bubble_b,
+        );
 
-            let mut velocity_a = write_query.get_mut(entity_a).unwrap().2;
-            velocity_a.value += direction * force;
-            let mut velocity_b = write_query.get_mut(entity_b).unwrap().2;
-            velocity_b.value -= direction * force;
-        }
 
+        let mut velocity_a = write_query.get_mut(entity_a).unwrap().2;
+        velocity_a.value += force;
+        let mut velocity_b = write_query.get_mut(entity_b).unwrap().2;
+        velocity_b.value -= force;
     }
+}
 
+fn calculate_neighbour_force(pos_a: Vec3, pos_b: Vec3, bubble_a : &Bubble, bubble_b : &Bubble ) -> Vec3{
+    let distance_sqr = pos_a.distance_squared(pos_b);
+    let effect_radius = bubble_a.effect_radius + bubble_b.effect_radius;
+    let effect_radius_sqr = effect_radius * effect_radius;
+
+    if distance_sqr < effect_radius_sqr {
+        let distance = pos_a.distance(pos_b);
+        let direction = (pos_a - pos_b).normalize();
+        let force = (effect_radius - distance) * 0.1;
+        return direction * force;
+    }
+    return Vec3::ZERO;
 }
 
 //use get_many_mut not to fight the borrow checker

@@ -8,6 +8,8 @@ using UnityEngine;
 public class RustDLL : MonoBehaviour
 {
     public const int BubbleCount = 2000;
+    public float NeighborForce;
+    public float Viscosity;
     private GameExt game;
     
     private void Start()
@@ -21,7 +23,7 @@ public class RustDLL : MonoBehaviour
             neededSpace -= taking;
         }
 
-        game = Interop.create_game(BubbleCount);
+        game = Interop.create_game(BubbleCount, NeighborForce, Viscosity);
     }
 
     private float msSum = 0;

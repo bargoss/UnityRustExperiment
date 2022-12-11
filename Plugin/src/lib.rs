@@ -119,8 +119,13 @@ pub struct GameExt {
 
 #[ffi_function]
 #[no_mangle]
-pub extern "C" fn create_game(bubble_count : i32) -> GameExt {
-    let game = Box::new(Game::new(WorldParams{bubble_count: bubble_count as usize}));
+pub extern "C" fn create_game(bubble_count : i32, neighbor_force: f32, viscosity: f32) -> GameExt {
+    let game = Box::new(Game::new(
+        WorldParams{
+            bubble_count: bubble_count as usize,
+            neighbor_force,
+            viscosity
+        }));
     let ptr = Box::into_raw(game);
     GameExt{ptr: ptr as *const u8}
 }
