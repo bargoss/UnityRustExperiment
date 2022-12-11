@@ -228,7 +228,6 @@ GameObject:
   - component: {fileID: 963194228}
   - component: {fileID: 963194227}
   - component: {fileID: 963194226}
-  - component: {fileID: 963194229}
   - component: {fileID: 963194230}
   m_Layer: 0
   m_Name: Main Camera
@@ -303,18 +302,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &963194229
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 963194225}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 692d97b1996130f41a0bc919aba7860a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &963194230
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -327,7 +314,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea794b5f547440a9aabe6118f2e592ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bubbleCount: 20000
+  BubbleCount: 1000
   BubbleMesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
   BubbleMaterial: {fileID: 2100000, guid: 52b4e1d615a2bf14883691f42e19eaf4, type: 2}
 --- !u!1 &1565365550
