@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using Bubbles;
 using DefaultNamespace;
 using UnityEngine;
 
 public class RustDLL : MonoBehaviour
 {
     public int BubbleCount = 10000;
-    private IntPtr game;
+    private GameExt game;
     
     private void Start()
     {
@@ -20,7 +21,7 @@ public class RustDLL : MonoBehaviour
             neededSpace -= taking;
         }
 
-        game = GameBackend.Instance.CreateGame(BubbleCount);
+        game = Interop.create_game(BubbleCount);
     }
 
     private float msSum = 0;
@@ -34,13 +35,13 @@ public class RustDLL : MonoBehaviour
         Debug.DrawRay(mousePos, Vector3.forward, Color.blue);
         
         //DLLInterface.ApplyBubblePush(game,mousePos);
-        GameBackend.Instance.ApplyBubblePush(game, mousePos);
-        GameBackend.Instance.ApplyBubblePush(game, mousePos);
-        GameBackend.Instance.ApplyBubblePush(game, mousePos);
+        Interop.apply_bubble_push(game, mousePos.x, mousePos.y, mousePos.z);
+        Interop.apply_bubble_push(game, mousePos.x, mousePos.y, mousePos.z);
+        Interop.apply_bubble_push(game, mousePos.x, mousePos.y, mousePos.z);
         
         float executionTime = MeasureExecutionTime(() =>
         {
-            GameBackend.Instance.UpdateGame(game);
+            Interop.update_game(game);
         });
         msSum += executionTime;
         measureCount++;
@@ -59,7 +60,15 @@ public class RustDLL : MonoBehaviour
     private List<Matrix4x4[]> _matrixBuffers = new List<Matrix4x4[]>();
     public void DrawBubblesNice()
     {
-        var positions = GameBackend.Instance.GetBubblePositions(game, BubbleCount);
+        var positionsPtr = Interop.get_bubble_positions(game);
+        var positionFloats = new float[BubbleCount * 3];
+        Marshal.Copy(positionsPtr, positionFloats, 0, BubbleCount * 3);
+        var positions = new Vector3[BubbleCount];
+        for (int i = 0; i < BubbleCount; i++)
+        {
+            positions[i] = new Vector3(positionFloats[i * 3], positionFloats[i * 3 + 1], positionFloats[i * 3 + 2]);
+        }
+     
         for (int i = 0; i < positions.Length; i++)
         {
             int bufferIndex = i / 1000;

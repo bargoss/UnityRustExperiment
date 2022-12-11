@@ -1,7 +1,12 @@
 use bevy_math::Vec3;
 use crate::bubbles::{BubblePushPoints, Game, PositionFloatBuffer, WorldParams};
-
 mod bubbles;
+use interoptopus::{ffi_type, function, Interop, Inventory, InventoryBuilder};
+use interoptopus::util::NamespaceMappings;
+use interoptopus_backend_csharp::{Config, Generator, Unsafe};
+use interoptopus_backend_csharp::overloads::Unity;
+use interoptopus::ffi_function;
+
 
 //native array struct for interop with size and array
 #[repr(C)]
@@ -105,41 +110,50 @@ pub extern "C" fn get_int_array_value(array_id:i32, index:i32) -> i32 {
     int_array[index as usize]
 }
 
-
-
-#[no_mangle]
-pub extern "C" fn create_game(bubble_count : usize) -> *mut Game {
-    let game = Box::new(Game::new(WorldParams{bubble_count}));
-    std::mem::forget(&game);
-    Box::into_raw(game)
+#[ffi_type]
+#[repr(C)]
+pub struct GameExt {
+    ptr: *const u8
 }
 
+
+#[ffi_function]
 #[no_mangle]
-pub extern "C" fn update_game(game: *mut Game) {
-    let game = unsafe { &mut *game };
+pub extern "C" fn create_game(bubble_count : i32) -> GameExt {
+    let game = Box::new(Game::new(WorldParams{bubble_count: bubble_count as usize}));
+    let ptr = Box::into_raw(game);
+    GameExt{ptr: ptr as *const u8}
+}
+
+#[ffi_function]
+#[no_mangle]
+pub extern "C" fn update_game(game: GameExt) {
+    let game = unsafe { &mut *(game.ptr as *mut Game) };
     game.update();
 }
 
 // give f32 array to c#
+#[ffi_function]
 #[no_mangle]
-pub extern "C" fn get_bubble_positions(game: *mut Game) -> *const f32 {
-    let game = unsafe { &mut *game };
+pub extern "C" fn get_bubble_positions(game: GameExt) -> *const f32 {
+    let game = unsafe { &mut *(game.ptr as *mut Game) };
     let resource = game.world.get_resource::<PositionFloatBuffer>().unwrap();
-
     resource.value.as_ptr()
 }
 
+#[ffi_function]
 #[no_mangle]
-pub extern "C" fn apply_bubble_push(game: *mut Game, x: f32, y: f32, z:f32) {
-    let game = unsafe { &mut *game };
+pub extern "C" fn apply_bubble_push(game: GameExt, x: f32, y: f32, z:f32) {
+    let game = unsafe { &mut *(game.ptr as *mut Game) };
     let mut resource = game.world.get_resource_mut::<BubblePushPoints>().unwrap();
     resource.points.push(Vec3::new(x, y, z));
 }
 
 // feed in a float array
+#[ffi_function]
 #[no_mangle]
-pub extern "C" fn set_push_position(game: *mut Game, x: f32, y: f32, z: f32) {
-    let game = unsafe { &mut *game };
+pub extern "C" fn set_push_position(game: GameExt, x: f32, y: f32, z: f32) {
+    let game = unsafe { &mut *(game.ptr as *mut Game) };
 
     let mut push_points = Vec::new();
     push_points.push(Vec3::new(x, y, z));
@@ -150,10 +164,9 @@ pub extern "C" fn set_push_position(game: *mut Game, x: f32, y: f32, z: f32) {
 
 
 
-
-
 #[cfg(test)]
 mod tests {
+    use std::fs;
     use super::*;
 
     //execute action, measure time
@@ -167,6 +180,66 @@ mod tests {
     }
 
     #[test]
+    fn generate_bindings(){
+
+        let my_inventory = InventoryBuilder::new()
+            .register(function!(create_game))
+            .register(function!(update_game))
+            .register(function!(get_bubble_positions))
+            .register(function!(apply_bubble_push))
+            .register(function!(set_push_position))
+            .inventory();
+        let config = Config {
+            dll_name: "mandelbrot".to_string(),
+            namespace_mappings: NamespaceMappings::new("Bubbles"),
+            use_unsafe: Unsafe::UnsafeKeyword,
+            ..Config::default()
+        };
+        Generator::new(config, my_inventory)
+            .add_overload_writer(Unity::new())
+            //.add_overload_writer(DotNet::new())
+            .write_file("Wrapper.cs");
+
+        // move the build artifacts to unity plugins folder
+        // path to here
+        let path = std::env::current_dir().unwrap();
+        let path = path.to_str().unwrap();
+        // print path
+
+        let path_to_built_dll = format!("{}\\target\\x86_64-pc-windows-msvc\\release\\mandelbrot.dll", path);
+        println!("path_to_built_dll: {}", path_to_built_dll);
+        let path_to_unity_plugin_folder = format!("{}\\..\\Assets\\Plugins\\x86_64", path);
+        println!("path_to_unity_plugin_folder: {}", path_to_unity_plugin_folder);
+        let path_to_wrapper = format!("{}\\Wrapper.cs", path);
+
+        //delete everything in the unity plugin folder with try catch for each element
+        let paths = fs::read_dir(path_to_unity_plugin_folder.clone()).unwrap();
+        paths.for_each(|path| {
+            let path = path.unwrap().path();
+            let path = path.to_str().unwrap();
+            println!("deleting: {}", path);
+            fs::remove_file(path).unwrap_or(());
+        });
+
+        // copy the dll to the unity plugin folder
+        fs::copy(path_to_built_dll, format!("{}\\mandelbrot.dll", path_to_unity_plugin_folder)).unwrap();
+        // copy the wrapper to the unity plugin folder
+        fs::copy(path_to_wrapper, format!("{}\\Wrapper.cs", path_to_unity_plugin_folder)).unwrap();
+
+
+
+
+
+
+
+
+
+
+
+
+    }
+
+    #[test]
     fn get_int_array_ptr_test() {
         let arr_ptr = get_int_array_ptr();
         // print the int value of this
@@ -177,51 +250,6 @@ mod tests {
     // ignored test
     #[test]
     fn interop_tests() {
-        //let game = create_game(20);
-        //{
-        //    update_game(game);
-        //}
-//
-        //// update game 100 times and measure time
-//
-        //let mut total_duration = 0;
-        //let iterations = 10;
-        //for _ in 0..iterations {
-        //    let elapsed = time_it(|| {
-        //        update_game(game);
-        //    });
-        //    total_duration += elapsed;
-        //}
-        //let average_duration = total_duration / iterations;
-        //println!("average duration: {}", average_duration);
-//
-//
-        //let positions = get_bubble_positions(game);
-        //let raw_address_value = positions as usize;
-        //let positions = unsafe { std::slice::from_raw_parts(positions, 10) };
-        //let pos0 = positions[0];
-        //let pos1 = positions[1];
-        //let pos2 = positions[2];
-//
-        //let pos3 = positions[3];
-        //let pos4 = positions[4];
-        //let pos5 = positions[5];
-//
-        //let pos6 = positions[6];
-        //let pos7 = positions[7];
-        //let pos8 = positions[8];
-//
-        //assert_eq!(pos0.abs() > 0.001, true);
-        //assert_eq!(pos1.abs() > 0.001, true);
-        //assert_eq!(pos2.abs() == 0.0, true);
-//
-        //assert_eq!(pos3.abs() > 0.001, true);
-        //assert_eq!(pos4.abs() > 0.001, true);
-        //assert_eq!(pos5.abs() == 0.0, true);
-//
-        //assert_eq!(pos6.abs() > 0.001, true);
-        //assert_eq!(pos7.abs() > 0.001, true);
-        //assert_eq!(pos8.abs() == 0.0, true);
     }
 
     #[test]
@@ -229,40 +257,4 @@ mod tests {
         let result = add(2, 2);
         assert_eq!(result, 4);
     }
-
-    /*
-    #[test]
-    fn real_test() {
-        let mut game = bubbles::Game::new(WorldParams{bubble_count: 500});
-        game.update();
-        let iter = game.get_positions_iter();
-
-        // tolist
-        let mut list = Vec::new();
-        for i in iter {
-            list.push(i.clone());
-        }
-
-        game.update();
-        let iter = game.get_positions_iter();
-        let mut list2 = Vec::new();
-        for i in iter {
-            list2.push(i.clone());
-        }
-
-        let mut distance_deltas = Vec::new();
-        for i in 0..list.len() {
-            // abs of list[i]-list2[i]
-            let delta_abs = (list[i] - list2[i]).abs();
-            distance_deltas.push(delta_abs);
-        }
-
-        let average_distance = distance_deltas.iter().sum::<f32>() / distance_deltas.len() as f32;
-
-        // assert average_distance > 0.001
-        assert!(average_distance > 0.001);
-    }
-
-     */
-
 }
