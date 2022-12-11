@@ -12,7 +12,7 @@ use crate::bubbles::spatial_ds::LookUpGrids;
 
 //const BUBBLE_COUNT: usize = 500;
 const DELTA_TIME: f32 = 0.5;
-const POSITION_FLOAT_BUFFER_SIZE: usize = 10000*3;
+const POSITION_FLOAT_BUFFER_SIZE: usize = 5000*3;
 // use macro
 //const BUBBLE_COUNT_3: usize = 1500;
 

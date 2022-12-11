@@ -113,7 +113,7 @@ pub extern "C" fn get_int_array_value(array_id:i32, index:i32) -> i32 {
 #[ffi_type]
 #[repr(C)]
 pub struct GameExt {
-    ptr: *const u8
+    pub ptr: *const u8
 }
 
 

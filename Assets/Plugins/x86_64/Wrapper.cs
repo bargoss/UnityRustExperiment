@@ -17,7 +17,7 @@ namespace Bubbles
     public static partial class Interop
     {
         #if UNITY_EDITOR
-public const string NativeLib = "game_795919383";
+public const string NativeLib = "game_482594635";
 #else
 public const string NativeLib = "mandelbrot";
 #endif
@@ -51,7 +51,7 @@ public const string NativeLib = "mandelbrot";
         #if UNITY_2018_1_OR_NEWER
         [NativeDisableUnsafePtrRestriction]
         #endif
-        IntPtr ptr;
+        public IntPtr ptr;
     }
 
 
