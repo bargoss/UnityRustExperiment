@@ -119,12 +119,10 @@ pub struct GameExt {
 
 #[ffi_function]
 #[no_mangle]
-pub extern "C" fn create_game(bubble_count : i32, neighbor_force: f32, viscosity: f32) -> GameExt {
+pub extern "C" fn create_game(bubble_count : i32) -> GameExt {
     let game = Box::new(Game::new(
         WorldParams{
             bubble_count: bubble_count as usize,
-            neighbor_force,
-            viscosity
         }));
     let ptr = Box::into_raw(game);
     GameExt{ptr: ptr as *const u8}
@@ -187,6 +185,17 @@ mod tests {
     }
 
     #[test]
+    fn bubble_tests(){
+        let game = create_game(1000);
+
+        let mut time = time_it(|| {
+            update_game(game);
+        });
+
+        println!("update game time: {}", time);
+    }
+
+    #[test]
     fn generate_bindings(){
         let postfix = rand::random::<u32>();
         let dll_name = format!("game_{}", postfix);
@@ -240,7 +249,8 @@ mod tests {
         let path = path.to_str().unwrap();
         // print path
 
-        let path_to_built_dll = format!("{}\\target\\x86_64-pc-windows-msvc\\release\\mandelbrot.dll", path);
+        //let path_to_built_dll = format!("{}\\target\\x86_64-pc-windows-msvc\\release\\mandelbrot.dll", path);
+        let path_to_built_dll = format!("{}\\target\\debug\\mandelbrot.dll", path);
         println!("path_to_built_dll: {}", path_to_built_dll);
         let path_to_unity_plugin_folder = format!("{}\\..\\Assets\\Plugins\\x86_64", path);
         println!("path_to_unity_plugin_folder: {}", path_to_unity_plugin_folder);

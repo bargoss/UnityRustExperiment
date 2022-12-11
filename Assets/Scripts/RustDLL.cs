@@ -23,7 +23,7 @@ public class RustDLL : MonoBehaviour
             neededSpace -= taking;
         }
 
-        game = Interop.create_game(BubbleCount, NeighborForce, Viscosity);
+        game = Interop.create_game(BubbleCount);
     }
 
     private float msSum = 0;

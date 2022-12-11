@@ -12,7 +12,7 @@ use crate::bubbles::spatial_ds::LookUpGrids;
 
 //const BUBBLE_COUNT: usize = 500;
 const DELTA_TIME: f32 = 0.5;
-const POSITION_FLOAT_BUFFER_SIZE: usize = 50000*3;
+const POSITION_FLOAT_BUFFER_SIZE: usize = 10000*3;
 // use macro
 //const BUBBLE_COUNT_3: usize = 1500;
 
@@ -28,8 +28,6 @@ pub struct PositionFloatBuffer{
 
 pub struct WorldParams{
     pub bubble_count: usize,
-    pub neighbor_force: f32,
-    pub viscosity: f32,
 }
 
 impl Game {
@@ -42,8 +40,9 @@ impl Game {
 
         // create PositionFloatBuffer instance
         world.insert_resource(world_params);
-        world.insert_resource(PositionFloatBuffer{ value: [0.0; POSITION_FLOAT_BUFFER_SIZE] });
-        world.insert_resource(BubblePushPoints{ points: Vec::new(), });
+        let position_float_buffer = PositionFloatBuffer{ value: [0.0; POSITION_FLOAT_BUFFER_SIZE] };
+        world.insert_resource(BubblePushPoints{ points: Vec::new()});
+        world.insert_resource(position_float_buffer);
         let lookup_grids = LookUpGrids::<u32>::new(3.0);
         world.insert_resource(lookup_grids);
         world.insert_resource(Vec::<(u32, u32)>::new()); // buffer for iterating over neighbor pair ids
@@ -181,7 +180,8 @@ fn handle_bubble_interactions(
     mut read_query: Query<(&Bubble, &Position)>,
     mut write_query : Query<(&Bubble, &Position, &mut Velocity)>,
     lookup_grids: Res<LookUpGrids<u32>>,
-    mut buffer: ResMut<Vec::<(u32, u32)>> // for neighbor pair ids
+    mut buffer: ResMut<Vec::<(u32, u32)>>, // for neighbor pair ids
+    world_params: Res<WorldParams>,
 ) {
     lookup_grids.get_all_neighbours(&mut buffer);
 
@@ -207,7 +207,12 @@ fn handle_bubble_interactions(
     }
 }
 
-fn calculate_neighbour_force(pos_a: Vec3, pos_b: Vec3, bubble_a : &Bubble, bubble_b : &Bubble ) -> Vec3{
+fn calculate_neighbour_force(
+    pos_a: Vec3, pos_b: Vec3,
+    bubble_a : &Bubble,
+    bubble_b : &Bubble,
+
+) -> Vec3 {
     let distance_sqr = pos_a.distance_squared(pos_b);
     let effect_radius = bubble_a.effect_radius + bubble_b.effect_radius;
     let effect_radius_sqr = effect_radius * effect_radius;
@@ -215,7 +220,7 @@ fn calculate_neighbour_force(pos_a: Vec3, pos_b: Vec3, bubble_a : &Bubble, bubbl
     if distance_sqr < effect_radius_sqr {
         let distance = pos_a.distance(pos_b);
         let direction = (pos_a - pos_b).normalize();
-        let force = (effect_radius - distance) * 0.1;
+        let force = (effect_radius - distance) * 0.1 * 1.0;
         return direction * force;
     }
     return Vec3::ZERO;
