@@ -7,7 +7,7 @@ using UnityEngine;
 
 public class RustDLL : MonoBehaviour
 {
-    public int BubbleCount = 10000;
+    public const int BubbleCount = 10000;
     private GameExt game;
     
     private void Start()
@@ -58,18 +58,18 @@ public class RustDLL : MonoBehaviour
     public Mesh BubbleMesh;
     public Material BubbleMaterial;
     private List<Matrix4x4[]> _matrixBuffers = new List<Matrix4x4[]>();
+    private float[] _positionFloatBuffer = new float[BubbleCount * 3];
     public void DrawBubblesNice()
     {
         var positionsPtr = Interop.get_bubble_positions(game);
-        var positionFloats = new float[BubbleCount * 3];
-        Marshal.Copy(positionsPtr, positionFloats, 0, BubbleCount * 3);
+        Marshal.Copy(positionsPtr, _positionFloatBuffer, 0, BubbleCount * 3);
         var positions = new Vector3[BubbleCount];
         for (int i = 0; i < BubbleCount; i++)
         {
-            positions[i] = new Vector3(positionFloats[i * 3], positionFloats[i * 3 + 1], positionFloats[i * 3 + 2]);
+            positions[i] = new Vector3(_positionFloatBuffer[i * 3], _positionFloatBuffer[i * 3 + 1], _positionFloatBuffer[i * 3 + 2]);
         }
      
-        for (int i = 0; i < positions.Length; i++)
+        for (int i = 0; i < positions.Length * 0.1f; i++)
         {
             int bufferIndex = i / 1000;
             int indexInBuffer = i % 1000;
