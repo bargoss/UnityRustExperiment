@@ -13,17 +13,21 @@ use crate::bubbles::spatial_ds::LookUpGrids;
 //const BUBBLE_COUNT: usize = 500;
 const DELTA_TIME: f32 = 0.5;
 const POSITION_FLOAT_BUFFER_SIZE: usize = 5000*3;
+const BEAM_FLOAT_BUFFER_SIZE: usize = 2500*3*2;
 // use macro
 //const BUBBLE_COUNT_3: usize = 1500;
 
 pub struct Game{
-    pub world: bevy_ecs::prelude::World,
+    pub world: World,
     pub update_schedule: Schedule,
 }
 // impl
 
 pub struct PositionFloatBuffer{
     pub value: [f32; POSITION_FLOAT_BUFFER_SIZE]
+}
+pub struct BeamFloatBuffer {
+    pub value: [f32; BEAM_FLOAT_BUFFER_SIZE]
 }
 
 pub struct WorldParams{
@@ -41,8 +45,12 @@ impl Game {
         // create PositionFloatBuffer instance
         world.insert_resource(world_params);
         let position_float_buffer = PositionFloatBuffer{ value: [0.0; POSITION_FLOAT_BUFFER_SIZE] };
-        world.insert_resource(BubblePushPoints{ points: Vec::new()});
         world.insert_resource(position_float_buffer);
+        let beam_float_buffer = BeamFloatBuffer { value: [0.0; BEAM_FLOAT_BUFFER_SIZE] };
+        world.insert_resource(beam_float_buffer);
+
+        world.insert_resource(BubblePushPoints{ points: Vec::new()});
+
         let lookup_grids = LookUpGrids::<u32>::new(3.0);
         world.insert_resource(lookup_grids);
         world.insert_resource(Vec::<(u32, u32)>::new()); // buffer for iterating over neighbor pair ids
@@ -51,6 +59,13 @@ impl Game {
         create_bubble_points_stage.add_system(create_bubble_points);
         create_bubble_points_stage.run(&mut world);
 
+        let mut create_bubble_points_stage2 = SystemStage::single_threaded();
+        create_bubble_points_stage2.add_system(update_lookup_grids);
+        create_bubble_points_stage2.run(&mut world); // THEY WERE NOT RUNNING IN ORDER WHEN THEY WERE IN SAME SYSTEM STAGE
+
+        let mut create_beams_stage = SystemStage::single_threaded();
+        create_beams_stage.add_system(create_test_beams);
+        create_beams_stage.run(&mut world);
 
 
 
@@ -64,11 +79,13 @@ impl Game {
         update_bubble_velocities_stage.add_system(handle_bubble_interactions);
         update_bubble_velocities_stage.add_system(handle_bubble_pull_to_center);
         update_bubble_velocities_stage.add_system(handle_bubble_push);
+        update_bubble_velocities_stage.add_system(handle_beam_forces);
         update_schedule.add_stage("handle_bubble_velocities", update_bubble_velocities_stage);
 
         let mut update_bubble_positions_stage = SystemStage::single_threaded();
         update_bubble_positions_stage.add_system(handle_bubble_velocities);
         update_bubble_positions_stage.add_system(update_position_views);
+        update_bubble_positions_stage.add_system(update_beam_views);
         update_schedule.add_stage("handle_bubble_positions", update_bubble_positions_stage);
 
 
@@ -110,6 +127,12 @@ pub struct BubblePushPoints {
     pub points: Vec<Vec3>,
 }
 
+#[derive(Component, Clone ,Debug)]
+pub struct Beam {
+    pub length: f32,
+    pub bubble_a: Entity,
+    pub bubble_b: Entity
+}
 
 #[derive(Component, Clone ,Debug, Default)]
 pub struct Bubble {
@@ -173,15 +196,77 @@ fn update_lookup_grids(mut query: Query<(&Position, Entity)>, mut lookup_grids: 
     }
 }
 
+fn create_test_beams(
+    bubble_query: Query<(&Bubble, &Position)>,
+    mut commands: Commands,
+    mut lookup_grids: ResMut<LookUpGrids<u32>>,
+    mut buffer: ResMut<Vec<(u32, u32)>>,
+){
+    const DISTANCE_TO_CREATE_BEAM: f32 = 0.3;
 
+    lookup_grids.get_all_neighbours(&mut buffer);
+
+    let mut beam_counter = 0;
+    for (id_a,id_b) in buffer.iter() {
+        let entity_a = Entity::from_raw(id_a.clone());
+        let entity_b = Entity::from_raw(id_b.clone());
+
+        let (_bubble_a, position_a) = bubble_query.get(entity_a).unwrap();
+        let (_bubble_b, position_b) = bubble_query.get(entity_b).unwrap();
+
+        let distance = position_a.value.distance(position_b.value);
+        if distance < DISTANCE_TO_CREATE_BEAM {
+            let beam = Beam {
+                length: distance,
+                bubble_a: entity_a,
+                bubble_b: entity_b
+            };
+            commands.spawn().insert(beam);
+            beam_counter += 1;
+        }
+    }
+    println!("beam count: {}", beam_counter);
+
+
+}
+
+fn handle_beam_forces(
+    bubble_query: Query<(&Bubble, &Position)>,
+    beam_query: Query<(&Beam)>,
+    mut write_query: Query<&mut Velocity>,
+    //world_params: Res<WorldParams>,
+){
+    for beam in beam_query.iter() {
+        let bubble_a = bubble_query.get(beam.bubble_a).unwrap();
+        let bubble_b = bubble_query.get(beam.bubble_b).unwrap();
+
+        let bubble_a_pos = bubble_a.1.value;
+        let bubble_b_pos = bubble_b.1.value;
+
+        let beam_length = (bubble_a_pos - bubble_b_pos).length();
+
+        let mut force = (bubble_a_pos - bubble_b_pos).normalize() * (beam.length - beam_length) * 1.0; //world_params.beam_force;
+
+
+        let mut velocity_a = write_query.get_mut(beam.bubble_a).unwrap();
+        velocity_a.value += force;
+        let mut velocity_b = write_query.get_mut(beam.bubble_b).unwrap();
+        velocity_b.value -= force;
+
+        //let mut bubble_a_vel = write_query.get_mut(beam.bubble_a).unwrap();
+        //bubble_a_vel.value += force;
+        //let mut bubble_b_vel = write_query.get_mut(beam.bubble_b).unwrap();
+        //bubble_b_vel.value -= force;
+    }
+}
 
 // query for
 fn handle_bubble_interactions(
     mut read_query: Query<(&Bubble, &Position)>,
     mut write_query : Query<(&Bubble, &Position, &mut Velocity)>,
     lookup_grids: Res<LookUpGrids<u32>>,
-    mut buffer: ResMut<Vec::<(u32, u32)>>, // for neighbor pair ids
-    world_params: Res<WorldParams>,
+    mut buffer: ResMut<Vec<(u32, u32)>>, // for neighbor pair ids
+    //world_params: Res<WorldParams>,
 ) {
     lookup_grids.get_all_neighbours(&mut buffer);
 
@@ -226,30 +311,7 @@ fn calculate_neighbour_force(
     return Vec3::ZERO;
 }
 
-//use get_many_mut not to fight the borrow checker
-fn handle_bubble_interactions3(mut query: Query<(&Bubble, &Position, &mut Velocity)>, lookup_grids: Res<LookUpGrids<u32>>) {
-    let a = query.get_mut(Entity::from_raw(0));
-    for (bubble1, position1, mut velocity1) in query.get_mut(Entity::from_raw(0)){
 
-    }
-}
-
-
-fn handle_bubble_interactions2(mut query: Query<(&Bubble, &Position, &mut Velocity)>, lookup_grids: Res<LookUpGrids<usize>>){
-    for (bubble1, position1, mut velocity1) in query.iter_mut() {}
-
-    let mut combinations = query.iter_combinations_mut();
-    while let Some([(bubble1, position1, mut velocity1), (bubble2, position2, mut velocity2)]) = combinations.fetch_next() {
-        let distance = position1.value.distance(position2.value);
-        let effect_radius = bubble1.effect_radius + bubble2.effect_radius;
-        if distance < effect_radius {
-            let force = (effect_radius - distance) / effect_radius;
-            let direction = (position1.value - position2.value).normalize();
-            velocity1.value += direction * force * DELTA_TIME;
-            velocity2.value -= direction * force * DELTA_TIME;
-        }
-    }
-}
 
 fn handle_bubble_pull_to_center(mut query: Query<(&Position, &mut Velocity)>){
     for (position, mut velocity) in query.iter_mut() {
@@ -300,5 +362,21 @@ fn update_position_views(mut query: Query<&Position>, mut bubble_positions: ResM
         bubble_positions.value[i*3] = position.value.x;
         bubble_positions.value[i*3+1] = position.value.y;
         bubble_positions.value[i*3+2] = position.value.z;
+    }
+}
+
+fn update_beam_views(mut beam_query: Query<&Beam>, bubble_query: Query<&Position,&Bubble>, mut beam_positions: ResMut<BeamFloatBuffer>) {
+    for (i, beam) in beam_query.iter_mut().enumerate() {
+        let bubble_pos_a = bubble_query.get(beam.bubble_a).unwrap().value;
+        let bubble_pos_b = bubble_query.get(beam.bubble_b).unwrap().value;
+
+
+        beam_positions.value[i*6+0] = bubble_pos_a.x;
+        beam_positions.value[i*6+1] = bubble_pos_a.y;
+        beam_positions.value[i*6+2] = bubble_pos_a.z;
+
+        beam_positions.value[i*6+3] = bubble_pos_b.x;
+        beam_positions.value[i*6+4] = bubble_pos_b.y;
+        beam_positions.value[i*6+5] = bubble_pos_b.z;
     }
 }

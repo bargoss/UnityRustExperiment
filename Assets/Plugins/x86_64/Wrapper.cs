@@ -17,7 +17,7 @@ namespace Bubbles
     public static partial class Interop
     {
         #if UNITY_EDITOR
-public const string NativeLib = "game_482594635";
+public const string NativeLib = "game_3539803980";
 #else
 public const string NativeLib = "mandelbrot";
 #endif

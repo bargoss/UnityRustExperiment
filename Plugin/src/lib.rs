@@ -7,6 +7,9 @@ use interoptopus_backend_csharp::{Config, Generator, Unsafe};
 use interoptopus_backend_csharp::overloads::Unity;
 use interoptopus::ffi_function;
 
+//for seeing generic data structures in the debugger
+use std::fmt::Debug;
+
 
 //native array struct for interop with size and array
 #[repr(C)]
@@ -112,6 +115,7 @@ pub extern "C" fn get_int_array_value(array_id:i32, index:i32) -> i32 {
 
 #[ffi_type]
 #[repr(C)]
+#[derive(Clone, Copy)]
 pub struct GameExt {
     pub ptr: *const u8
 }
@@ -172,6 +176,7 @@ mod tests {
     use std::fs;
     use std::io::Read;
     use interoptopus_backend_csharp::CSharpVisibility;
+    use crate::bubbles::BeamFloatBuffer;
     use super::*;
 
     //execute action, measure time
@@ -186,13 +191,35 @@ mod tests {
 
     #[test]
     fn bubble_tests(){
-        let game = create_game(1000);
+        let game = create_game(100);
 
-        let mut time = time_it(|| {
+        // 1000 iterations
+        for _ in 0..1000 {
             update_game(game);
+        }
+    }
+
+    #[test]
+    fn test_beams(){
+        let mut game = Game::new(WorldParams{
+            bubble_count: 100,
         });
 
-        println!("update game time: {}", time);
+        game.update();
+
+        let beam_float_buffer = game.world.get_resource::<BeamFloatBuffer>().unwrap();
+
+        // assert that first 10 elements are not very close to 0
+        for i in 0..10 {
+            let abs = beam_float_buffer.value[i*3 + 0].abs();
+            let abs2 = beam_float_buffer.value[i*3 + 1].abs();
+            assert!(abs > 0.0001);
+            assert!(abs2 > 0.0001);
+        }
+
+        let a = 3;
+        // need to get the beam informations
+
     }
 
     #[test]

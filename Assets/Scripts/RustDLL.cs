@@ -7,7 +7,7 @@ using UnityEngine;
 
 public class RustDLL : MonoBehaviour
 {
-    public const int BubbleCount = 2000;
+    public const int BubbleCount = 100; //2000;
     public float NeighborForce;
     public float Viscosity;
     private GameExt game;
