@@ -1,0 +1,41 @@
+tasks:
+    make it more easily testable:
+        id based referencing instead of entity based
+            id <-> entity dictionaries and all bubble creation/destructions use that
+        cleanup the initialization system
+            add functions
+                add bubble (returns bubble id)
+                remove bubble (removes bubble with id)
+                    the beam related systems will take care of missing references
+                remove all bubbles
+            
+
+
+    
+
+
+
+new settings:
+    FormPersistentBeamDuration : i32,
+    BeamPower : f32,
+    BeamFormDistance : f32,
+    BeamDistance : f32,
+    BeamBreakDistance : f32,
+
+
+
+
+PointNeighbourship:
+    duration: frames it has been around,
+    duration_needed: frames it has to be around to have an effect,
+    power,
+    entity_a,
+    entity_b,
+    distance,
+    maxDistance : break threshold
+
+
+
+
+beam management system:
+    create or increment beams that are close
