@@ -1,5 +1,7 @@
 mod spatial_ds;
 
+use std::collections::HashMap;
+
 use bevy_ecs;
 use bevy_ecs::bundle::Bundle;
 use bevy_ecs::component::Component;
@@ -29,6 +31,41 @@ pub struct PositionFloatBuffer{
 pub struct BeamFloatBuffer {
     pub value: [f32; BEAM_FLOAT_BUFFER_SIZE]
 }
+pub struct EntityExternalIdMap {
+    // two way dictinary
+    id_to_entity: HashMap<u32, Entity>,
+    entity_to_id: HashMap<Entity, u32>,
+}
+impl EntityExternalIdMap {
+    pub fn new() -> EntityExternalIdMap {
+        EntityExternalIdMap {
+            id_to_entity: HashMap::new(),
+            entity_to_id: HashMap::new(),
+        }
+    }
+    pub fn get_entity(&self, id: u32) -> Option<&Entity> {
+        self.id_to_entity.get(&id)
+    }
+    pub fn get_id(&self, entity: &Entity) -> Option<&u32> {
+        self.entity_to_id.get(entity)
+    }
+    pub fn insert(&mut self, id: u32, entity: Entity) {
+        self.id_to_entity.insert(id, entity);
+        self.entity_to_id.insert(entity, id);
+    }
+    pub fn remove(&mut self, id: u32) {
+        if let Some(entity) = self.id_to_entity.remove(&id) {
+            self.entity_to_id.remove(&entity);
+        }
+    }
+    pub fn clear(&mut self) {
+        self.id_to_entity.clear();
+        self.entity_to_id.clear();
+    }
+}
+
+
+
 
 pub struct WorldParams{
     pub bubble_count: usize,
@@ -42,17 +79,12 @@ impl Game {
         // or to create a new new resource type for each resource
         // f32 array that is in a box
 
-        // create PositionFloatBuffer instance
         world.insert_resource(world_params);
-        let position_float_buffer = PositionFloatBuffer{ value: [0.0; POSITION_FLOAT_BUFFER_SIZE] };
-        world.insert_resource(position_float_buffer);
-        let beam_float_buffer = BeamFloatBuffer { value: [0.0; BEAM_FLOAT_BUFFER_SIZE] };
-        world.insert_resource(beam_float_buffer);
-
+        world.insert_resource(PositionFloatBuffer{ value: [0.0; POSITION_FLOAT_BUFFER_SIZE] });
+        world.insert_resource(BeamFloatBuffer { value: [0.0; BEAM_FLOAT_BUFFER_SIZE] });
         world.insert_resource(BubblePushPoints{ points: Vec::new()});
-
-        let lookup_grids = LookUpGrids::<u32>::new(3.0);
-        world.insert_resource(lookup_grids);
+        world.insert_resource(EntityExternalIdMap::new());
+        world.insert_resource(LookUpGrids::<u32>::new(3.0));
         world.insert_resource(Vec::<(u32, u32)>::new()); // buffer for iterating over neighbor pair ids
 
         let mut create_bubble_points_stage = SystemStage::single_threaded();
@@ -73,6 +105,7 @@ impl Game {
 
         let mut pre_update_stage = SystemStage::single_threaded();
         pre_update_stage.add_system(update_lookup_grids);
+        pre_update_stage.add_system(update_external_id_res);
         update_schedule.add_stage("pre_update", pre_update_stage);
 
         let mut update_bubble_velocities_stage = SystemStage::single_threaded();
@@ -140,6 +173,12 @@ pub struct Bubble {
     pub target_distance: f32
 }
 #[derive(Component, Clone ,Debug, Default)]
+pub struct ExternalId {
+    pub value: u32
+}
+
+
+#[derive(Component, Clone ,Debug, Default)]
 pub struct Position {
     pub value: Vec3
 }
@@ -154,6 +193,7 @@ pub struct BubblePointBundle {
     pub bubble: Bubble,
     pub position: Position,
     pub velocity: Velocity,
+    pub external_id: ExternalId
 }
 
 
@@ -193,6 +233,12 @@ fn update_lookup_grids(mut query: Query<(&Position, Entity)>, mut lookup_grids: 
     lookup_grids.clear();
     for (position, entity) in query.iter_mut() {
         lookup_grids.add(entity.id(), position.value);
+    }
+}
+fn update_external_id_res(mut query: Query<(&mut ExternalId, Entity)>, mut external_id_res: ResMut<EntityExternalIdMap>) {
+    external_id_res.clear();
+    for (mut external_id, entity) in query.iter_mut() {
+        external_id_res.insert(external_id.value, entity);
     }
 }
 
