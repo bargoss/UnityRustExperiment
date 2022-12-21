@@ -23,54 +23,6 @@ pub struct Game{
     pub world: World,
     pub update_schedule: Schedule,
 }
-// impl
-
-pub struct PositionFloatBuffer{
-    pub value: [f32; POSITION_FLOAT_BUFFER_SIZE]
-}
-pub struct BeamFloatBuffer {
-    pub value: [f32; BEAM_FLOAT_BUFFER_SIZE]
-}
-pub struct EntityExternalIdMap {
-    // two way dictinary
-    id_to_entity: HashMap<u32, Entity>,
-    entity_to_id: HashMap<Entity, u32>,
-}
-impl EntityExternalIdMap {
-    pub fn new() -> EntityExternalIdMap {
-        EntityExternalIdMap {
-            id_to_entity: HashMap::new(),
-            entity_to_id: HashMap::new(),
-        }
-    }
-    pub fn get_entity(&self, id: u32) -> Option<&Entity> {
-        self.id_to_entity.get(&id)
-    }
-    pub fn get_id(&self, entity: &Entity) -> Option<&u32> {
-        self.entity_to_id.get(entity)
-    }
-    pub fn insert(&mut self, id: u32, entity: Entity) {
-        self.id_to_entity.insert(id, entity);
-        self.entity_to_id.insert(entity, id);
-    }
-    pub fn remove(&mut self, id: u32) {
-        if let Some(entity) = self.id_to_entity.remove(&id) {
-            self.entity_to_id.remove(&entity);
-        }
-    }
-    pub fn clear(&mut self) {
-        self.id_to_entity.clear();
-        self.entity_to_id.clear();
-    }
-}
-
-
-
-
-pub struct WorldParams{
-    pub bubble_count: usize,
-}
-
 impl Game {
     pub fn new(world_params: WorldParams) -> Game {
         let mut world = World::new();
@@ -128,7 +80,6 @@ impl Game {
         }
     }
 
-
     pub fn update(&mut self) {
         self.update_schedule.run(&mut self.world);
     }
@@ -152,7 +103,79 @@ impl Game {
             resource.points.push(point);
         }
     }
+
+    pub fn create_bubble(&mut self, position: Vec3, id: u32)
+    {
+        let mut commands = self.world.get_resource_mut::<Commands>().unwrap();
+
+        commands.spawn_bundle(BubblePointBundle{
+            // transform
+            position: Position{
+                value: position
+            },
+            external_id: ExternalId{
+                value: id
+            },
+            ..Default::default()
+        });
+    }
+
+    pub fn destroy_bubble(&mut self, id: u32)
+    {
+        let mut entity_external_id_map = self.world.get_resource_mut::<EntityExternalIdMap>().unwrap();
+        let entity = entity_external_id_map.get_entity(id).unwrap().clone();
+        let mut commands = self.world.get_resource_mut::<Commands>().unwrap();
+        commands.entity(entity).despawn();
+    }
 }
+
+pub struct PositionFloatBuffer{
+    pub value: [f32; POSITION_FLOAT_BUFFER_SIZE]
+}
+pub struct BeamFloatBuffer {
+    pub value: [f32; BEAM_FLOAT_BUFFER_SIZE]
+}
+pub struct EntityExternalIdMap {
+    // two way dictinary
+    id_to_entity: HashMap<u32, Entity>,
+    entity_to_id: HashMap<Entity, u32>,
+}
+impl EntityExternalIdMap {
+    pub fn new() -> EntityExternalIdMap {
+        EntityExternalIdMap {
+            id_to_entity: HashMap::new(),
+            entity_to_id: HashMap::new(),
+        }
+    }
+    pub fn get_entity(&self, id: u32) -> Option<&Entity> {
+        self.id_to_entity.get(&id)
+    }
+    pub fn get_id(&self, entity: &Entity) -> Option<&u32> {
+        self.entity_to_id.get(entity)
+    }
+    pub fn insert(&mut self, id: u32, entity: Entity) {
+        self.id_to_entity.insert(id, entity);
+        self.entity_to_id.insert(entity, id);
+    }
+    pub fn remove(&mut self, id: u32) {
+        if let Some(entity) = self.id_to_entity.remove(&id) {
+            self.entity_to_id.remove(&entity);
+        }
+    }
+    pub fn clear(&mut self) {
+        self.id_to_entity.clear();
+        self.entity_to_id.clear();
+    }
+}
+
+
+
+
+pub struct WorldParams{
+    pub bubble_count: usize,
+}
+
+
 
 
 // resource with a Vec<Vec3> for bubble push points
