@@ -123,11 +123,8 @@ pub struct GameExt {
 
 #[ffi_function]
 #[no_mangle]
-pub extern "C" fn create_game(bubble_count : i32) -> GameExt {
-    let game = Box::new(Game::new(
-        WorldParams{
-            bubble_count: bubble_count as usize,
-        }));
+pub extern "C" fn create_game() -> GameExt {
+    let game = Box::new(Game::new(WorldParams{}));
     let ptr = Box::into_raw(game);
     GameExt{ptr: ptr as *const u8}
 }
@@ -137,6 +134,22 @@ pub extern "C" fn create_game(bubble_count : i32) -> GameExt {
 pub extern "C" fn update_game(game: GameExt) {
     let game = unsafe { &mut *(game.ptr as *mut Game) };
     game.update();
+}
+
+#[ffi_function]
+#[no_mangle]
+pub extern "C" fn create_bubble(game: GameExt, x: f32, y: f32, z:f32) -> u32
+{
+    let game = unsafe { &mut *(game.ptr as *mut Game) };
+    let pos = Vec3{x, y, z};
+    game.create_bubble(pos)
+}
+
+#[ffi_function]
+#[no_mangle]
+pub extern "C" fn destroy_bubble(game: GameExt, bubble_id : u32){
+    let game = unsafe { &mut *(game.ptr as *mut Game) };
+    game.destroy_bubble(bubble_id);
 }
 
 // give f32 array to c#
@@ -176,7 +189,7 @@ mod tests {
     use std::fs;
     use std::io::Read;
     use interoptopus_backend_csharp::CSharpVisibility;
-    use crate::bubbles::BeamFloatBuffer;
+    use crate::bubbles::{BeamFloatBuffer, EntityExternalIdMap};
     use super::*;
 
     //execute action, measure time
@@ -191,36 +204,18 @@ mod tests {
 
     #[test]
     fn bubble_tests(){
-        let game = create_game(100);
+        let game = create_game();
+        let bubble_0_id = create_bubble(game, 0.0, 0.0, 0.0);
+        let bubble_1_id = create_bubble(game, 1.0, 0.0, 0.0);
 
         // 1000 iterations
         for _ in 0..1000 {
             update_game(game);
         }
+
+        // todo: check if bubbles are moving
     }
 
-    #[test]
-    fn test_beams(){
-        let mut game = Game::new(WorldParams{
-            bubble_count: 100,
-        });
-
-        game.update();
-
-        let beam_float_buffer = game.world.get_resource::<BeamFloatBuffer>().unwrap();
-
-        // assert that first 10 elements are not very close to 0
-        for i in 0..10 {
-            let abs = beam_float_buffer.value[i*3 + 0].abs();
-            let abs2 = beam_float_buffer.value[i*3 + 1].abs();
-            assert!(abs > 0.0001);
-            assert!(abs2 > 0.0001);
-        }
-
-        let a = 3;
-        // need to get the beam informations
-
-    }
 
     #[test]
     fn generate_bindings(){
@@ -326,5 +321,37 @@ mod tests {
     fn it_works() {
         let result = add(2, 2);
         assert_eq!(result, 4);
+    }
+
+    #[test]
+    fn create_destroy_bubbles_test() {
+        let mut game = Game::new(WorldParams {  });
+        let bubble_0_id = game.create_bubble(Vec3 { x: 0.0, y: 0.0, z: 0.0 });
+        let bubble_1_id = game.create_bubble(Vec3 { x: 1.0, y: 0.0, z: 0.0 });
+        let bubble_2_id = game.create_bubble(Vec3 { x: 2.0, y: 0.0, z: 0.0 });
+        let bubble_3_id = game.create_bubble(Vec3 { x: 3.0, y: 0.0, z: 0.0 });
+
+        game.update();
+
+        game.destroy_bubble(bubble_0_id);
+        game.destroy_bubble(bubble_1_id);
+        
+        game.update();
+
+        // get EntityExternalIdMap
+        let entity_external_id_map = game.world.get_resource::<EntityExternalIdMap>().unwrap();
+
+        // do some asserts
+        let res0 = entity_external_id_map.get_entity(bubble_0_id);
+        let res1 = entity_external_id_map.get_entity(bubble_1_id);
+        let res2 = entity_external_id_map.get_entity(bubble_2_id);
+        let res3 = entity_external_id_map.get_entity(bubble_3_id);
+        assert_eq!(res0, None);
+        assert_eq!(res1, None);
+        // not None
+        assert_ne!(res2, None);
+        assert_ne!(res3, None);
+
+        // not tested
     }
 }

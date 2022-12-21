@@ -8,6 +8,7 @@ use bevy_ecs::component::Component;
 use bevy_ecs::entity::Entity;
 use bevy_ecs::prelude::{Commands, Query, Res, ResMut, Schedule, SystemStage};
 use bevy_ecs::schedule::Stage;
+use bevy_ecs::system::CommandQueue;
 use bevy_ecs::world::World;
 use bevy_math::Vec3;
 use crate::bubbles::spatial_ds::LookUpGrids;
@@ -22,6 +23,7 @@ const BEAM_FLOAT_BUFFER_SIZE: usize = 2500*3*2;
 pub struct Game{
     pub world: World,
     pub update_schedule: Schedule,
+    pub next_id: u32,
 }
 impl Game {
     pub fn new(world_params: WorldParams) -> Game {
@@ -38,21 +40,9 @@ impl Game {
         world.insert_resource(EntityExternalIdMap::new());
         world.insert_resource(LookUpGrids::<u32>::new(3.0));
         world.insert_resource(Vec::<(u32, u32)>::new()); // buffer for iterating over neighbor pair ids
+        
 
-        let mut create_bubble_points_stage = SystemStage::single_threaded();
-        create_bubble_points_stage.add_system(create_bubble_points);
-        create_bubble_points_stage.run(&mut world);
-
-        let mut create_bubble_points_stage2 = SystemStage::single_threaded();
-        create_bubble_points_stage2.add_system(update_lookup_grids);
-        create_bubble_points_stage2.run(&mut world); // THEY WERE NOT RUNNING IN ORDER WHEN THEY WERE IN SAME SYSTEM STAGE
-
-        let mut create_beams_stage = SystemStage::single_threaded();
-        create_beams_stage.add_system(create_test_beams);
-        create_beams_stage.run(&mut world);
-
-
-
+        
         let mut update_schedule = Schedule::default();
 
         let mut pre_update_stage = SystemStage::single_threaded();
@@ -77,6 +67,7 @@ impl Game {
         Game {
             world,
             update_schedule,
+            next_id: 0,
         }
     }
 
@@ -104,9 +95,12 @@ impl Game {
         }
     }
 
-    pub fn create_bubble(&mut self, position: Vec3, id: u32)
+    pub fn create_bubble(&mut self, position: Vec3) -> u32
     {
-        let mut commands = self.world.get_resource_mut::<Commands>().unwrap();
+        let mut command_queue = CommandQueue::default();
+        let mut commands = Commands::new(&mut command_queue, &mut self.world);
+        let id = self.next_id;
+        self.next_id += 1;
 
         commands.spawn_bundle(BubblePointBundle{
             // transform
@@ -118,14 +112,21 @@ impl Game {
             },
             ..Default::default()
         });
+        command_queue.apply(&mut self.world);
+
+        id
     }
 
     pub fn destroy_bubble(&mut self, id: u32)
     {
-        let mut entity_external_id_map = self.world.get_resource_mut::<EntityExternalIdMap>().unwrap();
+        let entity_external_id_map = self.world.get_resource_mut::<EntityExternalIdMap>().unwrap();
         let entity = entity_external_id_map.get_entity(id).unwrap().clone();
-        let mut commands = self.world.get_resource_mut::<Commands>().unwrap();
+
+        let mut command_queue = CommandQueue::default();
+        let mut commands = Commands::new(&mut command_queue, &mut self.world);
+    
         commands.entity(entity).despawn();
+        command_queue.apply(&mut self.world);
     }
 }
 
@@ -172,7 +173,6 @@ impl EntityExternalIdMap {
 
 
 pub struct WorldParams{
-    pub bubble_count: usize,
 }
 
 
@@ -219,31 +219,6 @@ pub struct BubblePointBundle {
     pub external_id: ExternalId
 }
 
-
-
-fn create_bubble_points(mut commands: Commands, world_params: Res<WorldParams>) {
-    let bundle = BubblePointBundle {
-        bubble: Bubble {
-            effect_radius: 1.0,
-            target_distance: 1.0,
-        },
-        ..Default::default()
-    };
-
-    // spawn 20 in random positions
-    for _ in 0..world_params.bubble_count {
-        let position = Vec3::new(
-            rand::random::<f32>() * 10.0 - 5.0,
-            rand::random::<f32>() * 10.0 - 5.0,
-            0.0,
-        );
-        let mut bundle_clone = bundle.clone();
-        bundle_clone.position.value = position;
-
-        commands.spawn_bundle(bundle_clone);
-    }
-}
-
 fn handle_bubble_velocities(mut query: Query<(&mut Position, &mut Velocity)>) {
     for (mut position, mut velocity) in query.iter_mut() {
         position.value += velocity.value;
@@ -263,40 +238,6 @@ fn update_external_id_res(mut query: Query<(&mut ExternalId, Entity)>, mut exter
     for (mut external_id, entity) in query.iter_mut() {
         external_id_res.insert(external_id.value, entity);
     }
-}
-
-fn create_test_beams(
-    bubble_query: Query<(&Bubble, &Position)>,
-    mut commands: Commands,
-    mut lookup_grids: ResMut<LookUpGrids<u32>>,
-    mut buffer: ResMut<Vec<(u32, u32)>>,
-){
-    const DISTANCE_TO_CREATE_BEAM: f32 = 0.3;
-
-    lookup_grids.get_all_neighbours(&mut buffer);
-
-    let mut beam_counter = 0;
-    for (id_a,id_b) in buffer.iter() {
-        let entity_a = Entity::from_raw(id_a.clone());
-        let entity_b = Entity::from_raw(id_b.clone());
-
-        let (_bubble_a, position_a) = bubble_query.get(entity_a).unwrap();
-        let (_bubble_b, position_b) = bubble_query.get(entity_b).unwrap();
-
-        let distance = position_a.value.distance(position_b.value);
-        if distance < DISTANCE_TO_CREATE_BEAM {
-            let beam = Beam {
-                length: distance,
-                bubble_a: entity_a,
-                bubble_b: entity_b
-            };
-            commands.spawn().insert(beam);
-            beam_counter += 1;
-        }
-    }
-    println!("beam count: {}", beam_counter);
-
-
 }
 
 fn handle_beam_forces(
