@@ -1,4 +1,5 @@
 mod spatial_ds;
+mod neighbourship_tracking;
 
 use std::collections::HashMap;
 
@@ -233,6 +234,8 @@ fn update_lookup_grids(mut query: Query<(&Position, Entity)>, mut lookup_grids: 
         lookup_grids.add(entity.id(), position.value);
     }
 }
+
+
 fn update_external_id_res(mut query: Query<(&mut ExternalId, Entity)>, mut external_id_res: ResMut<EntityExternalIdMap>) {
     external_id_res.clear();
     for (mut external_id, entity) in query.iter_mut() {
