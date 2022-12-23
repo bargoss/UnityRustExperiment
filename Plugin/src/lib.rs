@@ -138,11 +138,11 @@ pub extern "C" fn update_game(game: GameExt) {
 
 #[ffi_function]
 #[no_mangle]
-pub extern "C" fn create_bubble(game: GameExt, x: f32, y: f32, z:f32) -> u32
+pub extern "C" fn create_bubble(game: GameExt, x: f32, y: f32, z:f32, radius:f32, target_distance:f32) -> u32
 {
     let game = unsafe { &mut *(game.ptr as *mut Game) };
     let pos = Vec3{x, y, z};
-    game.create_bubble(pos)
+    game.create_bubble(pos, radius, target_distance)
 }
 
 #[ffi_function]
@@ -205,8 +205,8 @@ mod tests {
     #[test]
     fn bubble_tests(){
         let game = create_game();
-        let bubble_0_id = create_bubble(game, 0.0, 0.0, 0.0);
-        let bubble_1_id = create_bubble(game, 1.0, 0.0, 0.0);
+        let bubble_0_id = create_bubble(game, 0.0, 0.0, 0.0, 1.0, 0.8);
+        let bubble_1_id = create_bubble(game, 1.0, 0.0, 0.0, 1.0, 0.8);
 
         // 1000 iterations
         for _ in 0..1000 {
@@ -228,6 +228,8 @@ mod tests {
             .register(function!(get_bubble_positions))
             .register(function!(apply_bubble_push))
             .register(function!(set_push_position))
+            .register(function!(create_bubble))
+            .register(function!(destroy_bubble))
             .inventory();
         let config = Config {
             // add postfix
@@ -323,13 +325,26 @@ mod tests {
         assert_eq!(result, 4);
     }
 
+    
+    #[test]
+    fn collisions_test() {
+        let mut game = Game::new(WorldParams {  });
+        let bubble_0_id = game.create_bubble(Vec3 { x: 0.0, y: 0.0, z: 0.0 }, 1.0, 0.8);
+        let bubble_1_id = game.create_bubble(Vec3 { x: 0.01, y: 0.0, z: 0.0 }, 1.0, 0.8);
+        game.update();
+        game.update();
+        
+        // assert that they repell each other
+    }
+
+
     #[test]
     fn create_destroy_bubbles_test() {
         let mut game = Game::new(WorldParams {  });
-        let bubble_0_id = game.create_bubble(Vec3 { x: 0.0, y: 0.0, z: 0.0 });
-        let bubble_1_id = game.create_bubble(Vec3 { x: 1.0, y: 0.0, z: 0.0 });
-        let bubble_2_id = game.create_bubble(Vec3 { x: 2.0, y: 0.0, z: 0.0 });
-        let bubble_3_id = game.create_bubble(Vec3 { x: 3.0, y: 0.0, z: 0.0 });
+        let bubble_0_id = game.create_bubble(Vec3 { x: 0.0, y: 0.0, z: 0.0 }, 1.0, 0.8);
+        let bubble_1_id = game.create_bubble(Vec3 { x: 1.0, y: 0.0, z: 0.0 }, 1.0, 0.8);
+        let bubble_2_id = game.create_bubble(Vec3 { x: 2.0, y: 0.0, z: 0.0 }, 1.0, 0.8);
+        let bubble_3_id = game.create_bubble(Vec3 { x: 3.0, y: 0.0, z: 0.0 }, 1.0, 0.8);
 
         game.update();
 

@@ -17,7 +17,7 @@ namespace Bubbles
     public static partial class Interop
     {
         #if UNITY_EDITOR
-public const string NativeLib = "game_3539803980";
+public const string NativeLib = "game_1310440936";
 #else
 public const string NativeLib = "mandelbrot";
 #endif
@@ -28,7 +28,7 @@ public const string NativeLib = "mandelbrot";
 
 
         [DllImport(NativeLib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "create_game")]
-        public static extern GameExt create_game(int bubble_count);
+        public static extern GameExt create_game();
 
         [DllImport(NativeLib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "update_game")]
         public static extern void update_game(GameExt game);
@@ -41,6 +41,12 @@ public const string NativeLib = "mandelbrot";
 
         [DllImport(NativeLib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "set_push_position")]
         public static extern void set_push_position(GameExt game, float x, float y, float z);
+
+        [DllImport(NativeLib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "create_bubble")]
+        public static extern uint create_bubble(GameExt game, float x, float y, float z, float radius, float target_distance);
+
+        [DllImport(NativeLib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "destroy_bubble")]
+        public static extern void destroy_bubble(GameExt game, uint bubble_id);
 
     }
 

@@ -4,10 +4,11 @@ using System.Runtime.InteropServices;
 using Bubbles;
 using DefaultNamespace;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class RustDLL : MonoBehaviour
 {
-    public const int BubbleCount = 100; //2000;
+    public const int BubbleCount = 2000; //2000;
     public float NeighborForce;
     public float Viscosity;
     private GameExt game;
@@ -23,7 +24,11 @@ public class RustDLL : MonoBehaviour
             neededSpace -= taking;
         }
 
-        game = Interop.create_game(BubbleCount);
+        game = Interop.create_game();
+        for (var i = 0; i < 100; i++)
+        {
+            Interop.create_bubble(game, Random.Range(-5,5), Random.Range(-5, 5), 0,1,1);
+        }
     }
 
     private float msSum = 0;
@@ -56,6 +61,11 @@ public class RustDLL : MonoBehaviour
         Debug.DrawRay(mousePos, Vector3.up, Color.blue);
         Debug.DrawRay(mousePos, Vector3.right, Color.blue);
         Debug.DrawRay(mousePos, Vector3.forward, Color.blue);
+
+        if (Input.GetKey(KeyCode.Space))
+        {
+            Interop.create_bubble(game, mousePos.x,mousePos.y, mousePos.z, 1,1);
+        }
         
         //DLLInterface.ApplyBubblePush(game,mousePos);
         HandleBubblePushing();

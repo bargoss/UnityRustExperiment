@@ -55,7 +55,7 @@ impl Game {
         update_bubble_velocities_stage.add_system(handle_bubble_interactions);
         update_bubble_velocities_stage.add_system(handle_bubble_pull_to_center);
         update_bubble_velocities_stage.add_system(handle_bubble_push);
-        update_bubble_velocities_stage.add_system(handle_beam_forces);
+        //update_bubble_velocities_stage.add_system(handle_beam_forces);
         update_schedule.add_stage("handle_bubble_velocities", update_bubble_velocities_stage);
 
         let mut update_bubble_positions_stage = SystemStage::single_threaded();
@@ -96,7 +96,7 @@ impl Game {
         }
     }
 
-    pub fn create_bubble(&mut self, position: Vec3) -> u32
+    pub fn create_bubble(&mut self, position: Vec3, effect_radius:f32, target_distance:f32) -> u32
     {
         let mut command_queue = CommandQueue::default();
         let mut commands = Commands::new(&mut command_queue, &mut self.world);
@@ -110,6 +110,10 @@ impl Game {
             },
             external_id: ExternalId{
                 value: id
+            },
+            bubble: Bubble{
+                effect_radius,
+                target_distance
             },
             ..Default::default()
         });
@@ -330,9 +334,12 @@ fn handle_bubble_pull_to_center(mut query: Query<(&Position, &mut Velocity)>){
     for (position, mut velocity) in query.iter_mut() {
         let center = Vec3::new(0.0, 0.0, 0.0);
         let delta_to_center = center - position.value;
-        let direction = delta_to_center.normalize();
-        let force = 0.05;
-        velocity.value += direction * force * DELTA_TIME;
+        let gravity_start_range = 30 as f32;
+        if delta_to_center.length_squared() > gravity_start_range * gravity_start_range {
+            let direction = delta_to_center.normalize();
+            let force = 0.05;
+            velocity.value += direction * force * DELTA_TIME;
+        }
     }
 }
 
