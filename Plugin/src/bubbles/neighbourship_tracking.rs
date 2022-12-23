@@ -12,33 +12,29 @@ impl BubbleNeigbourships {
             neighbourships: HashMap::new(),
         }
     }
-    fn add(&mut self, a: u32, b: u32) {
+    fn record_collision(&mut self, a: u32, b: u32) {
+        // swap a b if a > b
+        let (a,b) = if a > b { (b,a) } else { (a,b) };
         let key = (a,b);
-        let key2 = (b,a);
         if let Some(neighbourship) = self.neighbourships.get_mut(&key) {
-            neighbourship.in_contact_this_frame = true;
+            neighbourship.colliding = true;
             neighbourship.contact_duration += 1;
         }  
         else{
             self.neighbourships.insert(key, BubbleNeigbourship {
-                in_contact_this_frame: true,
-                contact_duration: 1
-            });
-        }
-        
-        if let Some(neighbourship) = self.neighbourships.get_mut(&key2) {
-            neighbourship.in_contact_this_frame = true;
-            neighbourship.contact_duration += 1;
-        } else {
-            self.neighbourships.insert(key2, BubbleNeigbourship {
-                in_contact_this_frame: true,
+                colliding: true,
                 contact_duration: 1
             });
         }
     }
-    fn clear_in_contact_this_frame(&mut self) {
+    fn reset_colliding(&mut self) {
         for (_, neighbourship) in self.neighbourships.iter_mut() {
-            neighbourship.in_contact_this_frame = false;
+            neighbourship.colliding = false;
+        }
+    }
+    fn on_update(&mut self) {
+        for (_, neighbourship) in self.neighbourships.iter_mut() {
+            neighbourship.colliding = false;
         }
     }
     
@@ -50,7 +46,7 @@ impl BubbleNeigbourships {
 
 
 struct BubbleNeigbourship {
-    pub in_contact_this_frame: bool,
+    pub colliding: bool,
     pub contact_duration: u32
 }
 
