@@ -14,6 +14,7 @@ use bevy_ecs::world::World;
 use bevy_math::Vec3;
 use crate::bubbles::spatial_ds::LookUpGrids;
 
+
 //const BUBBLE_COUNT: usize = 500;
 const DELTA_TIME: f32 = 0.5;
 const POSITION_FLOAT_BUFFER_SIZE: usize = 5000*3;

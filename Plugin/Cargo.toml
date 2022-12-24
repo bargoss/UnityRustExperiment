@@ -38,5 +38,6 @@ interoptopus_backend_csharp = "0.14.15"
 bevy_ecs = "0.8.1"
 bevy_math = "0.8.1"
 rand = "0.8.5"
+fixed = "1.20.0"
 
 

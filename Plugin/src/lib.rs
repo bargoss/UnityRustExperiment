@@ -7,6 +7,10 @@ use interoptopus_backend_csharp::{Config, Generator, Unsafe};
 use interoptopus_backend_csharp::overloads::Unity;
 use interoptopus::ffi_function;
 
+// fixed point math utils
+use fixed::types::I16F16;
+use fixed::traits::ToFixed;
+
 //for seeing generic data structures in the debugger
 use std::fmt::Debug;
 
@@ -188,6 +192,7 @@ pub extern "C" fn set_push_position(game: GameExt, x: f32, y: f32, z: f32) {
 mod tests {
     use std::fs;
     use std::io::Read;
+    use fixed::{FixedI32, types::extra::U8};
     use interoptopus_backend_csharp::CSharpVisibility;
     use crate::bubbles::{BeamFloatBuffer, EntityExternalIdMap};
     use super::*;
@@ -325,7 +330,17 @@ mod tests {
         assert_eq!(result, 4);
     }
 
-    
+
+    #[test]
+    fn fixed_point_math_test() {
+        let a : FixedI32<U8> = FixedI32::from_num(1.0);
+        let b : FixedI32<U8> = FixedI32::from_num(2.0);
+        let c = a + b;
+        let c = c.to_num::<f32>();
+        assert_eq!(c, 3.0);
+    }
+        
+
     #[test]
     fn collisions_test() {
         let mut game = Game::new(WorldParams {  });
