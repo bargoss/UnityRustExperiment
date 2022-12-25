@@ -1,14 +1,18 @@
 use bevy_math::Vec3;
 use crate::bubbles::{BubblePushPoints, Game, PositionFloatBuffer, WorldParams};
 mod bubbles;
+//import the stuff in path ./survival_game/survival_game.rs
+
+mod survival_game;
+
+
+
 use interoptopus::{ffi_type, function, Interop, Inventory, InventoryBuilder};
 use interoptopus::util::NamespaceMappings;
 use interoptopus_backend_csharp::{Config, Generator, Unsafe};
 use interoptopus_backend_csharp::overloads::Unity;
 use interoptopus::ffi_function;
 
-//for seeing generic data structures in the debugger
-use std::fmt::Debug;
 
 
 //native array struct for interop with size and array
@@ -189,7 +193,7 @@ mod tests {
     use std::fs;
     use std::io::Read;
     use interoptopus_backend_csharp::CSharpVisibility;
-    use crate::bubbles::{BeamFloatBuffer, EntityExternalIdMap};
+    use crate::bubbles::{BeamFloatBuffer, EntityExternalIdMap, Position};
     use super::*;
 
     //execute action, measure time
@@ -335,6 +339,12 @@ mod tests {
         game.update();
         
         // assert that they repell each other
+    }
+
+    
+    #[derive(Clone, Debug)]
+    pub struct MyGameState{
+        pub bubbles: Vec<Position>,
     }
 
 

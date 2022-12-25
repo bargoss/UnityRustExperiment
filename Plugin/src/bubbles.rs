@@ -1,4 +1,4 @@
-mod spatial_ds;
+pub(crate) mod spatial_ds;
 mod neighbourship_tracking;
 
 use std::collections::HashMap;
