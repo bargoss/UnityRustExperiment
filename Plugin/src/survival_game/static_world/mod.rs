@@ -1,2 +1,2 @@
 // expose every sibling module
-pub mod terrain;
+pub mod tilemap;

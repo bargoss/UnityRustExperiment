@@ -12,20 +12,22 @@ use bevy_math::Vec3;
 use crate::bubbles::spatial_ds::LookUpGrids;
 
 mod static_world;
+mod structs;
+mod components;
 //use crate::survival_game::static_world::terrain::Terrain;
 
 
-pub struct Game{
+pub struct Game {
     world: World,
     update_schedule: Schedule,
     next_id: u32,
 }
 impl Game {
     pub fn new() -> Game {
-        let world = World::new();
+        let mut world = World::new();
 
-        let terrain = static_world::terrain::Terrain::new(10, 10);
-        //let terrain = Terrain::new(10, 10);
+        let terrain = static_world::tilemap::TileMap::new(256, 256);
+        world.insert_resource(terrain);
 
         let mut update_schedule = Schedule::default();
 
