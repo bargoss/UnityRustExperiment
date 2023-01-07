@@ -12,6 +12,7 @@ pub struct PawnId(u32);
 pub struct Pawn{
     pub id: u32,
     pub position: Vec3,
+    pub movement: Vec3,
 }
 
 #[derive(Component, Clone, Debug)]

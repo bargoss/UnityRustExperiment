@@ -14,6 +14,7 @@ use crate::bubbles::spatial_ds::LookUpGrids;
 mod static_world;
 mod structs;
 mod components;
+pub mod systems;
 //use crate::survival_game::static_world::terrain::Terrain;
 
 
