@@ -36,7 +36,7 @@ pub struct TileMap {
 
 impl TileMap {
     pub fn new(width: u32, height: u32) -> TileMap {
-        let mut tiles = Vec::new();
+    let mut tiles = Vec::new();
         for _ in 0..width * height {
             tiles.push(Tile{
                 height: 0,

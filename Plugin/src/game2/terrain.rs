@@ -1,80 +1,411 @@
 use std::default;
+use std::collections::HashMap;
+use bevy_math::Vec2;
 
-use quadtree_rs::{Quadtree, area::AreaBuilder, point::Point};
 
-pub struct TileMap{
-    pub quadtree: Quadtree<i32,TileEntity>,
-    pub terrain_tiles: Vec<TerrainTile>,
-    side_len: usize,
+
+// use ico_math
+//use ico_math::Vector2Int;
+
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct Vector2Int{
+    pub x : i32,
+    pub y : i32,
 }
-impl TileMap{
-    pub fn new(depth: usize) -> TileMap {
-        let mut qt = Quadtree::<u64, TileEntity>::new(depth);
-        let side_len = 2usize.pow(depth as u32);
-    
-        let mut terrain_tiles = Vec::with_capacity(side_len * side_len);
 
-        TileMap{
-            quadtree: qt,
-            terrain_tiles,
-            side_len,
+impl std::ops::Sub for Vector2Int{
+    type Output = Vector2Int;
+    fn sub(self, other : Vector2Int) -> Vector2Int{
+        Vector2Int{x : self.x - other.x, y : self.y - other.y}
+    }
+}
+impl std::ops::Add for Vector2Int{
+    type Output = Vector2Int;
+    fn add(self, other : Vector2Int) -> Vector2Int{
+        Vector2Int{x : self.x + other.x, y : self.y + other.y}
+    }
+}
+// support multiplication by a scalar
+impl std::ops::Mul<i32> for Vector2Int{
+    type Output = Vector2Int;
+    fn mul(self, other : i32) -> Vector2Int{
+        Vector2Int{x : self.x * other, y : self.y * other}
+    }
+}
+
+
+pub struct TileWorld{
+    size_x : usize,
+    size_y : usize,
+    tile_occupations : Box<[TileOccupation]>,
+    // dictionary of tile entities that maps usize to a polymorphic TileEntity
+    tile_entities : HashMap<usize, Box<TileEntity>>,
+}
+pub enum TileWorldRaycastResult{
+    HitOccupiedTile{pos : Vector2Int, tile : TileOccupation},
+    HitNothing,
+}
+
+pub struct TileWorldRaycastParams{
+    pub start : Vec2,
+    pub end : Vec2,
+}
+
+pub fn raycast_to_grid_edge(position: Vec2, direction: Vec2) -> Vec2 {
+    let position_x = position.x.floor();
+    let position_y = position.y.floor();
+    let t_x = if direction.x > 0.0 {
+        (position_x + 1.0 - position.x) / direction.x
+    } else if direction.x < 0.0 {
+        (position_x - position.x) / direction.x
+    } else {
+        10000.0
+    };
+    let t_y = if direction.y > 0.0 {
+        (position_y + 1.0 - position.y) / direction.y
+    } else if direction.y < 0.0 {
+        (position_y - position.y) / direction.y
+    } else {
+        10000.0
+    };
+    if t_x < t_y {
+        //Vec2::new(position_x + (direction.x > 0.0) as i32 as f64, position.y + t_x * direction.y)
+        Vec2{
+            x: position_x + (direction.x > 0.0) as i32 as f32,
+            y: position.y + t_x * direction.y
+        }
+    } else {
+        //Vec2::new(position.x + t_y * direction.x, position_y + (direction.y > 0.0) as i32 as f64)
+        Vec2{
+            x: position.x + t_y * direction.x,
+            y: position_y + (direction.y > 0.0) as i32 as f32
+        }
+    }
+}
+
+// finishes an epsilon outside the unit box border
+pub fn step_by_grid(pos : Vec2, move_dir_normalized : Vec2) -> Vec2{
+    let position_within_grid = Vec2{
+        x: pos.x - pos.x.floor(),
+        y: pos.y - pos.y.floor(),
+    };
+    let grid_pivot = Vec2{
+        x: pos.x.floor(),
+        y: pos.y.floor(),
+    };
+    let final_pos_within_grid = raycast_to_grid_edge(position_within_grid, move_dir_normalized);
+    let final_pos = grid_pivot + final_pos_within_grid + move_dir_normalized * 0.0001;
+    return final_pos;
+}
+
+
+// create some methods
+
+impl TileWorld{
+    pub fn new(size_x : usize, size_y : usize) -> TileWorld{
+        TileWorld{
+            size_x,
+            size_y,
+            // a boxed array of TileOccupation::Empty
+            tile_occupations : vec![TileOccupation::Empty; size_x * size_y].into_boxed_slice(),
+            tile_entities : HashMap::new(),
         }
     }
 
-    pub fn get_terrain(&self, x: i32, y: i32) -> TerrainTile {
-        let index = (y * self.side_len as i32 + x) as usize;
-        self.terrain_tiles[index]
+    pub fn get_index(&self, pos : Vector2Int) -> usize{
+        (pos.y * self.size_x as i32 + pos.x) as usize
+    }
+    
+    pub fn get_tile_pos(&self, pos: Vec2) -> Vector2Int{
+        Vector2Int{
+            x: pos.x.floor() as i32,
+            y: pos.y.floor() as i32,
+        }
+    }
+    
+    pub fn get_tile(&self, pos : Vector2Int) -> TileOccupation{
+        if pos.x < 0 || pos.y < 0 || pos.x >= self.size_x as i32 || pos.y >= self.size_y as i32{
+            return TileOccupation::OutOfBounds;
+        }
+        self.tile_occupations[self.get_index(pos)]
     }
 
-    pub fn set_terrain(&mut self, x: i32, y: i32, terrain: TerrainTile) {
-        let index = (y * self.side_len as i32 + x) as usize;
-        self.terrain_tiles[index] = terrain;
+    pub fn set_tiles(&mut self, pos : Vector2Int, size : Vector2Int, tile : TileOccupation){
+        for dy in 0..size.y{
+            for dx in 0..size.x{
+                self.tile_occupations[self.get_index(Vector2Int{x: pos.x + dx, y: pos.y + dy})] = tile;
+            }
+        }
     }
 
-    pub fn get_tile_entity(&self, x: i32, y: i32) -> Option<TileEntity> {
-        let region = AreaBuilder::default()
-            .anchor(Point {x, y})
-            .dimensions((1, 1))
-            .build().unwrap();
-        let mut query = self.quadtree.query(region);
-        let a = query.next();
-        match a {
-            Some(tile) => Some(tile.clone()),
+    pub fn get_tile_entity_by_id(&self, id : usize) -> Option<&TileEntity>{
+        let a = self.tile_entities.get(&id);
+        match a{
+            Some(a) => Some(a),
             None => None,
         }
+    }
+
+    pub fn get_tile_entity_by_id_mut(&mut self, id : usize) -> Option<&mut TileEntity>{
+        let a = self.tile_entities.get_mut(&id);
+        match a{
+            Some(a) => Some(a),
+            None => None,
+        }
+    }
+
+    pub fn get_first_tile_entity_id_in_region(&self, pos : Vector2Int, size : Vector2Int) -> Option<usize>{
+        for y in 0..size.y{
+            for x in 0..size.x{
+                let tile = self.get_tile(Vector2Int{x, y});
+                match tile{
+                    TileOccupation::EntityBlocked{tile_entity_occupation_id} => return Some(tile_entity_occupation_id),
+                    _ => (),
+                }
+            }
+        }
+        None
+    }
+
+    pub fn get_first_tile_entity_in_region(&self, pos : Vector2Int, size : Vector2Int) -> Option<&TileEntity>{
+        let id = self.get_first_tile_entity_id_in_region(pos, size);
+        match id{
+            Some(id) => self.get_tile_entity_by_id(id),
+            None => None,
+        }
+    }
+
+    pub fn try_add_tile_entity(&mut self, tile_entity : TileEntity) -> bool{
+        let pos = tile_entity.pos;
+        let size = tile_entity.size;
+        let id = tile_entity.id;
+        let tile = self.get_tile(pos);
+        match tile{
+            TileOccupation::Empty => {
+                self.set_tiles(pos, size, TileOccupation::EntityBlocked{tile_entity_occupation_id : id});
+                self.tile_entities.insert(id, Box::new(tile_entity));
+                true
+            },
+            _ => false,
+        }
+    }
+
+    pub fn remove_tile_entity(&mut self, entity_id : usize){
+        let tile_entity = self.tile_entities.get(&entity_id);
+        match tile_entity{
+            Some(tile_entity) => {
+                let pos = tile_entity.pos;
+                let size = tile_entity.size;
+                self.set_tiles(pos, size, TileOccupation::Empty);
+                self.tile_entities.remove(&entity_id);
+            },
+            None => (),
+        }
+    }
+
+    
+    // check all the grids that the ray passes through, return the first one that is occupied, return TileWorldRaycastResult::HitNothing if no grid is occupied
+    // doesn't check the start grid
+    pub fn raycast(&self, params : TileWorldRaycastParams) -> TileWorldRaycastResult{
+        let start = params.start;
+        let end = params.end;
+        let normalized = (end - start).normalize();
+        
+        
+        let end_tile = Vector2Int{
+            x: end.x.floor() as i32,
+            y: end.y.floor() as i32,
+        };
+
+        let mut current_pos = start;
+        while self.get_tile_pos(current_pos) != end_tile{
+            // move to next tile
+            current_pos = step_by_grid(current_pos, normalized);
+            // check tile
+            let tile_pos = self.get_tile_pos(current_pos);
+            let tile = self.get_tile(tile_pos);
+            if tile != TileOccupation::Empty{
+                return TileWorldRaycastResult::HitOccupiedTile {
+                    pos : self.get_tile_pos(current_pos),
+                    tile,
+                };
+            }
+        }
+        
+        return TileWorldRaycastResult::HitNothing;
+    }
     
 
-    }
 }
 
 
-#[derive(Clone, Copy)]
-pub enum TerrainType{
-    Dirt,
-    Stone,
-    Ore,
-    Grass,
+
+/*
+get_tile(Vec2Int pos) -> TileOccupation,
+try_add_tile_entity(TileEntity entity) -> bool,
+remove_tile_entity(TileEntity entity),
+*/
+
+
+/*
+Empty: nothing is on the tile
+TerrainBlocked: tile is blocked for some reason
+EntityBlocked: tile is blocked by an entity it should also contain a reference to the polymorphic entity
+*/
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub enum TileOccupation{
+    Empty,    
+    EntityBlocked {tile_entity_occupation_id : usize},
+    TerrainBlocked,
+    OutOfBounds,
 }
+
+/*
+TileEntity: a polymorphic trait that can be implemented by any entity that can be placed on a tile
+*/
+
 pub struct TileEntity{
-
+    pub pos : Vector2Int,
+    pub size : Vector2Int,
+    pub id : usize,
+    pub tile_entity : Box<dyn TileEntityBehaviour>,
 }
 
-#[derive(Clone, Copy)]
-pub struct TerrainTile {
-    terrain_type: TerrainType,
-}
+pub trait TileEntityBehaviour {}
+
+// wall entity, it 1x1 size and it has health
 
 
-// tests
+
+
+
+
 #[cfg(test)]
 mod tests {
     use super::*;
 
+    #[derive(Clone, Copy, Debug)]
+    pub struct Wall{
+        pos : Vector2Int,
+    }
+    
+    impl TileEntityBehaviour for Wall{}
+
+    #[derive(Clone, Copy, Debug)]
+    pub struct Barracks{}
+    
+    impl TileEntityBehaviour for Barracks{}
+    
+
     #[test]
-    fn test_tilemap() {
-        let mut tilemap = TileMap::new(100, 100);
-        let tile = TileEntity{};
-        tilemap.set_tile(0, 0, tile);
-        assert_eq!(tilemap.get_tile(0, 0).height, 0);
+    fn test_tileworld() {
+        let mut tileworld = TileWorld::new(10, 10);
+
+        // test get_tile
+        assert_eq!(tileworld.get_tile(Vector2Int{x : 0, y : 0}), TileOccupation::Empty);
+
+        // test set_tiles
+        tileworld.set_tiles(Vector2Int{x : 0, y : 0}, Vector2Int{x : 2, y : 2}, TileOccupation::TerrainBlocked);
+        assert_eq!(tileworld.get_tile(Vector2Int{x : 0, y : 0}), TileOccupation::TerrainBlocked);
+        assert_eq!(tileworld.get_tile(Vector2Int{x : 1, y : 0}), TileOccupation::TerrainBlocked);
+        assert_eq!(tileworld.get_tile(Vector2Int{x : 0, y : 1}), TileOccupation::TerrainBlocked);
+        assert_eq!(tileworld.get_tile(Vector2Int{x : 1, y : 1}), TileOccupation::TerrainBlocked);
+        assert_eq!(tileworld.get_tile(Vector2Int{x : 2, y : 0}), TileOccupation::Empty);
+        assert_eq!(tileworld.get_tile(Vector2Int{x : 0, y : 2}), TileOccupation::Empty);
+        assert_eq!(tileworld.get_tile(Vector2Int{x : 2, y : 2}), TileOccupation::Empty);
+
+        // test get_tile_entity_by_id
+        let wall = Wall{pos : Vector2Int{x : 4, y : 4}};
+        let mut tile_entity = TileEntity{
+            pos : Vector2Int{x : 4, y : 4},
+            size : Vector2Int{x : 1, y : 1},
+            id : 10,
+            tile_entity : Box::new(wall),
+        };
+        tileworld.try_add_tile_entity(tile_entity);
+        let tile_entity = tileworld.get_tile_entity_by_id(10);
+        match tile_entity{
+            Some(tile_entity) => {
+                assert_eq!(tile_entity.pos, Vector2Int{x : 4, y : 4});
+                assert_eq!(tile_entity.size, Vector2Int{x : 1, y : 1});
+                assert_eq!(tile_entity.id, 10);
+            },
+            None => assert!(false),
+        }
+
+        // test get_first_tile_entity_id_in_region
+        let id = tileworld.get_first_tile_entity_id_in_region(Vector2Int{x : 4, y : 4}, Vector2Int{x : 1, y : 1});
+        match id{
+            Some(id) => assert_eq!(id, 10),
+            None => assert!(false),
+        }
+
+    }
+    
+    #[test]
+    fn test_tile_world_raycast(){
+        let mut tileworld = TileWorld::new(10, 10);
+
+        // test set_tiles
+        tileworld.set_tiles(Vector2Int{x : 4, y : 4}, Vector2Int{x : 2, y : 2}, TileOccupation::TerrainBlocked);
+
+        // test raycast
+        let raycast_params = TileWorldRaycastParams{
+            start : Vec2{x : 0.5, y : 0.5},
+            end : Vec2{x : 9.0, y : 9.0},
+        };
+        let raycast_result = tileworld.raycast(raycast_params);
+        match raycast_result{
+            TileWorldRaycastResult::HitOccupiedTile{pos, tile} => {
+                assert_eq!(pos, Vector2Int{x : 4, y : 4});
+                assert_eq!(tile, TileOccupation::TerrainBlocked);
+            },
+            _ => assert!(false),
+        }
+    }
+
+    #[test]
+    fn test_raycast() {
+        let position = Vec2{x: 0.5, y: 0.5};
+        let direction = Vec2{x: -1.0, y: -1.1}.normalize();
+
+        let result = raycast_to_grid_edge(position, direction);
+
+        let a = 3;
+    }
+
+    #[test]
+    fn test_step_by_grid(){
+        let direction = Vec2{x: -1.0, y: -1.0}.normalize();
+
+        let step_0 = Vec2{x: 0.25, y: 0.0001};
+        let step_0_grid = Vec2{x: step_0.x.floor(), y: step_0.y.floor()};
+        println!("step_0_grid: {:?}", step_0_grid);
+        
+        let step_1 = step_by_grid(step_0, direction);
+        let step_1_grid = Vec2{x: step_1.x.floor(), y: step_1.y.floor()};
+        println!("step_1_grid: {:?}", step_1_grid);
+        
+        let step_2 = step_by_grid(step_1, direction);
+        let step_2_grid = Vec2{x: step_2.x.floor(), y: step_2.y.floor()};
+        println!("step_2_grid: {:?}", step_2_grid);
+        
+        let step_3 = step_by_grid(step_2, direction);
+        let step_3_grid = Vec2{x: step_3.x.floor(), y: step_3.y.floor()};
+        println!("step_3_grid: {:?}", step_3_grid);
+
+        let step_4 = step_by_grid(step_3, direction);
+        let step_4_grid = Vec2{x: step_4.x.floor(), y: step_4.y.floor()};
+        println!("step_4_grid: {:?}", step_4_grid);
+
+        let step_5 = step_by_grid(step_4, direction);
+        let step_5_grid = Vec2{x: step_5.x.floor(), y: step_5.y.floor()};
+        println!("step_5_grid: {:?}", step_5_grid);
+
+        let step_6 = step_by_grid(step_5, direction);
+        let step_6_grid = Vec2{x: step_6.x.floor(), y: step_6.y.floor()};
+        println!("step_6_grid: {:?}", step_6_grid);
+
+        let a = 3;
     }
 }

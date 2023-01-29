@@ -1,0 +1,28 @@
+What I need:
+Tilemap that stores references to tile entities
+
+
+
+2D Array TileMap with tile entities
+
+struct TileWorld{
+    sizeX : usize,
+    sizeY : usize,
+    tile_occupations : [TileOccupation; sizeX * sizeY],
+    get_tile(Vec2Int pos) -> TileOccupation,
+    try_add_tile_entity(TileEntity entity) -> bool,
+    remove_tile_entity(TileEntity entity),
+}
+
+
+enum TileOccupation{
+    Empty,
+    Occupied(Box<TileEntity>),
+    Blocked,
+}
+
+TileEntity{
+    Pos : Vec2Int,
+    Size : Vec2Int,
+}
+
