@@ -1,38 +1,12 @@
 use std::default;
 use std::collections::HashMap;
 use bevy_math::Vec2;
+use super::data_types::Vector2Int;
 
 
 
 // use ico_math
 //use ico_math::Vector2Int;
-
-#[derive(Clone, Copy, Debug, PartialEq)]
-pub struct Vector2Int{
-    pub x : i32,
-    pub y : i32,
-}
-
-impl std::ops::Sub for Vector2Int{
-    type Output = Vector2Int;
-    fn sub(self, other : Vector2Int) -> Vector2Int{
-        Vector2Int{x : self.x - other.x, y : self.y - other.y}
-    }
-}
-impl std::ops::Add for Vector2Int{
-    type Output = Vector2Int;
-    fn add(self, other : Vector2Int) -> Vector2Int{
-        Vector2Int{x : self.x + other.x, y : self.y + other.y}
-    }
-}
-// support multiplication by a scalar
-impl std::ops::Mul<i32> for Vector2Int{
-    type Output = Vector2Int;
-    fn mul(self, other : i32) -> Vector2Int{
-        Vector2Int{x : self.x * other, y : self.y * other}
-    }
-}
-
 
 pub struct TileWorld{
     size_x : usize,
