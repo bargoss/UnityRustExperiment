@@ -12,8 +12,6 @@ pub struct TileWorld{
     size_x : usize,
     size_y : usize,
     tile_occupations : Box<[TileOccupation]>,
-    // dictionary of tile entities that maps usize to a polymorphic TileEntity
-    tile_entities : HashMap<usize, Box<TileEntity>>,
 }
 pub enum TileWorldRaycastResult{
     HitOccupiedTile{pos : Vector2Int, tile : TileOccupation},
@@ -82,7 +80,7 @@ impl TileWorld{
             size_y,
             // a boxed array of TileOccupation::Empty
             tile_occupations : vec![TileOccupation::Empty; size_x * size_y].into_boxed_slice(),
-            tile_entities : HashMap::new(),
+
         }
     }
 
@@ -112,69 +110,19 @@ impl TileWorld{
         }
     }
 
-    pub fn get_tile_entity_by_id(&self, id : usize) -> Option<&TileEntity>{
-        let a = self.tile_entities.get(&id);
-        match a{
-            Some(a) => Some(a),
-            None => None,
-        }
-    }
-
-    pub fn get_tile_entity_by_id_mut(&mut self, id : usize) -> Option<&mut TileEntity>{
-        let a = self.tile_entities.get_mut(&id);
-        match a{
-            Some(a) => Some(a),
-            None => None,
-        }
-    }
-
-    pub fn get_first_tile_entity_id_in_region(&self, pos : Vector2Int, size : Vector2Int) -> Option<usize>{
+    
+    pub fn get_first_occupied_tile_in_region(&self, pos : Vector2Int, size : Vector2Int) -> Option<TileOccupation>{
         for y in 0..size.y{
             for x in 0..size.x{
                 let tile = self.get_tile(Vector2Int{x, y});
+                // if its not empty or our of bounds, return it
                 match tile{
-                    TileOccupation::EntityBlocked{tile_entity_occupation_id} => return Some(tile_entity_occupation_id),
-                    _ => (),
+                    TileOccupation::Empty | TileOccupation::OutOfBounds=> {},
+                    _ => return Some(tile),
                 }
             }
         }
         None
-    }
-
-    pub fn get_first_tile_entity_in_region(&self, pos : Vector2Int, size : Vector2Int) -> Option<&TileEntity>{
-        let id = self.get_first_tile_entity_id_in_region(pos, size);
-        match id{
-            Some(id) => self.get_tile_entity_by_id(id),
-            None => None,
-        }
-    }
-
-    pub fn try_add_tile_entity(&mut self, tile_entity : TileEntity) -> bool{
-        let pos = tile_entity.pos;
-        let size = tile_entity.size;
-        let id = tile_entity.id;
-        let tile = self.get_tile(pos);
-        match tile{
-            TileOccupation::Empty => {
-                self.set_tiles(pos, size, TileOccupation::EntityBlocked{tile_entity_occupation_id : id});
-                self.tile_entities.insert(id, Box::new(tile_entity));
-                true
-            },
-            _ => false,
-        }
-    }
-
-    pub fn remove_tile_entity(&mut self, entity_id : usize){
-        let tile_entity = self.tile_entities.get(&entity_id);
-        match tile_entity{
-            Some(tile_entity) => {
-                let pos = tile_entity.pos;
-                let size = tile_entity.size;
-                self.set_tiles(pos, size, TileOccupation::Empty);
-                self.tile_entities.remove(&entity_id);
-            },
-            None => (),
-        }
     }
 
     
@@ -229,7 +177,7 @@ EntityBlocked: tile is blocked by an entity it should also contain a reference t
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum TileOccupation{
     Empty,    
-    EntityBlocked {tile_entity_occupation_id : usize},
+    EntityBlocked {entity_id : usize},
     TerrainBlocked,
     OutOfBounds,
 }
@@ -296,24 +244,14 @@ mod tests {
             id : 10,
             tile_entity : Box::new(wall),
         };
-        tileworld.try_add_tile_entity(tile_entity);
-        let tile_entity = tileworld.get_tile_entity_by_id(10);
-        match tile_entity{
-            Some(tile_entity) => {
-                assert_eq!(tile_entity.pos, Vector2Int{x : 4, y : 4});
-                assert_eq!(tile_entity.size, Vector2Int{x : 1, y : 1});
-                assert_eq!(tile_entity.id, 10);
-            },
-            None => assert!(false),
-        }
-
+        tileworld.set_tiles(Vector2Int{x : 4, y : 4}, Vector2Int{x : 1, y : 1}, TileOccupation::EntityBlocked { entity_id: (10) });
+        
         // test get_first_tile_entity_id_in_region
-        let id = tileworld.get_first_tile_entity_id_in_region(Vector2Int{x : 4, y : 4}, Vector2Int{x : 1, y : 1});
-        match id{
-            Some(id) => assert_eq!(id, 10),
+        let occupation = tileworld.get_first_occupied_tile_in_region(Vector2Int{x : 4, y : 4}, Vector2Int{x : 1, y : 1});
+        match occupation{
+            Some(tile_occupation) => assert_eq!(tile_occupation, TileOccupation::EntityBlocked { entity_id: (10) }),
             None => assert!(false),
         }
-
     }
     
     #[test]

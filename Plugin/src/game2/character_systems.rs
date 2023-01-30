@@ -22,19 +22,20 @@ pub struct Collider {
     pub value: Vec3
 }
 
-pub fn handle_character_movement(mut query: Query<(&Position, &mut Velocity)>, mut tile_world: ResMut<TileWorld>){
-    for (position, mut velocity) in query.iter_mut() {
-        for push_point in push_points.points.iter() {
-            let delta_to_push_point = position.value - *push_point;
-            let sqr_distance = delta_to_push_point.length_squared();
-            let effect_radius = 15.0;
-            if sqr_distance < effect_radius * effect_radius {
-                let direction = delta_to_push_point.normalize();
-                velocity.value += direction * 0.2 * DELTA_TIME;
-            }
-        }
-    }
-
-    // clear the push points
-    push_points.points.clear();
-}
+//pub fn handle_character_movement(mut query: Query<(&Position, &mut Velocity)>, mut tile_world: ResMut<TileWorld>){
+//    for (position, mut velocity) in query.iter_mut() {
+//        for push_point in push_points.points.iter() {
+//            let delta_to_push_point = position.value - *push_point;
+//            let sqr_distance = delta_to_push_point.length_squared();
+//            let effect_radius = 15.0;
+//            if sqr_distance < effect_radius * effect_radius {
+//                let direction = delta_to_push_point.normalize();
+//                velocity.value += direction * 0.2 * DELTA_TIME;
+//            }
+//        }
+//    }
+//
+//    // clear the push points
+//    push_points.points.clear();
+//}
+//
