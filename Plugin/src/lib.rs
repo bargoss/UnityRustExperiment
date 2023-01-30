@@ -322,6 +322,9 @@ mod tests {
     // ignored test
     #[test]
     fn interop_tests() {
+        // print something
+        println!("inter\nop_\nte\nst\nsas\ndasdjk\nasjdk\nlasjdlaj\nskldjka\nlsjdkljas\nkldjaks\nljdajsdj\nasjj\njjjjjint\nerop_test");
+        //assert_eq!(1,2);
     }
 
     #[test]

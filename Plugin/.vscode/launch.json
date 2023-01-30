@@ -13,7 +13,8 @@
                     "test",
                     "--no-run",
                     "--lib",
-                    "--package=untitled7"
+                    "--package=untitled7"//,
+                    //"--manifest-path=${workspaceFolder}/Cargo.toml"
                 ],
                 "filter": {
                     "name": "mandelbrot",
