@@ -1,3 +1,4 @@
+use std::fmt;
 use bevy_math::Vec3;
 use crate::bubbles::{BubblePushPoints, Game, PositionFloatBuffer, WorldParams};
 mod bubbles;

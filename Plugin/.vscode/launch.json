@@ -4,26 +4,25 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
+        
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Debug unit tests in library 'mandelbrot'",
+            "name": "Cargo test",
             "cargo": {
                 "args": [
                     "test",
                     "--no-run",
                     "--lib",
-                    "--package=untitled7"//,
-                    //"--manifest-path=${workspaceFolder}/Cargo.toml"
-                ],
-                "filter": {
-                    "name": "mandelbrot",
-                    "kind": "lib"
-                }
+                    "--manifest-path=${workspaceFolder}/Cargo.toml"
+                ]
             },
-            "args": [],
-            "cwd": "${workspaceFolder}"
+            "args": []
         }
+
     ]
     
 }
+
+
+//"--manifest-path=${workspaceFolder}/Cargo.toml"
