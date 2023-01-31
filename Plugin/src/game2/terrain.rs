@@ -111,14 +111,13 @@ impl TileWorld{
     }
 
     
-    pub fn get_first_occupied_tile_in_region(&self, pos : Vector2Int, size : Vector2Int) -> Option<TileOccupation>{
-        for y in 0..size.y{
-            for x in 0..size.x{
-                let tile = self.get_tile(Vector2Int{x, y});
-                // if its not empty or our of bounds, return it
+    pub fn get_first_collider_in_region(&self, pos : Vector2Int, size : Vector2Int) -> Option<usize>{
+        for dy in 0..size.y{
+            for dx in 0..size.x{
+                let tile = self.get_tile(Vector2Int{x: pos.x + dx, y: pos.y + dy});
                 match tile{
-                    TileOccupation::Empty | TileOccupation::OutOfBounds=> {},
-                    _ => return Some(tile),
+                    TileOccupation::ColliderBlocked{collider_id} => return Some(collider_id),
+                    _ => continue,
                 }
             }
         }
@@ -177,7 +176,7 @@ EntityBlocked: tile is blocked by an entity it should also contain a reference t
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum TileOccupation{
     Empty,    
-    EntityBlocked {entity_id : usize},
+    ColliderBlocked {collider_id : usize},
     TerrainBlocked,
     OutOfBounds,
 }
@@ -238,20 +237,20 @@ mod tests {
 
         // test get_tile_entity_by_id
         let wall = Wall{pos : Vector2Int{x : 4, y : 4}};
-        let mut tile_entity = TileEntity{
+        let tile_entity = TileEntity{
             pos : Vector2Int{x : 4, y : 4},
             size : Vector2Int{x : 1, y : 1},
             id : 10,
             tile_entity : Box::new(wall),
         };
-        tileworld.set_tiles(Vector2Int{x : 4, y : 4}, Vector2Int{x : 1, y : 1}, TileOccupation::EntityBlocked { entity_id: (10) });
+        tileworld.set_tiles(Vector2Int{x : 4, y : 4}, Vector2Int{x : 1, y : 1}, TileOccupation::ColliderBlocked { collider_id: (10) });
         
         // test get_first_tile_entity_id_in_region
-        let occupation = tileworld.get_first_occupied_tile_in_region(Vector2Int{x : 4, y : 4}, Vector2Int{x : 1, y : 1});
-        //match occupation{
-        //    Some(tile_occupation) => assert_eq!(tile_occupation, TileOccupation::EntityBlocked { entity_id: (10) }),
-        //    None => assert!(false),
-        //}
+        let occupation = tileworld.get_first_collider_in_region(Vector2Int{x : 4, y : 4}, Vector2Int{x : 1, y : 1});
+        match occupation{
+            Some(tile_occupation) => assert_eq!(tile_occupation, 10),
+            None => assert!(false),
+        }
     }
     
     #[test]
