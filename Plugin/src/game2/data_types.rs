@@ -2,15 +2,103 @@ use std::fmt;
 
 // use the "fixed" crate to create a fixed point number type
 use fixed::{types::I24F8, traits::Fixed};
+use bevy_math::Vec2;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
-pub struct Vector2I24F8{
-    pub x : I24F8,
-    pub y : I24F8,
+pub struct Vector2FixedFloat{
+    pub x : FixedFloat,
+    pub y : FixedFloat,
 }
+
+// implement math stuff for Vector2I24F8
+impl Vector2FixedFloat{
+    pub fn sqr_magnitude(&self) -> FixedFloat{
+        self.x * self.x + self.y * self.y
+    }
+    
+    pub fn magnitude(&self) -> FixedFloat{
+        let sqr_mag = self.sqr_magnitude();
+        sqr_mag.sqrt()
+    }
+
+    // normalize
+    pub fn normalize(&self) -> Vector2FixedFloat{
+        let length = self.magnitude();
+        Vector2FixedFloat{
+            x : self.x / length,
+            y : self.y / length,
+        }
+    }
+}
+
+impl std::ops::Add for Vector2FixedFloat{
+    type Output = Vector2FixedFloat;
+    fn add(self, other : Vector2FixedFloat) -> Vector2FixedFloat{
+        Vector2FixedFloat{
+            x : self.x + other.x,
+            y : self.y + other.y,
+        }
+    }
+}
+
+impl std::ops::Sub for Vector2FixedFloat{
+    type Output = Vector2FixedFloat;
+    fn sub(self, other : Vector2FixedFloat) -> Vector2FixedFloat{
+        Vector2FixedFloat{
+            x : self.x - other.x,
+            y : self.y - other.y,
+        }
+    }
+}
+
+// multiply with scalar
+impl std::ops::Mul<FixedFloat> for Vector2FixedFloat{
+    type Output = Vector2FixedFloat;
+    fn mul(self, other : FixedFloat) -> Vector2FixedFloat{
+        Vector2FixedFloat{
+            x : self.x * other,
+            y : self.y * other,
+        }
+    }
+}
+
+// divide with scalar
+impl std::ops::Div<FixedFloat> for Vector2FixedFloat{
+    type Output = Vector2FixedFloat;
+    fn div(self, other : FixedFloat) -> Vector2FixedFloat{
+        Vector2FixedFloat{
+            x : self.x / other,
+            y : self.y / other,
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
 
 #[derive(Clone, Copy, PartialEq)]
 pub struct FixedFloat(I24F8);
+
+// implicit conversion from f32 to FixedFloat
+impl From<f32> for FixedFloat{
+    fn from(value : f32) -> FixedFloat{
+        FixedFloat(I24F8::from_num(value))
+    }
+}
+
+// implicit conversion from FixedFloat to f32
+impl From<FixedFloat> for f32{
+    fn from(value : FixedFloat) -> f32{
+        value.0.to_num::<f32>()
+    }
+}
 
 impl fmt::Debug for FixedFloat {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -23,6 +111,20 @@ impl fmt::Debug for FixedFloat {
 impl FixedFloat{
     pub fn new(value : f32) -> FixedFloat{
         FixedFloat(I24F8::from_num(value))
+    }
+
+    // implement sqrt
+    pub fn sqrt(&self) -> FixedFloat{
+        let as_float = self.0.to_num::<f32>();
+        let as_float_sqrt = as_float.sqrt();
+        FixedFloat(I24F8::from_num(as_float_sqrt))
+    }
+
+    // abs
+    pub fn abs(&self) -> FixedFloat{
+        let as_float = self.0.to_num::<f32>();
+        let as_float_abs = as_float.abs();
+        FixedFloat(I24F8::from_num(as_float_abs))
     }
 }
 
@@ -55,141 +157,6 @@ impl std::ops::Div for FixedFloat{
 }
 
 
-
-
-
-
-#[cfg(test)]
-pub mod data_types_tests{
-    use std::collections::{HashSet, HashMap, LinkedList};
-
-    use fixed::{types::I24F8};
-
-    use super::FixedFloat;    
-
-    pub struct MyStruct{
-        pub a : i32,
-        pub b : i32,
-        pub child: Option<Box<MyStruct>>,
-        pub hash_map : HashMap<i32, MyStruct>,
-    }
-
-    // override debug view of Baran
-    impl std::fmt::Debug for MyStruct{
-        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-            f.debug_struct("MyStruct")
-            // just print a static string
-             .field("hello", &"world")
-             .finish()
-        }
-    }
-    // Q: its still the default view, its not showing me my "hello" fields. Why?
-    // A: because you need to implement the Debug trait for the type of the field.
-
-
-    #[test]
-    pub fn asdasdas(){
-        let a = FixedFloat::new(1.0);
-        let b = FixedFloat::new(2.0);
-
-        // define a vec of boxed floats
-        let mut vec = Vec::new();
-        // create barans
-        let mut baran = MyStruct{a : 1, b : 2, child : None, hash_map : HashMap::new()};
-        let mut baran2 = MyStruct{a : 3, b : 4, child : None, hash_map : HashMap::new()};
-        let mut baran3 = MyStruct{a : 3, b : 4, child : None, hash_map : HashMap::new()};
-        baran2.child = Some(Box::new(baran));
-        baran2.hash_map.insert(1,baran3);
-        
-        // push them into the vec
-        vec.push(Box::new(baran2));
-
-
-        let mut hash_map_test = HashMap::new();
-        let baran_0_0 = MyStruct{a : 1, b : 2, child : None, hash_map : HashMap::new()};
-        let baran_0_1 = MyStruct{a : 3, b : 4, child : None, hash_map : HashMap::new()};
-        hash_map_test.insert(1, baran_0_0);
-        hash_map_test.insert(2, baran_0_1);
-        
-        // print baran_0_0
-        let baran_0_2 = MyStruct{a : 1, b : 2, child : None, hash_map : HashMap::new()};
-        println!("{:?}", baran_0_2);
-
-
-        let c = a + b;
-        
-        let d = 1;
-
-        // create a vec of numbers, push some numbers in it, turn it into an array
-        let mut vec = Vec::new();
-        vec.push(1);
-        vec.push(2);
-        vec.push(3);
-
-        //let array = vec.into_boxed_slice();
-        // not boxed slice, just array, here in the stack
-        
-        // create a vec of numbers, push some numbers in it, turn it into an array
-        let mut vec = Vec::new();
-        vec.push(1);
-        vec.push(2);
-        vec.push(3);
-
-        // collect into a non boxed array
-        let array : [i32; 3] = vec.into_iter().collect::<Vec<i32>>().try_into().unwrap();
-        
-        
-        // create a linked list
-        let mut list = LinkedList::new();
-        list.push_back(1);
-        list.push_back(2);
-        list.push_back(3);
-        
-
-
-
-    }
-}
-
-
-//impl std::ops::Sub for Vector2I24F8{
-//    type Output = Vector2I24F8;
-//    fn sub(self, other : Vector2I24F8) -> Vector2I24F8{
-//        Vector2I24F8{x : self.x - other.x, y : self.y - other.y}
-//    }
-//}
-//
-//impl std::ops::Add for Vector2I24F8{
-//    type Output = Vector2I24F8;
-//    fn add(self, other : Vector2I24F8) -> Vector2I24F8{
-//        Vector2I24F8{x : self.x + other.x, y : self.y + other.y}
-//    }
-//}
-//
-//// support multiplication by a scalar
-//impl std::ops::Mul<I24F8> for Vector2I24F8{
-//    type Output = Vector2I24F8;
-//    fn mul(self, other : I24F8) -> Vector2I24F8{
-//        Vector2I24F8{x : self.x * other, y : self.y * other}
-//    }
-//}
-//
-//// support multiplication by a scalar
-//impl std::ops::Mul<f32> for Vector2I24F8{
-//    type Output = Vector2I24F8;
-//    fn mul(self, other : f32) -> Vector2I24F8{
-//        Vector2I24F8{x : self.x * other, y : self.y * other}
-//    }
-//}
-//
-//// support multiplication by a i32
-//impl std::ops::Mul<i32> for Vector2I24F8{
-//    type Output = Vector2I24F8;
-//    fn mul(self, other : i32) -> Vector2I24F8{
-//        Vector2I24F8{x : self.x * other, y : self.y * other}
-//    }
-//}
-
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Vector2Int{
     pub x : i32,
@@ -216,3 +183,31 @@ impl std::ops::Mul<i32> for Vector2Int{
     }
 }
 
+
+
+
+#[cfg(test)]
+pub mod data_types_tests{
+    use std::collections::{HashSet, HashMap, LinkedList};
+
+    use fixed::{types::I24F8};
+
+    use super::FixedFloat;    
+
+
+
+    #[test]
+    pub fn tests(){
+        let a = FixedFloat::new(1.0);
+        let b = FixedFloat::new(2.0);
+        let c = FixedFloat::new(3.0);
+        let d = FixedFloat::new(4.0);
+
+        let e = a + b;
+        let f = c - d;
+
+        assert_eq!(e, FixedFloat::new(3.0));
+        assert_eq!(f, FixedFloat::new(-1.0));
+    }
+
+}
