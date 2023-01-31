@@ -5,46 +5,46 @@ use fixed::{types::I24F8, traits::Fixed};
 use bevy_math::Vec2;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
-pub struct Vector2FixedFloat{
-    pub x : FixedFloat,
-    pub y : FixedFloat,
+pub struct Vec2FFloat{
+    pub x : FFloat,
+    pub y : FFloat,
 }
 
 // implement math stuff for Vector2I24F8
-impl Vector2FixedFloat{
-    pub fn sqr_magnitude(&self) -> FixedFloat{
+impl Vec2FFloat{
+    pub fn sqr_mag(&self) -> FFloat{
         self.x * self.x + self.y * self.y
     }
     
-    pub fn magnitude(&self) -> FixedFloat{
-        let sqr_mag = self.sqr_magnitude();
+    pub fn mag(&self) -> FFloat{
+        let sqr_mag = self.sqr_mag();
         sqr_mag.sqrt()
     }
 
     // normalize
-    pub fn normalize(&self) -> Vector2FixedFloat{
-        let length = self.magnitude();
-        Vector2FixedFloat{
+    pub fn normalize(&self) -> Vec2FFloat{
+        let length = self.mag();
+        Vec2FFloat{
             x : self.x / length,
             y : self.y / length,
         }
     }
 }
 
-impl std::ops::Add for Vector2FixedFloat{
-    type Output = Vector2FixedFloat;
-    fn add(self, other : Vector2FixedFloat) -> Vector2FixedFloat{
-        Vector2FixedFloat{
+impl std::ops::Add for Vec2FFloat{
+    type Output = Vec2FFloat;
+    fn add(self, other : Vec2FFloat) -> Vec2FFloat{
+        Vec2FFloat{
             x : self.x + other.x,
             y : self.y + other.y,
         }
     }
 }
 
-impl std::ops::Sub for Vector2FixedFloat{
-    type Output = Vector2FixedFloat;
-    fn sub(self, other : Vector2FixedFloat) -> Vector2FixedFloat{
-        Vector2FixedFloat{
+impl std::ops::Sub for Vec2FFloat{
+    type Output = Vec2FFloat;
+    fn sub(self, other : Vec2FFloat) -> Vec2FFloat{
+        Vec2FFloat{
             x : self.x - other.x,
             y : self.y - other.y,
         }
@@ -52,10 +52,10 @@ impl std::ops::Sub for Vector2FixedFloat{
 }
 
 // multiply with scalar
-impl std::ops::Mul<FixedFloat> for Vector2FixedFloat{
-    type Output = Vector2FixedFloat;
-    fn mul(self, other : FixedFloat) -> Vector2FixedFloat{
-        Vector2FixedFloat{
+impl std::ops::Mul<FFloat> for Vec2FFloat{
+    type Output = Vec2FFloat;
+    fn mul(self, other : FFloat) -> Vec2FFloat{
+        Vec2FFloat{
             x : self.x * other,
             y : self.y * other,
         }
@@ -63,10 +63,10 @@ impl std::ops::Mul<FixedFloat> for Vector2FixedFloat{
 }
 
 // divide with scalar
-impl std::ops::Div<FixedFloat> for Vector2FixedFloat{
-    type Output = Vector2FixedFloat;
-    fn div(self, other : FixedFloat) -> Vector2FixedFloat{
-        Vector2FixedFloat{
+impl std::ops::Div<FFloat> for Vec2FFloat{
+    type Output = Vec2FFloat;
+    fn div(self, other : FFloat) -> Vec2FFloat{
+        Vec2FFloat{
             x : self.x / other,
             y : self.y / other,
         }
@@ -84,23 +84,23 @@ impl std::ops::Div<FixedFloat> for Vector2FixedFloat{
 
 
 #[derive(Clone, Copy, PartialEq)]
-pub struct FixedFloat(I24F8);
+pub struct FFloat(I24F8);
 
 // implicit conversion from f32 to FixedFloat
-impl From<f32> for FixedFloat{
-    fn from(value : f32) -> FixedFloat{
-        FixedFloat(I24F8::from_num(value))
+impl From<f32> for FFloat{
+    fn from(value : f32) -> FFloat{
+        FFloat(I24F8::from_num(value))
     }
 }
 
 // implicit conversion from FixedFloat to f32
-impl From<FixedFloat> for f32{
-    fn from(value : FixedFloat) -> f32{
+impl From<FFloat> for f32{
+    fn from(value : FFloat) -> f32{
         value.0.to_num::<f32>()
     }
 }
 
-impl fmt::Debug for FixedFloat {
+impl fmt::Debug for FFloat {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_tuple("")
          .field(&self.0.to_num::<f32>())
@@ -108,51 +108,51 @@ impl fmt::Debug for FixedFloat {
     }
 }
 
-impl FixedFloat{
-    pub fn new(value : f32) -> FixedFloat{
-        FixedFloat(I24F8::from_num(value))
+impl FFloat{
+    pub fn new(value : f32) -> FFloat{
+        FFloat(I24F8::from_num(value))
     }
 
     // implement sqrt
-    pub fn sqrt(&self) -> FixedFloat{
+    pub fn sqrt(&self) -> FFloat{
         let as_float = self.0.to_num::<f32>();
         let as_float_sqrt = as_float.sqrt();
-        FixedFloat(I24F8::from_num(as_float_sqrt))
+        FFloat(I24F8::from_num(as_float_sqrt))
     }
 
     // abs
-    pub fn abs(&self) -> FixedFloat{
+    pub fn abs(&self) -> FFloat{
         let as_float = self.0.to_num::<f32>();
         let as_float_abs = as_float.abs();
-        FixedFloat(I24F8::from_num(as_float_abs))
+        FFloat(I24F8::from_num(as_float_abs))
     }
 }
 
-impl std::ops::Add for FixedFloat{
-    type Output = FixedFloat;
-    fn add(self, other : FixedFloat) -> FixedFloat{
-        FixedFloat(self.0 + other.0)
+impl std::ops::Add for FFloat{
+    type Output = FFloat;
+    fn add(self, other : FFloat) -> FFloat{
+        FFloat(self.0 + other.0)
     }
 }
 
-impl std::ops::Sub for FixedFloat{
-    type Output = FixedFloat;
-    fn sub(self, other : FixedFloat) -> FixedFloat{
-        FixedFloat(self.0 - other.0)
+impl std::ops::Sub for FFloat{
+    type Output = FFloat;
+    fn sub(self, other : FFloat) -> FFloat{
+        FFloat(self.0 - other.0)
     }
 }
 
-impl std::ops::Mul for FixedFloat{
-    type Output = FixedFloat;
-    fn mul(self, other : FixedFloat) -> FixedFloat{
-        FixedFloat(self.0 * other.0)
+impl std::ops::Mul for FFloat{
+    type Output = FFloat;
+    fn mul(self, other : FFloat) -> FFloat{
+        FFloat(self.0 * other.0)
     }
 }
 
-impl std::ops::Div for FixedFloat{
-    type Output = FixedFloat;
-    fn div(self, other : FixedFloat) -> FixedFloat{
-        FixedFloat(self.0 / other.0)
+impl std::ops::Div for FFloat{
+    type Output = FFloat;
+    fn div(self, other : FFloat) -> FFloat{
+        FFloat(self.0 / other.0)
     }
 }
 
@@ -188,26 +188,36 @@ impl std::ops::Mul<i32> for Vector2Int{
 
 #[cfg(test)]
 pub mod data_types_tests{
-    use std::collections::{HashSet, HashMap, LinkedList};
-
-    use fixed::{types::I24F8};
-
-    use super::FixedFloat;    
+    use super::FFloat;
+    use super::Vec2FFloat;
 
 
 
     #[test]
     pub fn tests(){
-        let a = FixedFloat::new(1.0);
-        let b = FixedFloat::new(2.0);
-        let c = FixedFloat::new(3.0);
-        let d = FixedFloat::new(4.0);
+        let a = FFloat::new(1.0);
+        let b = FFloat::new(2.0);
+        let c = FFloat::new(3.0);
+        let d = FFloat::new(4.0);
 
         let e = a + b;
         let f = c - d;
 
-        assert_eq!(e, FixedFloat::new(3.0));
-        assert_eq!(f, FixedFloat::new(-1.0));
+        assert_eq!(e, FFloat::new(3.0));
+        assert_eq!(f, FFloat::new(-1.0));
+
+        let v0 = Vec2FFloat{x : FFloat::new(4.0), y : FFloat::new(0.0)};
+        let v1 = Vec2FFloat{x : FFloat::new(0.0), y : FFloat::new(3.0)};
+
+        let v2 = v0 + v1;
+
+        assert_eq!(v2, Vec2FFloat{x : FFloat::new(4.0), y : FFloat::new(3.0)});
+
+        let sqr_mag = v2.sqr_mag();
+        assert_eq!(sqr_mag, FFloat::new(25.0));
+
+        let mag = v2.mag();
+        assert_eq!(mag, FFloat::new(5.0));
     }
 
 }

@@ -1,6 +1,6 @@
 use super::terrain::TileWorld;
 use super::data_types::Vector2Int;
-use super::data_types::Vector2FixedFloat;
+use super::data_types::Vec2FFloat;
 
 
 use bevy_ecs::{self, bundle::Bundle, component::Component, entity::Entity, prelude::{Commands, Query, Res, ResMut}};
