@@ -1,0 +1,12 @@
+What I need in Unity side:
+
+public struct Unit {
+    public int Id;
+    public Vector2 Position;
+}
+
+public struct TileMap {
+    public int width;
+    public int height;
+    public int[] Tiles;
+}
