@@ -1,4 +1,4 @@
-pub mod character;
+pub mod unit;
 pub mod position;
 pub mod velocity;
 pub mod collider;

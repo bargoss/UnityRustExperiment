@@ -11,8 +11,8 @@ use super::data_types::Vector2Int;
 //use ico_math::Vector2Int;
 
 pub struct TileWorld{
-    size_x : usize,
-    size_y : usize,
+    size_x : u32,
+    size_y : u32,
     tile_occupations : Box<[TileOccupation]>,
 }
 pub enum TileWorldRaycastResult{
@@ -76,13 +76,14 @@ pub fn step_by_grid(pos : Vec2, move_dir_normalized : Vec2) -> Vec2{
 // create some methods
 
 impl TileWorld{
-    pub fn new(size_x : usize, size_y : usize) -> TileWorld{
+    pub fn new(size_x : u32, size_y : u32) -> TileWorld{
+        let array_size = (size_x * size_y) as usize;
+
         TileWorld{
             size_x,
             size_y,
             // a boxed array of TileOccupation::Empty
-            tile_occupations : vec![TileOccupation::Empty; size_x * size_y].into_boxed_slice(),
-
+            tile_occupations : vec![TileOccupation::Empty; array_size].into_boxed_slice(),
         }
     }
 
@@ -113,7 +114,7 @@ impl TileWorld{
     }
 
     
-    pub fn get_first_collider_in_region(&self, pos : Vector2Int, size : Vector2Int) -> Option<usize>{
+    pub fn get_first_collider_in_region(&self, pos : Vector2Int, size : Vector2Int) -> Option<u32>{
         for dy in 0..size.y{
             for dx in 0..size.x{
                 let tile = self.get_tile(Vector2Int{x: pos.x + dx, y: pos.y + dy});
@@ -178,7 +179,7 @@ EntityBlocked: tile is blocked by an entity it should also contain a reference t
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum TileOccupation{
     Empty,    
-    ColliderBlocked {collider_id : usize},
+    ColliderBlocked {collider_id : u32},
     TerrainBlocked,
     OutOfBounds,
 }
@@ -190,7 +191,7 @@ TileEntity: a polymorphic trait that can be implemented by any entity that can b
 pub struct TileEntity{
     pub pos : Vector2Int,
     pub size : Vector2Int,
-    pub id : usize,
+    pub id : u32,
     pub tile_entity : Box<dyn TileEntityBehaviour>,
 }
 
