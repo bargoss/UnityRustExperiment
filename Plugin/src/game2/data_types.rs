@@ -120,6 +120,31 @@ impl std::ops::Div<FFloat> for Vec2FFloat{
 #[derive(Clone, Copy, PartialEq)]
 pub struct FFloat(I24F8);
 
+impl FFloat {
+    pub(crate) fn floor(&self) -> FFloat {
+        FFloat(self.0.floor())
+    }
+
+    // zero
+    pub fn zero() -> FFloat{
+        FFloat(I24F8::from_num(0.0))
+    }
+
+    // one
+    pub fn one() -> FFloat{
+        FFloat(I24F8::from_num(1.0))
+    }
+}
+
+// cast from i32
+impl From<i32> for FFloat{
+    fn from(value : i32) -> FFloat{
+        FFloat(I24F8::from_num(value))
+    }
+}
+
+
+
 // implement PartialOrd
 impl PartialOrd for FFloat{
     fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
@@ -147,6 +172,15 @@ impl From<FFloat> for f32{
         value.0.to_num::<f32>()
     }
 }
+
+// FFloat to i32
+impl From<FFloat> for i32{
+    fn from(value : FFloat) -> i32{
+        value.0.to_num::<i32>()
+    }
+}
+
+
 
 impl fmt::Debug for FFloat {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {

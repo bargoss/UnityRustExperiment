@@ -22,54 +22,52 @@ pub enum TileWorldRaycastResult{
 }
 
 pub struct TileWorldRaycastParams{
-    pub start : Vec2,
-    pub end : Vec2,
+    pub start : Vec2FFloat,
+    pub end : Vec2FFloat,
 }
 
-pub fn raycast_to_grid_edge(position: Vec2, direction: Vec2) -> Vec2 {
+pub fn raycast_to_grid_edge(position: Vec2FFloat, direction: Vec2FFloat) -> Vec2FFloat {
     let position_x = position.x.floor();
     let position_y = position.y.floor();
-    let t_x = if direction.x > 0.0 {
-        (position_x + 1.0 - position.x) / direction.x
-    } else if direction.x < 0.0 {
+    let t_x = if direction.x > FFloat::new(0.0) {
+        (position_x + FFloat::new(1.0) - position.x) / direction.x
+    } else if direction.x < FFloat::new(0.0) {
         (position_x - position.x) / direction.x
     } else {
-        10000.0
+        FFloat::new(10000.0)
     };
-    let t_y = if direction.y > 0.0 {
-        (position_y + 1.0 - position.y) / direction.y
-    } else if direction.y < 0.0 {
+    let t_y = if direction.y > FFloat::new(0.0) {
+        (position_y + FFloat::new(1.0) - position.y) / direction.y
+    } else if direction.y < FFloat::new(0.0) {
         (position_y - position.y) / direction.y
     } else {
-        10000.0
+        FFloat::new(10000.0)
     };
     if t_x < t_y {
-        //Vec2::new(position_x + (direction.x > 0.0) as i32 as f64, position.y + t_x * direction.y)
-        Vec2{
-            x: position_x + (direction.x > 0.0) as i32 as f32,
+        Vec2FFloat{
+            x: position_x + FFloat::new((direction.x > FFloat::new(0.0)) as i32 as f32),
             y: position.y + t_x * direction.y
         }
     } else {
-        //Vec2::new(position.x + t_y * direction.x, position_y + (direction.y > 0.0) as i32 as f64)
-        Vec2{
+        Vec2FFloat{
             x: position.x + t_y * direction.x,
-            y: position_y + (direction.y > 0.0) as i32 as f32
+            y: position_y + FFloat::new((direction.y > FFloat::new(0.0)) as i32 as f32)
         }
     }
 }
 
 // finishes an epsilon outside the unit box border
-pub fn step_by_grid(pos : Vec2, move_dir_normalized : Vec2) -> Vec2{
-    let position_within_grid = Vec2{
+pub fn step_by_grid(pos : Vec2FFloat, move_dir_normalized : Vec2FFloat) -> Vec2FFloat{
+    let position_within_grid = Vec2FFloat{
         x: pos.x - pos.x.floor(),
         y: pos.y - pos.y.floor(),
     };
-    let grid_pivot = Vec2{
+    let grid_pivot = Vec2FFloat{
         x: pos.x.floor(),
         y: pos.y.floor(),
     };
     let final_pos_within_grid = raycast_to_grid_edge(position_within_grid, move_dir_normalized);
-    let final_pos = grid_pivot + final_pos_within_grid + move_dir_normalized * 0.0001;
+    let final_pos = grid_pivot + final_pos_within_grid + move_dir_normalized * FFloat::new(0.0001);
     return final_pos;
 }
 
@@ -92,14 +90,7 @@ impl TileWorld{
         (pos.y * self.size_x as i32 + pos.x) as usize
     }
     
-    pub fn get_tile_pos(&self, pos: Vec2) -> Vector2Int{
-        Vector2Int{
-            x: pos.x.floor() as i32,
-            y: pos.y.floor() as i32,
-        }
-    }
-
-    pub fn get_tile_pos_vec2_f_float(&self, pos: Vec2FFloat) -> Vector2Int{
+    pub fn get_tile_pos(&self, pos: Vec2FFloat) -> Vector2Int{
         let x_float = f32::from(pos.x);
         let y_float = f32::from(pos.y);
 
@@ -110,6 +101,8 @@ impl TileWorld{
             y: y_int,
         }
     }
+
+
     
     pub fn get_tile(&self, pos : Vector2Int) -> TileOccupation{
         if pos.x < 0 || pos.y < 0 || pos.x >= self.size_x as i32 || pos.y >= self.size_y as i32{
@@ -150,8 +143,8 @@ impl TileWorld{
         
         
         let end_tile = Vector2Int{
-            x: end.x.floor() as i32,
-            y: end.y.floor() as i32,
+            x: i32::from(end.x.floor()),
+            y: i32::from(end.y.floor()),
         };
 
         let mut current_pos = start;
@@ -172,6 +165,7 @@ impl TileWorld{
         return TileWorldRaycastResult::HitNothing;
     }
 
+    /*
     // normals show us the direction of the wall
     // look at 2x2 window and find a direction towards empty tiles
     pub fn get_normal(&self, pos : Vec2FFloat) -> Vec2FFloat {
@@ -218,6 +212,7 @@ impl TileWorld{
 
         normal
     }
+    */
 }
 
 
@@ -282,19 +277,6 @@ mod tests {
 
 
     #[test]
-    fn test_normal() {
-        let mut tileworld = TileWorld::new(5, 5);
-
-        let normal0 = tileworld.get_normal(Vec2FFloat::new(0.1, 0.1));
-
-        println!("normal0: {:?}", normal0);
-
-        assert_eq!(normal0, Vec2FFloat::new(1.0, 1.0));
-
-
-    }
-
-    #[test]
     fn test_tileworld() {
         let mut tileworld = TileWorld::new(10, 10);
 
@@ -338,8 +320,8 @@ mod tests {
 
         // test raycast
         let raycast_params = TileWorldRaycastParams{
-            start : Vec2{x : 0.5, y : 0.5},
-            end : Vec2{x : 9.0, y : 9.0},
+            start : Vec2FFloat::new(0.5,0.5),
+            end : Vec2FFloat::new(9.0, 9.0),
         };
         let raycast_result = tileworld.raycast(raycast_params);
         match raycast_result{
@@ -353,8 +335,8 @@ mod tests {
 
     #[test]
     fn test_raycast() {
-        let position = Vec2{x: 0.5, y: 0.5};
-        let direction = Vec2{x: -1.0, y: -1.1}.normalize();
+        let position = Vec2FFloat::new(0.5, 0.5);
+        let direction = Vec2FFloat::new(-1.0, -1.1).normalize();
 
         let result = raycast_to_grid_edge(position, direction);
 
@@ -363,34 +345,35 @@ mod tests {
 
     #[test]
     fn test_step_by_grid(){
-        let direction = Vec2{x: -1.0, y: -1.0}.normalize();
+        let direction = Vec2FFloat::new(-1.0,-1.0).normalize();
 
-        let step_0 = Vec2{x: 0.25, y: 0.0001};
-        let step_0_grid = Vec2{x: step_0.x.floor(), y: step_0.y.floor()};
+        let step_0 = Vec2FFloat::new(0.25, 0.0001);
+        let step_0_grid = Vec2FFloat{x: step_0.x, y: step_0.y};
         println!("step_0_grid: {:?}", step_0_grid);
         
         let step_1 = step_by_grid(step_0, direction);
-        let step_1_grid = Vec2{x: step_1.x.floor(), y: step_1.y.floor()};
+        //let step_1_grid = Vec2{x: step_1.x.floor(), y: step_1.y.floor()};
+        let step_1_grid = Vec2FFloat{x: step_1.x, y: step_1.y};
         println!("step_1_grid: {:?}", step_1_grid);
         
         let step_2 = step_by_grid(step_1, direction);
-        let step_2_grid = Vec2{x: step_2.x.floor(), y: step_2.y.floor()};
+        let step_2_grid = Vec2FFloat{x: step_2.x, y: step_2.y};
         println!("step_2_grid: {:?}", step_2_grid);
         
         let step_3 = step_by_grid(step_2, direction);
-        let step_3_grid = Vec2{x: step_3.x.floor(), y: step_3.y.floor()};
+        let step_3_grid = Vec2FFloat{x: step_3.x, y: step_3.y};
         println!("step_3_grid: {:?}", step_3_grid);
 
         let step_4 = step_by_grid(step_3, direction);
-        let step_4_grid = Vec2{x: step_4.x.floor(), y: step_4.y.floor()};
+        let step_4_grid = Vec2FFloat{x: step_4.x, y: step_4.y};
         println!("step_4_grid: {:?}", step_4_grid);
 
         let step_5 = step_by_grid(step_4, direction);
-        let step_5_grid = Vec2{x: step_5.x.floor(), y: step_5.y.floor()};
+        let step_5_grid = Vec2FFloat{x: step_5.x, y: step_5.y};
         println!("step_5_grid: {:?}", step_5_grid);
 
         let step_6 = step_by_grid(step_5, direction);
-        let step_6_grid = Vec2{x: step_6.x.floor(), y: step_6.y.floor()};
+        let step_6_grid = Vec2FFloat{x: step_6.x, y: step_6.y};
         println!("step_6_grid: {:?}", step_6_grid);
 
         let a = 3;
