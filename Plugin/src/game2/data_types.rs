@@ -4,14 +4,48 @@ use std::fmt;
 use fixed::{types::I24F8, traits::Fixed};
 use bevy_math::Vec2;
 
-#[derive(Clone, Copy, Debug, PartialEq)]
+#[derive(Clone, Copy, PartialEq)]
 pub struct Vec2FFloat{
     pub x : FFloat,
     pub y : FFloat,
 }
 
+// implement debug for Vec2FFloat
+impl fmt::Debug for Vec2FFloat{
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "Vec2FFloat({:?}, {:?})", self.x, self.y)
+    }
+}
+
+// implemenmt addassign for Vec2FFloat
+impl std::ops::AddAssign for Vec2FFloat{
+    fn add_assign(&mut self, other: Self){
+        self.x += other.x;
+        self.y += other.y;
+    }
+}
+
 // implement math stuff for Vector2I24F8
 impl Vec2FFloat{
+    // constructor
+    pub fn new(x : f32, y : f32) -> Vec2FFloat{
+        Vec2FFloat{
+            x : FFloat::new(x),
+            y : FFloat::new(y),
+        }
+    }
+    // return string
+    pub fn display(&self) -> String{
+        format!("({}, {})", f32::from(self.x), f32::from(self.y))
+    }
+    // zero vector
+    pub fn zero() -> Vec2FFloat{
+        Vec2FFloat{
+            x : FFloat::new(0.0),
+            y : FFloat::new(0.0),
+        }
+    }
+
     pub fn sqr_mag(&self) -> FFloat{
         self.x * self.x + self.y * self.y
     }
@@ -85,6 +119,20 @@ impl std::ops::Div<FFloat> for Vec2FFloat{
 
 #[derive(Clone, Copy, PartialEq)]
 pub struct FFloat(I24F8);
+
+// implement PartialOrd
+impl PartialOrd for FFloat{
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        self.0.partial_cmp(&other.0)
+    }
+}
+
+// implement addassign for FFloat
+impl std::ops::AddAssign for FFloat{
+    fn add_assign(&mut self, other: Self){
+        self.0 += other.0;
+    }
+}
 
 // implicit conversion from f32 to FixedFloat
 impl From<f32> for FFloat{

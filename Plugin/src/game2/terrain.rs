@@ -1,6 +1,7 @@
 use std::default;
 use std::collections::HashMap;
 use bevy_math::Vec2;
+use crate::game2::data_types::{FFloat, Vec2FFloat};
 use super::data_types::Vector2Int;
 //use super::data_types::Vector2I24F8;
 
@@ -97,6 +98,18 @@ impl TileWorld{
             y: pos.y.floor() as i32,
         }
     }
+
+    pub fn get_tile_pos_vec2_f_float(&self, pos: Vec2FFloat) -> Vector2Int{
+        let x_float = f32::from(pos.x);
+        let y_float = f32::from(pos.y);
+
+        let x_int = x_float.floor() as i32;
+        let y_int = y_float.floor() as i32;
+        Vector2Int{
+            x: x_int,
+            y: y_int,
+        }
+    }
     
     pub fn get_tile(&self, pos : Vector2Int) -> TileOccupation{
         if pos.x < 0 || pos.y < 0 || pos.x >= self.size_x as i32 || pos.y >= self.size_y as i32{
@@ -158,8 +171,53 @@ impl TileWorld{
         
         return TileWorldRaycastResult::HitNothing;
     }
-    
 
+    // normals show us the direction of the wall
+    // look at 2x2 window and find a direction towards empty tiles
+    pub fn get_normal(&self, pos : Vec2FFloat) -> Vec2FFloat {
+        let pos_x = f32::from(pos.x).floor();
+        let pos_y = f32::from(pos.y).floor();
+        let pos = Vec2FFloat::new(pos_x, pos_y);
+
+        let window_start = self.get_tile_pos_vec2_f_float(pos + Vec2FFloat::new(0.5, 0.5));
+
+        let offsets = [
+            Vec2FFloat::new(-0.5, -0.5),
+            Vec2FFloat::new(0.5, -0.5),
+            Vec2FFloat::new(-0.5, 0.5),
+            Vec2FFloat::new(0.5, 0.5),
+        ];
+        let tiles = [
+            self.get_tile(Vector2Int{x: window_start.x, y: window_start.y}),
+            self.get_tile(Vector2Int{x: window_start.x + 1, y: window_start.y}),
+            self.get_tile(Vector2Int{x: window_start.x, y: window_start.y + 1}),
+            self.get_tile(Vector2Int{x: window_start.x + 1, y: window_start.y + 1}),
+        ];
+
+        let mut normal = Vec2FFloat::zero();
+        for i in 0..4{
+            if tiles[i] == TileOccupation::Empty{
+                normal += offsets[i];
+            }
+        }
+
+        // sign normals x and y
+        if normal.x > FFloat::new(0.0){
+            normal.x = FFloat::new(1.0);
+        }
+        else if normal.x < FFloat::new(0.0){
+            normal.x = FFloat::new(-1.0);
+        }
+
+        if normal.y > FFloat::new(0.0){
+            normal.y = FFloat::new(1.0);
+        }
+        else if normal.y < FFloat::new(0.0){
+            normal.y = FFloat::new(-1.0);
+        }
+
+        normal
+    }
 }
 
 
@@ -219,7 +277,22 @@ mod tests {
     pub struct Barracks{}
     
     impl TileEntityBehaviour for Barracks{}
-    
+
+
+
+
+    #[test]
+    fn test_normal() {
+        let mut tileworld = TileWorld::new(5, 5);
+
+        let normal0 = tileworld.get_normal(Vec2FFloat::new(0.1, 0.1));
+
+        println!("normal0: {:?}", normal0);
+
+        assert_eq!(normal0, Vec2FFloat::new(1.0, 1.0));
+
+
+    }
 
     #[test]
     fn test_tileworld() {

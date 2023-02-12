@@ -1,26 +1,24 @@
-use super::terrain::TileWorld;
-use super::data_types::Vector2Int;
-use super::data_types::Vec2FFloat;
+use bevy_ecs::prelude::{Query, Res};
+use crate::game2::components::position::WorldPosition;
+use crate::game2::components::unit::Unit;
+use super::super::data_types::*;
+use super::super::terrain::*;
+
+pub fn handle_unit_tile_map_collisions(mut query: Query<(&WorldPosition, &mut Unit)>, tile_world: Res<TileWorld>){
+    for (position, mut unit) in query.iter_mut() {
+        let mut unit_velocity = &mut unit.velocity;
+        let unit_position = position.pos;
 
 
-use bevy_ecs::{self, bundle::Bundle, component::Component, entity::Entity, prelude::{Commands, Query, Res, ResMut}};
-//use bevy_ecs::schedule::Stage;
-//use bevy_ecs::system::CommandQueue;
-//use bevy_ecs::world::World;
-use bevy_math::Vec3;
 
-#[derive(Component, Clone ,Debug, Default)]
-pub struct Position  {
-    pub value: Vec3
+
+
+
+    }
 }
-#[derive(Component, Clone ,Debug, Default)]
-pub struct Velocity {
-    pub value: Vec3
-}
-#[derive(Component, Clone ,Debug, Default)]
-pub struct Collider {
-    pub value: Vec3
-}
+
+
+
 
 //pub fn handle_character_movement(mut query: Query<(&Position, &mut Velocity)>, mut tile_world: ResMut<TileWorld>){
 //    for (position, mut velocity) in query.iter_mut() {
