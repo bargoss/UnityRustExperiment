@@ -35,37 +35,61 @@ mod tests {
     use bevy_ecs::prelude::*;
     use crate::game2::components::position::WorldPosition;
     use crate::game2::components::unit::Unit;
+    use crate::game2::terrain::TileOccupation::TerrainBlocked;
     use super::super::super::data_types::*;
     use super::super::super::terrain::*;
 
-    fn bevy_ecs_test(system: impl bevy_ecs::schedule::IntoSystemDescriptor<()>) {
-        let mut world = World::new();
-        let mut init_schedule = Schedule::default();
-        let mut init_stage = SystemStage::single_threaded();
-        init_schedule.add_stage("init", init_stage);
-
-        let mut update_schedule = Schedule::default();
-        let mut update_stage = SystemStage::single_threaded();
-        update_stage.add_system(system);
-        update_schedule.add_stage("update", update_stage);
-
-        init_schedule.run_once(&mut world);
-        update_schedule.run_once(&mut world);
+    // create a wrapper for this:
+    /*
+    pub fn add_system<Params>(&mut self, system: impl IntoSystemDescriptor<Params>) -> &mut Self {
+        self.add_system_inner(system.into_descriptor(), None);
+        self
     }
+    */
+    pub fn run_system_once<Params>(world: &mut World, system: impl bevy_ecs::schedule::IntoSystemDescriptor<Params>) {
+        SystemStage::single_threaded().add_system(system).run(world);
+    }
+
+
 
     #[test]
     fn test_handle_unit_movement_by_velocity() {
+
         let mut world = World::new();
-
         let mut tile_world = TileWorld::new(10, 10);
+        tile_world.set_tiles(Vector2Int{x: 4, y: 0}, Vector2Int{x: 5, y: 9}, TileOccupation::TerrainBlocked);
 
-        let mut init_schedule = Schedule::default();
-        let mut init_stage = SystemStage::single_threaded();
-        init_stage.add_system(handle_unit_movement_by_velocity);
-        init_schedule.add_stage("init", init_stage);
-
-        let mut update_schedule = Schedule::default();
+        world.insert_resource(tile_world);
 
 
+        // add an entity
+        let entity = world.spawn()
+            .insert(Unit{velocity: Vec2FFloat::new(0.15, 0.0)})
+            .insert(WorldPosition{pos: Vec2FFloat::new(1.5, 4.5)})
+            .id();
+
+        run_system_once(&mut world, handle_unit_movement_by_velocity);
+
+        // check unit position, make sure it has moved
+        let position = world.get::<WorldPosition>(entity).unwrap();
+        println!("position: {:?}", position.pos);
+        assert_eq!(position.pos, Vec2FFloat::new(1.65, 4.5));
+
+        // keep moving until velocity is zero
+        for _ in 0..100 {
+            run_system_once(&mut world, handle_unit_movement_by_velocity);
+        }
+
+        // check unit position, make sure it has stopped
+        let position = world.get::<WorldPosition>(entity).unwrap();
+        println!("position after hitting the wall: {:?}", position.pos);
+
+        // make sure velocity is zero
+        let unit = world.get::<Unit>(entity).unwrap();
+        println!("unit velocity after hitting the wall: {:?}", unit.velocity);
+        assert_eq!(unit.velocity, Vec2FFloat::zero());
+
+        // assert that final position x is somewhere between 3.5 and 4.5
+        assert!(position.pos.x >= FFloat::new(3.5) && position.pos.x <= FFloat::new(4.5));
     }
 }

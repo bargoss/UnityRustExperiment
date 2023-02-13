@@ -134,6 +134,11 @@ impl FFloat {
     pub fn one() -> FFloat{
         FFloat(I24F8::from_num(1.0))
     }
+
+    // to str
+    pub fn to_str(&self) -> String{
+        format!("{}", self.0.to_num::<f32>())
+    }
 }
 
 // cast from i32

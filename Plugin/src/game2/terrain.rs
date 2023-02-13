@@ -139,7 +139,12 @@ impl TileWorld{
     pub fn raycast(&self, params : TileWorldRaycastParams) -> TileWorldRaycastResult{
         let start = params.start;
         let end = params.end;
-        let normalized = (end - start).normalize();
+        let mag = (end - start).mag();
+        if mag == FFloat::new(0.0) {
+            return TileWorldRaycastResult::HitNothing;
+        }
+
+        let normalized = (end - start) / mag;
         
         
         let end_tile = Vector2Int{
