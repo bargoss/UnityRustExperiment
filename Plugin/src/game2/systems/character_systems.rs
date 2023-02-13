@@ -38,17 +38,7 @@ mod tests {
     use crate::game2::terrain::TileOccupation::TerrainBlocked;
     use super::super::super::data_types::*;
     use super::super::super::terrain::*;
-
-    // create a wrapper for this:
-    /*
-    pub fn add_system<Params>(&mut self, system: impl IntoSystemDescriptor<Params>) -> &mut Self {
-        self.add_system_inner(system.into_descriptor(), None);
-        self
-    }
-    */
-    pub fn run_system_once<Params>(world: &mut World, system: impl bevy_ecs::schedule::IntoSystemDescriptor<Params>) {
-        SystemStage::single_threaded().add_system(system).run(world);
-    }
+    use super::super::super::test_utils::*;
 
 
 
