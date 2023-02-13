@@ -194,6 +194,12 @@ impl fmt::Debug for FFloat {
          .finish()
     }
 }
+// implement display for FFloat
+impl fmt::Display for FFloat {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", self.0.to_num::<f32>())
+    }
+}
 
 impl FFloat{
     pub fn new(value : f32) -> FFloat{
