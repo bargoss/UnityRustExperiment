@@ -43,3 +43,13 @@ quadtree_rs = "0.1.2"
 ico_math = "0.1.6"
 fixed = "1.22.1"
 
+# use ncollide2d and enable the "improved_fixed_point_support" cargo feature
+ncollide2d = { version = "0.33.0", features = ["improved_fixed_point_support"] }
+#nphysics2d = { version = "0.24.0", features = ["improved_fixed_point_support"] }
+nphysics2d = { version = "0.24.0", features = ["improved_fixed_point_support"] }
+nalgebra = "0.32.2"
+
+# use simba and enable the "partial_fixed_point_support" cargo feature
+simba = { version = "0.8.0", features = ["partial_fixed_point_support"] }
+
+
