@@ -1,6 +1,8 @@
 use super::math::FixedPoint;
+use super::math::FixedPointExt;
 use std::collections::HashMap;
 use crate::game_core::math::FixedPointV2;
+use nalgebra;
 
 #[derive(Copy, Clone, Debug)]
 struct GridContent<const GridElementCount: usize> {
@@ -9,6 +11,13 @@ struct GridContent<const GridElementCount: usize> {
 }
 impl<const GridElementCount: usize> GridContent<GridElementCount>
 {
+    fn new() -> Self {
+        Self {
+            arr: [0; GridElementCount],
+            len: 0,
+        }
+    }
+
     fn add(&mut self, item: u32) {
         if self.len < self.arr.len() {
             self.arr[self.len] = item;
@@ -56,7 +65,7 @@ impl<const N:usize> SpacialPartitioning<N>{
     }
 
 
-    pub fn get_all_neighbours(&self, buffer : &mut Vec::<(T, T)>) {
+    pub fn get_all_neighbours(&self, buffer : &mut Vec::<(u32, u32)>) {
         let neighbour_deltas = [(1,0), (1,1), (0,1), (-1,1)];
         buffer.clear();
         for my_grid_key in self.grids.keys() {
@@ -88,8 +97,9 @@ impl<const N:usize> SpacialPartitioning<N>{
     }
 
     pub fn get_grid(&self, position: FixedPointV2) -> (i32, i32) {
-        let x = i32::from((position.x / self.grid_size).floor());
-        let y = i32::from((position.y / self.grid_size).floor());
-        (x, y)
+        let x = (position.x / self.grid_size).floor_to_i32();
+        let y = (position.y / self.grid_size).floor_to_i32();
+
+        (x,y)
     }
 }
