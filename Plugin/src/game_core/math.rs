@@ -6,7 +6,7 @@ use derive_more::{Deref, DerefMut, Add, Sub, Mul, Div, AddAssign, SubAssign, Mul
 type BaseType = FixedI64<fixed::types::extra::U24>;
 
 #[derive(Debug, Clone, Copy, Deref, Add, AddAssign, Sub, SubAssign, Mul, MulAssign, Div, DivAssign)]
-pub struct FixedPoint(BaseType);
+pub struct FixedPoint(pub BaseType);
 
 impl FixedPoint {
     pub(crate) fn from_num(p0: f64) -> Self {
@@ -22,6 +22,8 @@ impl FixedPointV2 {
         FixedPointV2(Vector2::new(FixedI64::<fixed::types::extra::U24>::from_num(x), FixedI64::<fixed::types::extra::U24>::from_num(y)))
     }
 }
+
+//implement multipli
 
 #[derive(Debug, Clone, Copy, Deref, Add, AddAssign, Sub, SubAssign, Mul, MulAssign, Div, DivAssign)]
 pub struct FixedPointV3(Vector3<BaseType>);

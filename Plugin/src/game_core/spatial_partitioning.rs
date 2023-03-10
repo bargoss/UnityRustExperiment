@@ -97,7 +97,11 @@ impl<const N:usize> SpacialPartitioning<N>{
     }
 
     pub fn get_grid(&self, position: FixedPointV2) -> (i32, i32) {
-        let x_divided = position.x / self.grid_size;
+        let a = FixedPoint::from_num(1.0);
+        let b = FixedPoint::from_num(2.1);
+        let c = a * b;
+        let one_to_grid_size = FixedPoint::from_num(1.0) + self.grid_size;
+        let x_divided = position.x * one_to_grid_size;
         //let x = (position.x / self.grid_size).floor_to_i32();
         //let y = (position.y / self.grid_size).floor_to_i32();
 
