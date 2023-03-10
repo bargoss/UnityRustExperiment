@@ -2,11 +2,10 @@ use nalgebra::Vector2;
 use nalgebra::Vector3;
 use simba::scalar::{FixedI64};
 
-// type FixedI40F24
-//pub type FixedPoint = FixedI64<fixed::types::extra::U24>;
-//pub type FixedPointV2 = Vector2<FixedPoint>;
-//pub type FixedPointV3 = Vector3<FixedPoint>;
-pub struct FixedPoint(pub FixedI64<fixed::types::extra::U24>);
+type BaseType = FixedI64<fixed::types::extra::U24>;
+
+
+pub struct FixedPoint(pub BaseType);
 
 impl FixedPoint {
     pub(crate) fn from_num(p0: f64) -> Self {
@@ -14,7 +13,18 @@ impl FixedPoint {
     }
 }
 
-pub struct FixedPointV2(pub Vector2<FixedI64<fixed::types::extra::U24>>);
+// impl deref for FixedPoint
+impl std::ops::Deref for FixedPoint {
+    type Target = BaseType;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
+
+
+pub struct FixedPointV2(pub Vector2<BaseType>);
 
 impl FixedPointV2 {
     pub(crate) fn new(p0: f64, p1: f64) -> Self {
@@ -22,14 +32,14 @@ impl FixedPointV2 {
     }
 }
 
-pub struct FixedPointV3(pub Vector3<FixedI64<fixed::types::extra::U24>>);
+pub struct FixedPointV3(pub Vector3<BaseType>);
 
 
 // make that an extension trait
 pub trait FixedPointExt {
     fn floor_to_i32(&self) -> i32;
 }
-impl FixedPointExt for FixedI64<fixed::types::extra::U24> {
+impl FixedPointExt for BaseType {
     fn floor_to_i32(&self) -> i32 {
         let integer_bits = self.to_bits() >> 24;
         let integer_bits = integer_bits as i32;
@@ -43,6 +53,14 @@ impl FixedPointExt for FixedI64<fixed::types::extra::U24> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_deref() {
+        let num0 = FixedPoint::from_num(0.5);
+        let num1 = FixedPoint::from_num(1.5);
+        
+        let num2 = FixedPoint(*num0 + *num1);
+    }
 
     #[test]
     fn test_0() {
