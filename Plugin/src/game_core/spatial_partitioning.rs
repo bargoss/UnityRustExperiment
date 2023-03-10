@@ -33,8 +33,8 @@ pub struct SpacialPartitioning<const N:usize>{
     grid_size: FixedPoint,
     grids: HashMap<(i32, i32), GridContent<N>>,
 }
-impl<const N:usize> SpacialPartitioning<N>{
-    pub fn new(grid_size: FixedPoint) -> SpacialPartitioning<N> {
+impl<const GridMaxElementCount:usize> SpacialPartitioning<GridMaxElementCount>{
+    pub fn new(grid_size: FixedPoint) -> SpacialPartitioning<GridMaxElementCount> {
         SpacialPartitioning {
             grid_size,
             grids: HashMap::new(),
@@ -62,6 +62,22 @@ impl<const N:usize> SpacialPartitioning<N>{
             }
         }
         result.into_iter()
+    }
+
+    // get a list from outside, clear it, fill it with results
+    pub fn overlap_box(&self, start_corner: FixedPointV2, end_corner: FixedPointV2, buffer: &mut Vec<u32>) {
+        let (x0, y0) = self.get_grid(start_corner);
+        let (x1, y1) = self.get_grid(end_corner);
+        buffer.clear();
+        for i in x0..x1 + 1 {
+            for j in y0..y1 + 1 {
+                if let Some(grid) = self.grids.get(&(i, j)) {
+                    for i in 0..grid.len {
+                        buffer.push(grid.arr[i]);
+                    }
+                }
+            }
+        }
     }
 
 
@@ -103,3 +119,55 @@ impl<const N:usize> SpacialPartitioning<N>{
         (x,y)
     }
 }
+
+
+// unit tests
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use nalgebra::Vector2;
+
+    // let mut spacial_partitioning = SpacialPartitioning::<2>::new(FixedPoint::new(10.0));
+
+    // test_add
+    #[test]
+    fn test_add() {
+        let mut spacial_partitioning = SpacialPartitioning::<2>::new(FixedPoint::new(10.0));
+        spacial_partitioning.add(1, FixedPointV2::new(0.0, 0.0));
+        spacial_partitioning.add(2, FixedPointV2::new(0.0, 0.0));
+
+        spacial_partitioning.add(2, FixedPointV2::new(9.9, 0.0));
+
+        assert_eq!(spacial_partitioning.grids.len(), 1);
+        assert_eq!(spacial_partitioning.grids.get(&(0, 0)).unwrap().len, 2);
+
+        spacial_partitioning.add(3, FixedPointV2::new(10.0, 0.0));
+        assert_eq!(spacial_partitioning.grids.len(), 2);
+        assert_eq!(spacial_partitioning.grids.get(&(0, 0)).unwrap().len, 2);
+        assert_eq!(spacial_partitioning.grids.get(&(1, 0)).unwrap().len, 1);
+    }
+
+
+    #[test]
+    fn test_spacial_partitioning() {
+        let mut partitioning: SpacialPartitioning<5> = SpacialPartitioning::new(FixedPoint::new(10.0));
+        partitioning.add(1, FixedPointV2::new(5.0, 5.0));
+        partitioning.add(2, FixedPointV2::new(25.0, 25.0));
+        partitioning.add(3, FixedPointV2::new(-5.0, -5.0));
+        partitioning.add(4, FixedPointV2::new(-25.0, -25.0));
+
+        let mut buffer = Vec::new();
+        partitioning.overlap_box(FixedPointV2::new(0.0, 0.0), FixedPointV2::new(11.0, 11.0), &mut buffer);
+        assert_eq!(buffer.len(), 1);
+        assert_eq!(buffer[0], 1);
+
+        partitioning.overlap_box(FixedPointV2::new(-11.0, -11.0), FixedPointV2::new(11.0, 11.0), &mut buffer);
+        assert_eq!(buffer.len(), 2);
+
+        // sort the buffer
+        buffer.sort();
+        assert_eq!(buffer[0], 1);
+        assert_eq!(buffer[1], 3);
+    }
+}
+

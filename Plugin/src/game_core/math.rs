@@ -8,7 +8,7 @@ type BaseType = FixedI64<fixed::types::extra::U24>;
 pub struct FixedPoint(pub BaseType);
 
 impl FixedPoint {
-    pub(crate) fn from_num(p0: f64) -> Self {
+    pub(crate) fn new(p0: f64) -> Self {
         FixedPoint(FixedI64::<fixed::types::extra::U24>::from_num(p0))
     }
 }
@@ -28,7 +28,7 @@ pub struct FixedPointV2(pub Vector2<BaseType>);
 
 impl FixedPointV2 {
     pub(crate) fn new(p0: f64, p1: f64) -> Self {
-        FixedPointV2(Vector2::new(FixedI64::<fixed::types::extra::U24>::from_num(p0), FixedI64::<fixed::types::extra::U24>::from_num(p1)))
+        FixedPointV2(Vector2::new(BaseType::from_num(p0), BaseType::from_num(p1)))
     }
 }
 
@@ -56,16 +56,16 @@ mod tests {
 
     #[test]
     fn test_deref() {
-        let num0 = FixedPoint::from_num(0.5);
-        let num1 = FixedPoint::from_num(1.5);
+        let num0 = FixedPoint::new(0.5);
+        let num1 = FixedPoint::new(1.5);
         
         let num2 = FixedPoint(*num0 + *num1);
     }
 
     #[test]
     fn test_0() {
-        let num0 = FixedPoint::from_num(0.5);
-        let num1 = FixedPoint::from_num(1.5);
+        let num0 = FixedPoint::new(0.5);
+        let num1 = FixedPoint::new(1.5);
         let vec0 = FixedPointV2::new(0.5, 1.5);
         let normalized_vec0 = vec0.0.normalize();
         let adsa = normalized_vec0 + normalized_vec0;
