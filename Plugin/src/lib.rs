@@ -17,7 +17,9 @@ use interoptopus_backend_csharp::{Config, Generator, Unsafe};
 use interoptopus_backend_csharp::overloads::Unity;
 use interoptopus::ffi_function;
 
-
+pub fn hello() {
+    println!("Hello, world!");
+}
 
 //native array struct for interop with size and array
 #[repr(C)]

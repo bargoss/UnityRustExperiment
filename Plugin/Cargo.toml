@@ -1,5 +1,5 @@
 [package]
-name = "untitled7"
+name = "bargame"
 version = "0.1.0"
 edition = "2021"
 
@@ -12,8 +12,8 @@ edition = "2021"
 
 # build this into a static wasm library that can be used with unity webgl build
 [lib]
-crate-type = ["cdylib", "staticlib"]
-name = "mandelbrot"
+crate-type = ["lib","cdylib", "staticlib"]
+name = "bargame_lib"
 path = "src/lib.rs"
 # example command to build this crate into a unity plugin that works in webgl
 
@@ -40,13 +40,7 @@ bevy_math = "0.8.1"
 rand = "0.8.5"
 ggrs = "0.9.2"
 quadtree_rs = "0.1.2"
-ico_math = "0.1.6"
 fixed = "1.22.1"
-
-# use ncollide2d and enable the "improved_fixed_point_support" cargo feature
-ncollide2d = { version = "0.33.0", features = ["improved_fixed_point_support"] }
-#nphysics2d = { version = "0.24.0", features = ["improved_fixed_point_support"] }
-nphysics2d = { version = "0.24.0", features = ["improved_fixed_point_support"] }
 nalgebra = "0.32.2"
 
 # use simba and enable the "partial_fixed_point_support" cargo feature

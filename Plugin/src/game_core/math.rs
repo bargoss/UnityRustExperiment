@@ -75,10 +75,3 @@ mod tests {
     }
 }
 
-
-use nphysics2d::simba::scalar::RealField;
-
-
-// implement RealField for FixedPoint
-
-//impl RealField for FixedPoint
