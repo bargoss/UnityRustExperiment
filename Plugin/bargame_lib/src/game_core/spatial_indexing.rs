@@ -29,25 +29,36 @@ impl<const GridElementCount: usize> GridContent<GridElementCount>
         self.arr.iter().take(self.len)
     }
 }
+
+#[derive(Copy, Clone, Debug)]
+pub struct GridBoundingBox{
+    pub start_corner: (i32, i32),
+    pub end_corner: (i32, i32)
+}
+
 pub struct SpacialPartitioning<const N:usize>{
     grid_size: FixedPoint,
     grids: HashMap<(i32, i32), GridContent<N>>,
+    object_grid_bounding_boxes: HashMap<u32, GridBoundingBox>,
 }
 impl<const GridMaxElementCount:usize> SpacialPartitioning<GridMaxElementCount>{
     pub fn new(grid_size: FixedPoint) -> SpacialPartitioning<GridMaxElementCount> {
         SpacialPartitioning {
             grid_size,
             grids: HashMap::new(),
+            object_grid_bounding_boxes: HashMap::new(),
         }
     }
 
     pub fn add_point(&mut self, item: u32, position: FixedPointV2) {
-        // add new elements to grids
-        let (x, y) = self.get_grid(position);
-        let grid = self.grids.entry((x, y)).or_insert(GridContent::new());
-        grid.add(item);
+        self.add_box(item, position, position);
     }
     pub fn add_box(&mut self, item: u32, start_corner: FixedPointV2, end_corner: FixedPointV2) {
+        if let Some(grid_bounding_box) = self.object_grid_bounding_boxes.get(&item) {
+            // remove item from old grids
+            self.remove_with_id(item);
+        }
+
         let (x0, y0) = self.get_grid(start_corner);
         let (x1, y1) = self.get_grid(end_corner);
         for i in x0..x1 + 1 {
@@ -57,6 +68,26 @@ impl<const GridMaxElementCount:usize> SpacialPartitioning<GridMaxElementCount>{
             }
         }
     }
+
+    pub fn remove_with_id(&mut self, item: u32) {
+        if let Some(grid_bounding_box) = self.object_grid_bounding_boxes.remove(&item) {
+            for i in grid_bounding_box.start_corner.0..grid_bounding_box.end_corner.0 + 1 {
+                for j in grid_bounding_box.start_corner.1..grid_bounding_box.end_corner.1 + 1 {
+                    if let Some(grid) = self.grids.get_mut(&(i, j)) {
+                        // remove item from grid
+                        for i in 0..grid.len {
+                            if grid.arr[i] == item {
+                                grid.arr[i] = grid.arr[grid.len - 1];
+                                grid.len -= 1;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     pub fn add_circle(&mut self, item: u32, center: FixedPointV2, radius: FixedPoint) {
         // add_box from here
         let half_size = FixedPointV2::new_from_fixedpoint(radius, radius);
@@ -98,6 +129,7 @@ impl<const GridMaxElementCount:usize> SpacialPartitioning<GridMaxElementCount>{
                 }
             }
         }
+        buffer.sort(); // for deterministic iterations
     }
 
 
@@ -204,6 +236,24 @@ mod tests {
         assert_eq!(buffer.len(), 1);
         assert_eq!(buffer[0], 1);
 
+    }
+
+    // test adding with same key
+    #[test]
+    fn test_add_same_key_different_position() {
+        let mut spacial_partitioning = SpacialPartitioning::<2>::new(FixedPoint::new(10.0));
+        spacial_partitioning.add_point(1, FixedPointV2::new(0.0, 0.0));
+        spacial_partitioning.add_point(2, FixedPointV2::new(0.0, 0.0));
+
+        spacial_partitioning.add_point(2, FixedPointV2::new(9.9, 0.0));
+
+        assert_eq!(spacial_partitioning.grids.len(), 1);
+        assert_eq!(spacial_partitioning.grids.get(&(0, 0)).unwrap().len, 2);
+
+        spacial_partitioning.add_point(3, FixedPointV2::new(10.0, 0.0));
+        assert_eq!(spacial_partitioning.grids.len(), 2);
+        assert_eq!(spacial_partitioning.grids.get(&(0, 0)).unwrap().len, 2);
+        assert_eq!(spacial_partitioning.grids.get(&(1, 0)).unwrap().len, 1);
     }
 }
 

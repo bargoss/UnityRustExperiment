@@ -5,3 +5,5 @@ mod math;
 mod components;
 
 mod bevy_experiment;
+
+mod verlet_physics;
