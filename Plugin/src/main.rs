@@ -20,45 +20,100 @@ struct Circle {
     color: Color,
 }
 
-struct MainState {
-    lines: Vec<Line>,
-    circles: Vec<Circle>,
-    pos_x: f32,
+struct DrawerState {
+    vertices: Vec<Vertex>,
+    indices: Vec<u32>,
+    colors: Vec<Color>,
 }
 
-impl MainState {
-    fn new() -> GameResult<MainState> {
-        let s = MainState {
-            pos_x: 0.0,
-            lines: vec![],
-            circles: vec![],
+impl DrawerState {
+    fn new() -> GameResult<DrawerState> {
+        let s = DrawerState {
+            vertices: vec![],
+            indices: vec![],
+            colors: vec![],
         };
         Ok(s)
     }
+
+    fn clear(&mut self) {
+        self.vertices.clear();
+        self.indices.clear();
+        self.colors.clear();
+    }
+
+    fn draw_triangle(&mut self, a: Vec2, b: Vec2, c: Vec2, color: Color) {
+        // push the three vertices into the self.vertices, self.indices, self.colors
+        let index = self.vertices.len() as u32;
+        let vertex_a = Vertex{
+            position: [a.x, a.y],
+            uv: [0.0, 0.0],
+            color: color.into(),
+        };
+        let vertex_b = Vertex{
+            position: [b.x, b.y],
+            uv: [0.0, 0.0],
+            color: color.into(),
+        };
+        let vertex_c = Vertex{
+            position: [c.x, c.y],
+            uv: [0.0, 0.0],
+            color: color.into(),
+        };
+
+        self.vertices.push(vertex_a);
+        self.vertices.push(vertex_b);
+        self.vertices.push(vertex_c);
+
+        self.indices.push(index);
+        self.indices.push(index + 1);
+        self.indices.push(index + 2);
+
+        self.colors.push(color);
+        self.colors.push(color);
+        self.colors.push(color);
+    }
+
+    fn draw_circle(&mut self, center: Vec2, radius: f32, color: Color) {
+        let segments = 16;
+        let angle = 2.0 * std::f32::consts::PI / segments as f32;
+        let mut current_angle = 0.0 as f32;
+
+        for i in 0..segments {
+            let start = Vec2::new(center.x + radius * current_angle.cos(), center.y + radius * current_angle.sin());
+            current_angle += angle;
+            let end = Vec2::new(center.x + radius * current_angle.cos(), center.y + radius * current_angle.sin());
+            self.draw_triangle(center, start, end, color);
+        }
+    }
+
+    fn draw_line(&mut self, start: Vec2, end: Vec2, thickness: f32, color: Color) {
+        let forward = (end - start).normalize();
+        let right = forward.perp();
+
+
+        let a = start + right * thickness;
+        let b = start - right * thickness;
+        let c = end + right * thickness;
+        let d = end - right * thickness;
+
+        self.draw_triangle(a, b, c, color);
+        self.draw_triangle(c, b, d, color);
+    }
+
+    fn get_mesh(&self) -> MeshData {
+        //to Vertex array
+
+        let mesh_data = MeshData {
+            vertices: &self.vertices,
+            indices: &self.indices,
+        };
+        mesh_data
+    }
 }
 
-impl event::EventHandler<ggez::GameError> for MainState {
+impl event::EventHandler<ggez::GameError> for DrawerState {
     fn update(&mut self, _ctx: &mut Context) -> GameResult {
-        self.pos_x = self.pos_x % 800.0 + 1.0;
-        let mut circle_count = 0;
-        if self.circles.len() < 5 {
-            let x = circle_count as f32;
-            self.circles.push(Circle {
-                center: Vec2::new(x * 50.0, 200.0),
-                radius: 100.0,
-                color: Color::WHITE,
-            });
-            circle_count += 1;
-        }
-        if self.lines.len() < 5 {
-            let x = self.lines.len() as f32;
-            self.lines.push(Line {
-                start: Vec2::new(x * 50.0, 100.0),
-                end: Vec2::new(x * 50.0, 300.0),
-                color: Color::WHITE,
-            });
-        }
-
         Ok(())
     }
 
@@ -104,7 +159,6 @@ impl event::EventHandler<ggez::GameError> for MainState {
 
         let mesh = Mesh::from_data(ctx, mesh_data);
 
-        canvas.draw(&circle, Vec2::new(self.pos_x, 380.0));
 
         canvas.draw(&mesh, Vec2::new(0.0, 0.0));
 
@@ -117,6 +171,6 @@ impl event::EventHandler<ggez::GameError> for MainState {
 pub fn main() -> GameResult {
     let cb = ggez::ContextBuilder::new("super_simple", "ggez");
     let (ctx, event_loop) = cb.build()?;
-    let state = MainState::new()?;
+    let state = DrawerState::new()?;
     event::run(ctx, event_loop, state)
 }
