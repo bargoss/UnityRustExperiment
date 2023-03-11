@@ -3,12 +3,19 @@ use nalgebra::Vector3;
 
 type BaseType = simba::scalar::FixedI40F24;
 
-
+#[derive(Debug, Clone, Copy)]
 pub struct FixedPoint(pub BaseType);
 
 impl FixedPoint {
     pub(crate) fn new(p0: f64) -> Self {
         FixedPoint(BaseType::from_num(p0))
+    }
+}
+
+//impl Default
+impl Default for FixedPoint {
+    fn default() -> Self {
+        FixedPoint(BaseType::from_num(0.0))
     }
 }
 
@@ -23,7 +30,15 @@ impl std::ops::Deref for FixedPoint {
 
 
 
+#[derive(Debug, Clone, Copy)]
 pub struct FixedPointV2(pub Vector2<BaseType>);
+
+//impl Default
+impl Default for FixedPointV2 {
+    fn default() -> Self {
+        FixedPointV2(Vector2::new(BaseType::from_num(0.0), BaseType::from_num(0.0)))
+    }
+}
 
 impl FixedPointV2 {
     pub(crate) fn new(p0: f64, p1: f64) -> Self {
@@ -31,7 +46,15 @@ impl FixedPointV2 {
     }
 }
 
+#[derive(Debug, Clone, Copy)]
 pub struct FixedPointV3(pub Vector3<BaseType>);
+
+//impl Default
+impl Default for FixedPointV3 {
+    fn default() -> Self {
+        FixedPointV3(Vector3::new(BaseType::from_num(0.0), BaseType::from_num(0.0), BaseType::from_num(0.0)))
+    }
+}
 
 
 // make that an extension trait

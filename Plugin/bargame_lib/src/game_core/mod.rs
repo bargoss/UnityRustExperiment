@@ -1,5 +1,7 @@
-//mod experiment;
-//mod experiment2;
-mod spatial_partitioning;
+mod spatial_indexing2;
 mod game_world;
 mod math;
+
+mod components;
+
+mod bevy_experiment;
