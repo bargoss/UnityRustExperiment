@@ -1,15 +1,14 @@
 use nalgebra::Vector2;
 use nalgebra::Vector3;
-use simba::scalar::{FixedI64};
 
-type BaseType = FixedI64<fixed::types::extra::U24>;
+type BaseType = simba::scalar::FixedI40F24;
 
 
 pub struct FixedPoint(pub BaseType);
 
 impl FixedPoint {
     pub(crate) fn new(p0: f64) -> Self {
-        FixedPoint(FixedI64::<fixed::types::extra::U24>::from_num(p0))
+        FixedPoint(BaseType::from_num(p0))
     }
 }
 
