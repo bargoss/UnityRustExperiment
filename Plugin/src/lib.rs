@@ -1,4 +1,3 @@
-mod game_core;
 mod experiments;
 use std::fmt;
 use bevy_math::Vec3;

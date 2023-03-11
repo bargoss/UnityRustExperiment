@@ -1,15 +1,14 @@
 [package]
-name = "bargame"
+name = "bargame_lib"
 version = "0.1.0"
 edition = "2021"
 
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[lib]
+crate-type = ["lib","cdylib", "staticlib"]
+name = "bargame_lib"
+path = "src/lib.rs"
 
 [dependencies]
-bargame_lib = { path = "bargame_lib" }
-ggez = "0.9.0-rc0"
-
 interoptopus = "0.14.15"
 interoptopus_backend_csharp = "0.14.15"
 bevy_ecs = "0.8.1"
@@ -19,5 +18,5 @@ rand = "0.8.5"
 #quadtree_rs = "0.1.2"
 fixed = "1.22.1"
 nalgebra = "0.32.2"
+# use simba and enable the "partial_fixed_point_support" cargo feature
 simba = { version = "0.8.0", features = ["partial_fixed_point_support"] }
-
