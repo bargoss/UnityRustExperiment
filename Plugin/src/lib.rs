@@ -6,7 +6,7 @@ use crate::bubbles::{BubblePushPoints, Game, PositionFloatBuffer, WorldParams};
 mod bubbles;
 //import the stuff in path ./survival_game/survival_game.rs
 
-mod survival_game;
+//mod survival_game;
 mod game2;
 
 
