@@ -50,6 +50,10 @@ impl<const GridMaxElementCount:usize> SpacialPartitioning<GridMaxElementCount>{
         }
     }
 
+    pub fn get_object(&self, item: u32) -> Option<&GridBoundingBox> {
+        self.object_grid_bounding_boxes.get(&item)
+    }
+
     pub fn add_point(&mut self, item: u32, position: FixedPointV2) {
         self.add_box(item, position, position);
     }
@@ -111,6 +115,15 @@ impl<const GridMaxElementCount:usize> SpacialPartitioning<GridMaxElementCount>{
             }
         }
         result.into_iter()
+    }
+
+    // collects into buffer
+    pub fn overlap_circle(&self, center: FixedPointV2, radius: FixedPoint, buffer: &mut Vec<u32>) {
+        let half_size = FixedPointV2::new_from_fixedpoint(radius, radius);
+        let box_start_corner = FixedPointV2(*center - *half_size);
+        let box_end_corner = FixedPointV2(*center + *half_size);
+
+        self.overlap_box(box_start_corner, box_end_corner, buffer);
     }
 
     // get a list from outside, clear it, fill it with results

@@ -7,5 +7,6 @@ pub struct VerletObject {
     pub position_last: FixedPointV2,
     pub acceleration: FixedPointV2,
     pub radius: FixedPoint,
+    pub mass: FixedPoint,
     pub is_static: bool,
 }

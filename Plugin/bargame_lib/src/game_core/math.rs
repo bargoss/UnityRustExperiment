@@ -27,6 +27,12 @@ impl std::ops::Deref for FixedPoint {
         &self.0
     }
 }
+// impl derefmut for FixedPoint
+impl std::ops::DerefMut for FixedPoint {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.0
+    }
+}
 
 
 
@@ -48,6 +54,10 @@ impl FixedPointV2 {
     pub(crate) fn new_from_fixedpoint(p0: FixedPoint, p1: FixedPoint) -> Self {
         FixedPointV2(Vector2::new(*p0, *p1))
     }
+
+    pub(crate) fn zero() -> Self {
+        FixedPointV2(Vector2::new(BaseType::from_num(0.0), BaseType::from_num(0.0)))
+    }
 }
 
 //deref
@@ -56,6 +66,13 @@ impl std::ops::Deref for FixedPointV2 {
 
     fn deref(&self) -> &Self::Target {
         &self.0
+    }
+}
+
+//derefmut
+impl std::ops::DerefMut for FixedPointV2 {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.0
     }
 }
 
@@ -75,6 +92,13 @@ impl std::ops::Deref for FixedPointV3 {
 
     fn deref(&self) -> &Self::Target {
         &self.0
+    }
+}
+
+// derefmut
+impl std::ops::DerefMut for FixedPointV3 {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.0
     }
 }
 
