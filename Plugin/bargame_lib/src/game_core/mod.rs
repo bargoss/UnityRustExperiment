@@ -1,4 +1,4 @@
-mod spatial_indexing2;
+mod spatial_indexing;
 mod game_world;
 mod math;
 

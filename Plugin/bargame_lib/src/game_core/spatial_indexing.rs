@@ -57,6 +57,14 @@ impl<const GridMaxElementCount:usize> SpacialPartitioning<GridMaxElementCount>{
             }
         }
     }
+    pub fn add_circle(&mut self, item: u32, center: FixedPointV2, radius: FixedPoint) {
+        // add_box from here
+        let half_size = FixedPointV2::new_from_fixedpoint(radius, radius);
+        let box_start_corner = FixedPointV2(*center - *half_size);
+        let box_end_corner = FixedPointV2(*center + *half_size);
+
+        self.add_box(item, box_start_corner, box_end_corner);
+    }
 
     // return iterator for grid neighbours
     pub fn get_neighbours(&self, position: FixedPointV2) -> impl Iterator<Item = u32> {

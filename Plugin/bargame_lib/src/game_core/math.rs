@@ -44,6 +44,19 @@ impl FixedPointV2 {
     pub(crate) fn new(p0: f64, p1: f64) -> Self {
         FixedPointV2(Vector2::new(BaseType::from_num(p0), BaseType::from_num(p1)))
     }
+
+    pub(crate) fn new_from_fixedpoint(p0: FixedPoint, p1: FixedPoint) -> Self {
+        FixedPointV2(Vector2::new(*p0, *p1))
+    }
+}
+
+//deref
+impl std::ops::Deref for FixedPointV2 {
+    type Target = Vector2<BaseType>;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -53,6 +66,15 @@ pub struct FixedPointV3(pub Vector3<BaseType>);
 impl Default for FixedPointV3 {
     fn default() -> Self {
         FixedPointV3(Vector3::new(BaseType::from_num(0.0), BaseType::from_num(0.0), BaseType::from_num(0.0)))
+    }
+}
+
+// deref
+impl std::ops::Deref for FixedPointV3 {
+    type Target = Vector3<BaseType>;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
     }
 }
 
