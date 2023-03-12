@@ -20,20 +20,41 @@ struct Circle {
     color: Color,
 }
 
+trait UserBehaviour {
+    fn start(&mut self);
+    fn update(&mut self, time: f32, delta_time: f32, draw_handlers: &mut dyn DrawHandlers);
+}
+
+trait DrawHandlers{
+    fn draw_triangle(&mut self, a: Vec2, b: Vec2, c: Vec2, color: Color);
+    fn draw_circle(&mut self, center: Vec2, radius: f32, color: Color);
+    fn draw_line(&mut self, start: Vec2, end: Vec2, thickness: f32, color: Color);
+}
+
+impl DrawHandlers for DrawerState{
+    fn draw_triangle(&mut self, a: Vec2, b: Vec2, c: Vec2, color: Color) { self.draw_triangle(a, b, c, color); }
+    fn draw_circle(&mut self, center: Vec2, radius: f32, color: Color) { self.draw_circle(center, radius, color); }
+    fn draw_line(&mut self, start: Vec2, end: Vec2, thickness: f32, color: Color) { self.draw_line(start, end, thickness, color); }
+}
+
 struct DrawerState {
     vertices: Vec<Vertex>,
     indices: Vec<u32>,
     colors: Vec<Color>,
     time: f32,
+    // an object of UserBehavior
+    user_behaviour: Option<Box<dyn UserBehaviour>>,
 }
 
+
 impl DrawerState {
-    fn new() -> GameResult<DrawerState> {
+    fn new(user_behaviour : Option<Box<dyn UserBehaviour>>) -> GameResult<DrawerState> {
         let s = DrawerState {
             vertices: vec![],
             indices: vec![],
             colors: vec![],
             time: 0.0,
+            user_behaviour: user_behaviour,
         };
         Ok(s)
     }
@@ -152,15 +173,16 @@ impl event::EventHandler<ggez::GameError> for DrawerState {
 
         let indices = vec![0u32, 1, 2];
 
-        let mesh_data = MeshData{
-            indices: &indices,
-            vertices: &vertices,
-        };
+
+        if let Some(mut user_behaviour) = self.user_behaviour.take() {
+            user_behaviour.update(self.time, 1.0,self);
+            self.user_behaviour = Some(user_behaviour);
+        }
 
 
-        //let mesh = Mesh::from_data(ctx, mesh_data);
 
-        self.draw_circle(Vec2::new(100.0 + self.time, 100.0), 50.0, Color::from([1.0, 0.0, 0.0, 1.0]));
+
+        //self.draw_circle(Vec2::new(100.0 + self.time, 100.0), 50.0, Color::from([1.0, 0.0, 0.0, 1.0]));
         let mesh_data = self.get_mesh();
         let mesh = Mesh::from_data(ctx, mesh_data);
         canvas.draw(&mesh, Vec2::new(0.0, 0.0));
@@ -173,9 +195,24 @@ impl event::EventHandler<ggez::GameError> for DrawerState {
     }
 }
 
+// create a new trait that has a "start" and an "update(delta_time : f32)" function
+// also have "draw_triagle", "draw_circle", "draw_line" functions
+// and a "run" function that returns a GameResult
+
+struct BaransBehavior;
+
+impl UserBehaviour for BaransBehavior {
+    fn start(&mut self) {
+    }
+
+    fn update(&mut self, time: f32, delta_time: f32, drawer: &mut dyn DrawHandlers) {
+        drawer.draw_circle(Vec2::new(100.0 + time, 100.0), 50.0, Color::from([1.0, 0.0, 0.0, 1.0]));
+    }
+}
+
 pub fn main() -> GameResult {
     let cb = ggez::ContextBuilder::new("super_simple", "ggez");
     let (ctx, event_loop) = cb.build()?;
-    let state = DrawerState::new()?;
+    let state = DrawerState::new(Some(Box::new(BaransBehavior)))?;
     event::run(ctx, event_loop, state)
 }
