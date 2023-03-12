@@ -23,12 +23,16 @@ pub trait DrawHandlers{
     fn draw_triangle(&mut self, a: Vec2, b: Vec2, c: Vec2, color: Color);
     fn draw_circle(&mut self, center: Vec2, radius: f32, color: Color);
     fn draw_line(&mut self, start: Vec2, end: Vec2, thickness: f32, color: Color);
+    fn set_camera_position(&mut self, position: Vec2);
+    fn set_camera_viewport_height(&mut self, height: f32);
 }
 
 impl DrawHandlers for DrawerState{
     fn draw_triangle(&mut self, a: Vec2, b: Vec2, c: Vec2, color: Color) { self.draw_triangle(a, b, c, color); }
     fn draw_circle(&mut self, center: Vec2, radius: f32, color: Color) { self.draw_circle(center, radius, color); }
     fn draw_line(&mut self, start: Vec2, end: Vec2, thickness: f32, color: Color) { self.draw_line(start, end, thickness, color); }
+    fn set_camera_position(&mut self, position: Vec2) { self.camera_position = position; }
+    fn set_camera_viewport_height(&mut self, height: f32) { self.camera_viewport_height = height; }
 }
 
 struct DrawerState {
@@ -38,6 +42,8 @@ struct DrawerState {
     time: f32,
     // an object of UserBehavior
     user_behaviour: Option<Box<dyn UserBehaviour>>,
+    camera_position: Vec2,
+    camera_viewport_height: f32,
 }
 
 
@@ -49,6 +55,8 @@ impl DrawerState {
             colors: vec![],
             time: 0.0,
             user_behaviour: user_behaviour,
+            camera_position: Vec2::new(0.0, 0.0),
+            camera_viewport_height: 20.0,
         };
         Ok(s)
     }
@@ -60,20 +68,43 @@ impl DrawerState {
     }
 
     fn draw_triangle(&mut self, a: Vec2, b: Vec2, c: Vec2, color: Color) {
+        let camera_pos = self.camera_position;
+        let viewport_width = self.camera_viewport_height * 16.0 / 9.0;
+        let viewport_height = self.camera_viewport_height;
+
+        let view_port_start_corner = Vec2::new(camera_pos.x - viewport_width / 2.0, camera_pos.y - viewport_height / 2.0);
+
+        let view_scale = 800.0 / viewport_width;
+
+        let mut a_in_screen_space = a - view_port_start_corner;
+        a_in_screen_space.x *= view_scale;
+        a_in_screen_space.y *= view_scale;
+
+        let mut b_in_screen_space = b - view_port_start_corner;
+        b_in_screen_space.x *= view_scale;
+        b_in_screen_space.y *= view_scale;
+
+        let mut c_in_screen_space = c - view_port_start_corner;
+        c_in_screen_space.x *= view_scale;
+        c_in_screen_space.y *= view_scale;
+
+
+        // transform the vertices to screen space
+
         // push the three vertices into the self.vertices, self.indices, self.colors
         let index = self.vertices.len() as u32;
         let vertex_a = Vertex{
-            position: [a.x, a.y],
+            position: [a_in_screen_space.x, a_in_screen_space.y],
             uv: [0.0, 0.0],
             color: color.into(),
         };
         let vertex_b = Vertex{
-            position: [b.x, b.y],
+            position: [b_in_screen_space.x, b_in_screen_space.y],
             uv: [0.0, 0.0],
             color: color.into(),
         };
         let vertex_c = Vertex{
-            position: [c.x, c.y],
+            position: [c_in_screen_space.x, c_in_screen_space.y],
             uv: [0.0, 0.0],
             color: color.into(),
         };
