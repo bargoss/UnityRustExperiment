@@ -167,6 +167,12 @@ impl event::EventHandler<ggez::GameError> for DrawerState {
 
         let indices = vec![0u32, 1, 2];
 
+        if self.time == 0.0 {
+            if let Some(mut user_behaviour) = self.user_behaviour.take() {
+                user_behaviour.start();
+                self.user_behaviour = Some(user_behaviour);
+            }
+        }
 
         if let Some(mut user_behaviour) = self.user_behaviour.take() {
             user_behaviour.update(self.time, 1.0,self);
