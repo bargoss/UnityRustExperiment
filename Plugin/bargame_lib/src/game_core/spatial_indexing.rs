@@ -175,6 +175,7 @@ impl<const GridMaxElementCount:usize> SpacialPartitioning<GridMaxElementCount>{
 
     pub fn clear(&mut self) {
         self.grids.clear();
+        self.object_grid_bounding_boxes.clear();
     }
 
     pub fn get_grid(&self, position: FixedPointV2) -> (i32, i32) {

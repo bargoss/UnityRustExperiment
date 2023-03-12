@@ -14,7 +14,7 @@ impl Index {
 
 
 #[derive(Copy, Clone, Debug, Hash, PartialEq, Eq, Ord, PartialOrd)]
-pub struct Id(u32);
+pub struct Id(pub u32);
 
 impl Id {
     pub fn new(p0: u32) -> Self {
@@ -24,7 +24,6 @@ impl Id {
 
 pub struct Entry<TVal> {
     pub val: TVal,
-    pub out_of_sync: bool,
 }
 
 pub struct VerletPhysicsWorld {
@@ -48,18 +47,10 @@ impl VerletPhysicsWorld {
 
     // handle the dirty objects
     fn sync_objects_and_beams(&mut self) {
+        self.spatial_partitioning.clear();
+
         for (id, entry) in self.objects.iter_mut() {
-            if entry.out_of_sync {
-                entry.out_of_sync = false;
-            }
-
             self.spatial_partitioning.add_circle(id.0, entry.val.position, entry.val.radius);
-        }
-
-        for (id, entry) in self.beams.iter_mut() {
-            if entry.out_of_sync {
-                entry.out_of_sync = false;
-            }
         }
     }
 
@@ -140,8 +131,8 @@ impl VerletPhysicsWorld {
         for i in 0..beam_keys.len() {
             let beam_key = beam_keys[i];
             let beam = self.beams.get(&beam_key).unwrap().val;
-            let id_A = Id(beam.verlet_object_id_a);
-            let id_B = Id(beam.verlet_object_id_b);
+            let id_A = beam.verlet_object_id_a;
+            let id_B = beam.verlet_object_id_b;
 
             if let Some(entry_A) = self.objects.get(&id_A) {
                 if let Some(entry_B) = self.objects.get(&id_B) {
@@ -176,16 +167,26 @@ impl VerletPhysicsWorld {
             }
         */
 
-        for (_, entry) in self.objects.iter_mut().filter(|(_, entry)| !entry.val.is_static) {
-            let mut obj = entry.val;
+        let mut iteration_id_buffer = Vec::new();
+        self.objects
+            .iter()
+            .filter(|(_, entry)| !entry.val.is_static)
+            .for_each(|(id, _)| iteration_id_buffer.push(id.0));
+
+        for id in iteration_id_buffer.iter() {
+            let mut obj = self.objects.get(&Id(*id)).unwrap().val;
 
             let displacement = *obj.position - *obj.position_last;
             *obj.position_last = *obj.position;
             *obj.position += displacement + *obj.acceleration * (*dt * *dt);
-            *obj.acceleration = *FixedPointV2::zero();
-            entry.val = obj;
-            entry.out_of_sync = true;
+            obj.acceleration = FixedPointV2::zero();
+
+            self.add_or_set_object(obj, Id(*id));
         }
+
+
+
+
     }
 
     pub fn update(&mut self, dt: FixedPoint, iteration_id_buffer: &mut Vec<u32>, overlap_circle_buffer: &mut Vec<u32>) {
@@ -198,7 +199,6 @@ impl VerletPhysicsWorld {
         for _ in 0..steps {
             self.solve_object_collisions(iteration_id_buffer, overlap_circle_buffer);
             self.solve_beams();
-
         }
         self.update_objects(dt);
         self.sync_objects_and_beams();
@@ -208,11 +208,15 @@ impl VerletPhysicsWorld {
         self.objects.iter().map(|(_, entry)| &entry.val)
     }
 
+    pub fn get_beam_iter(&self) -> impl Iterator<Item = &VerletBeam> {
+        self.beams.iter().map(|(_, entry)| &entry.val)
+    }
+
     pub fn set_object(&mut self, object : VerletObject, id : Id) {
-        self.objects.insert(id, Entry{val: object, out_of_sync: true});
+        self.objects.insert(id, Entry{val: object});
     }
     pub fn add_or_set_object(&mut self, object : VerletObject, id : Id) {
-        self.objects.insert(id, Entry{val: object, out_of_sync: true});
+        self.objects.insert(id, Entry{val: object});
     }
 
     pub fn remove_object(&mut self, id : Id) {
@@ -221,11 +225,11 @@ impl VerletPhysicsWorld {
     }
 
     pub fn add_beam(&mut self, beam : VerletBeam, id : Id) {
-        self.beams.insert(id, Entry{val: beam, out_of_sync: true});
+        self.beams.insert(id, Entry{val: beam});
     }
 
     pub fn add_or_set_beam(&mut self, beam : VerletBeam, id : Id) {
-        self.beams.insert(id, Entry{val: beam, out_of_sync: true});
+        self.beams.insert(id, Entry{val: beam});
     }
 
     pub fn remove_beam(&mut self, id : Id) {
