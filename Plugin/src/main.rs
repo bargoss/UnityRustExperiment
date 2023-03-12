@@ -50,7 +50,7 @@ impl UserBehaviour for BubbleTests {
 fn create_beam(physics_world: &mut verlet_physics_world::VerletPhysicsWorld, id_a: Id, id_b: Id, id_beam : Id){
     let obj_0 = physics_world.get_object(id_a).unwrap();
     let obj_1 = physics_world.get_object(id_b).unwrap();
-    let distance = FixedPoint((*obj_0.position - *obj_1.position).magnitude());
+    let distance = (obj_0.position - obj_1.position).magnitude();
     let beam = VerletBeam{
         verlet_object_id_a: id_b,
         verlet_object_id_b: id_a,
@@ -63,9 +63,9 @@ pub fn main() -> GameResult {
     let mut physics_world = verlet_physics_world::VerletPhysicsWorld::new();
 
     let obj0 = VerletObject{
-        position: FixedPointV2::new(-10.0, 0.5),
-        position_last: FixedPointV2::new(-10.0, 0.5),
-        acceleration: FixedPointV2::new(475.1, 0.1),
+        position: FixedPointV2::from_num(-10.0, 0.5),
+        position_last: FixedPointV2::from_num(-10.0, 0.5),
+        acceleration: FixedPointV2::from_num(475.1, 0.1),
         radius: FixedPoint::new(0.5),
         mass: FixedPoint::new(  1.0),
         is_static: false,
@@ -78,9 +78,9 @@ pub fn main() -> GameResult {
     for x in -2..3 {
         for y in -2..3 {
             let obj = VerletObject{
-                position: FixedPointV2::new(x as f64 * seperation, y as f64 * seperation),
-                position_last: FixedPointV2::new(x as f64 * seperation, y as f64 * seperation),
-                acceleration: FixedPointV2::new(0.0, 0.0),
+                position: FixedPointV2::from_num(x as f64 * seperation, y as f64 * seperation),
+                position_last: FixedPointV2::from_num(x as f64 * seperation, y as f64 * seperation),
+                acceleration: FixedPointV2::from_num(0.0, 0.0),
                 radius: FixedPoint::new(0.5),
                 mass: FixedPoint::new(  1.0),
                 is_static: false,

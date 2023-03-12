@@ -17,3 +17,4 @@ bevy_ecs = "0.8.1"
 nalgebra = "0.32.2"
 # use simba and enable the "partial_fixed_point_support" cargo feature
 simba = { version = "0.8.0", features = ["partial_fixed_point_support"] }
+derive_more = "0.99.17"

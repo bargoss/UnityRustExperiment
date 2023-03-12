@@ -94,9 +94,9 @@ impl<const GridMaxElementCount:usize> SpacialPartitioning<GridMaxElementCount>{
 
     pub fn add_circle(&mut self, item: u32, center: FixedPointV2, radius: FixedPoint) {
         // add_box from here
-        let half_size = FixedPointV2::new_from_fixedpoint(radius, radius);
-        let box_start_corner = FixedPointV2(*center - *half_size);
-        let box_end_corner = FixedPointV2(*center + *half_size);
+        let half_size = FixedPointV2::new(radius, radius);
+        let box_start_corner = center - half_size;
+        let box_end_corner = center + half_size;
 
         self.add_box(item, box_start_corner, box_end_corner);
     }
@@ -119,9 +119,9 @@ impl<const GridMaxElementCount:usize> SpacialPartitioning<GridMaxElementCount>{
 
     // collects into buffer
     pub fn overlap_circle(&self, center: FixedPointV2, radius: FixedPoint, buffer: &mut Vec<u32>) {
-        let half_size = FixedPointV2::new_from_fixedpoint(radius, radius);
-        let box_start_corner = FixedPointV2(*center - *half_size);
-        let box_end_corner = FixedPointV2(*center + *half_size);
+        let half_size = FixedPointV2::new(radius, radius);
+        let box_start_corner = center - half_size;
+        let box_end_corner = center + half_size;
 
         self.overlap_box(box_start_corner, box_end_corner, buffer);
     }
@@ -179,8 +179,9 @@ impl<const GridMaxElementCount:usize> SpacialPartitioning<GridMaxElementCount>{
     }
 
     pub fn get_grid(&self, position: FixedPointV2) -> (i32, i32) {
-        let x = (position.0.x / self.grid_size.0).floor_to_i32();
-        let y = (position.0.y / self.grid_size.0).floor_to_i32();
+        let div_x = (position.x() / self.grid_size);
+        let x = (position.x() / self.grid_size).floor_to_i32();
+        let y = (position.y() / self.grid_size).floor_to_i32();
 
         (x,y)
     }
@@ -199,15 +200,15 @@ mod tests {
     #[test]
     fn test_add() {
         let mut spacial_partitioning = SpacialPartitioning::<2>::new(FixedPoint::new(10.0));
-        spacial_partitioning.add_point(1, FixedPointV2::new(0.0, 0.0));
-        spacial_partitioning.add_point(2, FixedPointV2::new(0.0, 0.0));
+        spacial_partitioning.add_point(1, FixedPointV2::from_num(0.0, 0.0));
+        spacial_partitioning.add_point(2, FixedPointV2::from_num(0.0, 0.0));
 
-        spacial_partitioning.add_point(2, FixedPointV2::new(9.9, 0.0));
+        spacial_partitioning.add_point(2, FixedPointV2::from_num(9.9, 0.0));
 
         assert_eq!(spacial_partitioning.grids.len(), 1);
         assert_eq!(spacial_partitioning.grids.get(&(0, 0)).unwrap().len, 2);
 
-        spacial_partitioning.add_point(3, FixedPointV2::new(10.0, 0.0));
+        spacial_partitioning.add_point(3, FixedPointV2::from_num(10.0, 0.0));
         assert_eq!(spacial_partitioning.grids.len(), 2);
         assert_eq!(spacial_partitioning.grids.get(&(0, 0)).unwrap().len, 2);
         assert_eq!(spacial_partitioning.grids.get(&(1, 0)).unwrap().len, 1);
@@ -217,17 +218,17 @@ mod tests {
     #[test]
     fn test_spacial_partitioning() {
         let mut partitioning: SpacialPartitioning<5> = SpacialPartitioning::new(FixedPoint::new(10.0));
-        partitioning.add_point(1, FixedPointV2::new(5.0, 5.0));
-        partitioning.add_point(2, FixedPointV2::new(25.0, 25.0));
-        partitioning.add_point(3, FixedPointV2::new(-5.0, -5.0));
-        partitioning.add_point(4, FixedPointV2::new(-25.0, -25.0));
+        partitioning.add_point(1, FixedPointV2::from_num(5.0, 5.0));
+        partitioning.add_point(2, FixedPointV2::from_num(25.0, 25.0));
+        partitioning.add_point(3, FixedPointV2::from_num(-5.0, -5.0));
+        partitioning.add_point(4, FixedPointV2::from_num(-25.0, -25.0));
 
         let mut buffer = Vec::new();
-        partitioning.overlap_box(FixedPointV2::new(0.0, 0.0), FixedPointV2::new(11.0, 11.0), &mut buffer);
+        partitioning.overlap_box(FixedPointV2::from_num(0.0, 0.0), FixedPointV2::from_num(11.0, 11.0), &mut buffer);
         assert_eq!(buffer.len(), 1);
         assert_eq!(buffer[0], 1);
 
-        partitioning.overlap_box(FixedPointV2::new(-11.0, -11.0), FixedPointV2::new(11.0, 11.0), &mut buffer);
+        partitioning.overlap_box(FixedPointV2::from_num(-11.0, -11.0), FixedPointV2::from_num(11.0, 11.0), &mut buffer);
         assert_eq!(buffer.len(), 2);
 
         // sort the buffer
@@ -239,14 +240,14 @@ mod tests {
     #[test]
     fn test_add_box(){
             let mut partitioning: SpacialPartitioning<5> = SpacialPartitioning::new(FixedPoint::new(10.0));
-        partitioning.add_box(1, FixedPointV2::new(9.0, 23.0), FixedPointV2::new(21.0, 25.0));
+        partitioning.add_box(1, FixedPointV2::from_num(9.0, 23.0), FixedPointV2::from_num(21.0, 25.0));
 
 
         let mut buffer = Vec::new();
-        partitioning.overlap_box(FixedPointV2::new(0.0, 0.0), FixedPointV2::new(11.0, 11.0), &mut buffer);
+        partitioning.overlap_box(FixedPointV2::from_num(0.0, 0.0), FixedPointV2::from_num(11.0, 11.0), &mut buffer);
         assert_eq!(buffer.len(), 0);
 
-        partitioning.overlap_box(FixedPointV2::new(0.0, 0.0), FixedPointV2::new(21.0, 25.0), &mut buffer);
+        partitioning.overlap_box(FixedPointV2::from_num(0.0, 0.0), FixedPointV2::from_num(21.0, 25.0), &mut buffer);
         assert_eq!(buffer.len(), 1);
         assert_eq!(buffer[0], 1);
 
@@ -256,15 +257,15 @@ mod tests {
     #[test]
     fn test_add_same_key_different_position() {
         let mut spacial_partitioning = SpacialPartitioning::<2>::new(FixedPoint::new(10.0));
-        spacial_partitioning.add_point(1, FixedPointV2::new(0.0, 0.0));
-        spacial_partitioning.add_point(2, FixedPointV2::new(0.0, 0.0));
+        spacial_partitioning.add_point(1, FixedPointV2::from_num(0.0, 0.0));
+        spacial_partitioning.add_point(2, FixedPointV2::from_num(0.0, 0.0));
 
-        spacial_partitioning.add_point(2, FixedPointV2::new(9.9, 0.0));
+        spacial_partitioning.add_point(2, FixedPointV2::from_num(9.9, 0.0));
 
         assert_eq!(spacial_partitioning.grids.len(), 1);
         assert_eq!(spacial_partitioning.grids.get(&(0, 0)).unwrap().len, 2);
 
-        spacial_partitioning.add_point(3, FixedPointV2::new(10.0, 0.0));
+        spacial_partitioning.add_point(3, FixedPointV2::from_num(10.0, 0.0));
         assert_eq!(spacial_partitioning.grids.len(), 2);
         assert_eq!(spacial_partitioning.grids.get(&(0, 0)).unwrap().len, 2);
         assert_eq!(spacial_partitioning.grids.get(&(1, 0)).unwrap().len, 1);

@@ -69,17 +69,21 @@ impl VerletPhysicsWorld {
     */
 
     pub fn solve_verlet_collision(object1: &mut VerletObject, object2: &mut VerletObject, min_dist: FixedPoint, response_coef: FixedPoint) {
-        let v = *object1.position - *object2.position;
+        let v = object1.position - object2.position;
         let dist = v.magnitude();
+        // Q: its giving me error: private associated function defined here, what am I doing wrong?
+
+
+
         let n = v / dist;
-        let mass_ratio_1 = *object1.mass / (*object1.mass + *object2.mass);
-        let mass_ratio_2 = *object2.mass / (*object1.mass + *object2.mass);
-        let delta = *FixedPoint::new(0.5) * *response_coef * (dist - *min_dist);
+        let mass_ratio_1 = object1.mass / (object1.mass + object2.mass);
+        let mass_ratio_2 = object2.mass / (object1.mass + object2.mass);
+        let delta = FixedPoint::new(0.5) * response_coef * (dist - min_dist);
         let obj1_translation = -n * (mass_ratio_2 * delta);
         let obj2_translation = n * (mass_ratio_1 * delta);
 
-        *object1.position += obj1_translation;
-        *object2.position += obj2_translation;
+        object1.position += obj1_translation;
+        object2.position += obj2_translation;
     }
 
     pub fn overlap_circle(&self, position: FixedPointV2, radius: FixedPoint, overlap_circle_buffer: &mut Vec<u32>) {
@@ -88,10 +92,10 @@ impl VerletPhysicsWorld {
         // sqr mag check and remove
         overlap_circle_buffer.retain(|id| {
             let obj = self.objects.get(&Id(*id)).unwrap().val;
-            let delta = *obj.position - *position;
+            let delta = obj.position - position;
             let sqr_dist = delta.magnitude_squared();
 
-            let collision_dist_squared = (*radius + *obj.radius) * (*radius + *obj.radius);
+            let collision_dist_squared = (radius + obj.radius) * (radius + obj.radius);
 
             sqr_dist < collision_dist_squared
         });
@@ -115,7 +119,7 @@ impl VerletPhysicsWorld {
             for other_id in overlap_circle_buffer.iter().filter(|id| **id != *id0) {
                 let mut obj1 = self.objects.get(&Id(*other_id)).unwrap().val;
 
-                let min_dist = FixedPoint(*obj0.radius + *obj1.radius);
+                let min_dist = obj0.radius + obj1.radius;
                 VerletPhysicsWorld::solve_verlet_collision(&mut obj0, &mut obj1, min_dist, FixedPoint::new(0.75));
 
                 if !obj1.is_static {
@@ -139,7 +143,7 @@ impl VerletPhysicsWorld {
                     let mut obj0 = entry_A.val.clone();
                     let mut obj1 = entry_B.val.clone();
 
-                    let min_dist = FixedPoint(*beam.length);
+                    let min_dist = beam.length;
                     VerletPhysicsWorld::solve_verlet_collision(&mut obj0, &mut obj1, min_dist, FixedPoint::new(0.75));
 
                     if !obj0.is_static {
@@ -176,9 +180,9 @@ impl VerletPhysicsWorld {
         for id in iteration_id_buffer.iter() {
             let mut obj = self.objects.get(&Id(*id)).unwrap().val;
 
-            let displacement = *obj.position - *obj.position_last;
-            *obj.position_last = *obj.position;
-            *obj.position += displacement + *obj.acceleration * (*dt * *dt);
+            let displacement = obj.position - obj.position_last;
+            obj.position_last = obj.position;
+            obj.position += displacement + obj.acceleration * (dt * dt);
             obj.acceleration = FixedPointV2::zero();
 
             self.add_or_set_object(obj, Id(*id));
@@ -191,7 +195,7 @@ impl VerletPhysicsWorld {
 
     pub fn update(&mut self, dt: FixedPoint, iteration_id_buffer: &mut Vec<u32>, overlap_circle_buffer: &mut Vec<u32>) {
         let steps = 2;
-        let step_dt = FixedPoint(*dt / *FixedPoint::new(steps as f64));
+        let step_dt = dt / FixedPoint::new(steps as f64);
 
 
         self.sync_objects_and_beams();
