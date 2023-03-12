@@ -72,12 +72,15 @@ fn create_beam(physics_world: &mut verlet_physics_world::VerletPhysicsWorld, id_
 fn shoot_new_object(physics_world: &mut verlet_physics_world::VerletPhysicsWorld, id: Id){
     //physics_world.remove_object(id);
 
+    let id_as_f64 = id.0 as f64;
+    let id_mapped = (id_as_f64 % 5.0 - 2.0);
+
     let obj = VerletObject{
-        position: FixedPointV2::from_num(-20.0, 0.01 * (id.0 as f64)),
-        position_last: FixedPointV2::from_num(-20.0, 0.01 * (id.0 as f64)),
-        acceleration: FixedPointV2::from_num(700.0, 0.0),
-        radius: FixedPoint::new(0.5),
-        mass: FixedPoint::new(  1.0),
+        position: FixedPointV2::from_num(-20.0, 0.01 * id_as_f64),
+        position_last: FixedPointV2::from_num(-20.0, 0.01 * id_as_f64),
+        acceleration: FixedPointV2::from_num(700.0, id_mapped * 15.0),
+        radius: FixedPoint::new(0.1),
+        mass: FixedPoint::new(  0.1),
         is_static: false,
     };
 
@@ -107,8 +110,8 @@ pub fn main() -> GameResult {
                 position: FixedPointV2::from_num(x as f64 * seperation, y as f64 * seperation),
                 position_last: FixedPointV2::from_num(x as f64 * seperation, y as f64 * seperation),
                 acceleration: FixedPointV2::from_num(0.0, 0.0),
-                radius: FixedPoint::new(0.5),
-                mass: FixedPoint::new(  1.0),
+                radius: FixedPoint::new(0.599),
+                mass: FixedPoint::new(  1.5),
                 is_static: false,
             };
             physics_world.add_or_set_object(obj, Id::new(last_id));
