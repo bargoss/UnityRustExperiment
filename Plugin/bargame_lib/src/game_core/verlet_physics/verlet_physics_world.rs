@@ -6,8 +6,21 @@ use super::*;
 #[derive(Copy, Clone, Debug, Hash, PartialEq, Eq, Ord, PartialOrd)]
 pub struct Index(u32);
 
+impl Index {
+    pub fn new(p0: u32) -> Self {
+        Index(p0)
+    }
+}
+
+
 #[derive(Copy, Clone, Debug, Hash, PartialEq, Eq, Ord, PartialOrd)]
 pub struct Id(u32);
+
+impl Id {
+    pub fn new(p0: u32) -> Self {
+        Id(p0)
+    }
+}
 
 pub struct Entry<TVal> {
     pub val: TVal,
@@ -174,6 +187,10 @@ impl VerletPhysicsWorld {
         }
         self.update_objects(dt);
         self.sync_objects_and_beams();
+    }
+
+    pub fn get_obj_iter(&self) -> impl Iterator<Item = &VerletObject> {
+        self.objects.iter().map(|(_, entry)| &entry.val)
     }
 
     pub fn set_object(&mut self, object : VerletObject, id : Id) {

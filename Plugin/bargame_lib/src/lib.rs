@@ -1,4 +1,4 @@
-mod game_core;
+pub mod game_core;
 
 pub fn add(left: usize, right: usize) -> usize {
     left + right

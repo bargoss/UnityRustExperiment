@@ -7,8 +7,14 @@ type BaseType = simba::scalar::FixedI40F24;
 pub struct FixedPoint(pub BaseType);
 
 impl FixedPoint {
-    pub(crate) fn new(p0: f64) -> Self {
+    pub fn new(p0: f64) -> Self {
         FixedPoint(BaseType::from_num(p0))
+    }
+
+    // to_f32
+    pub fn to_f32(&self) -> f32 {
+        // convert simba::scalar::FixedI40F24 to f32
+        self.0.0.to_num()
     }
 }
 
@@ -47,15 +53,15 @@ impl Default for FixedPointV2 {
 }
 
 impl FixedPointV2 {
-    pub(crate) fn new(p0: f64, p1: f64) -> Self {
+    pub fn new(p0: f64, p1: f64) -> Self {
         FixedPointV2(Vector2::new(BaseType::from_num(p0), BaseType::from_num(p1)))
     }
 
-    pub(crate) fn new_from_fixedpoint(p0: FixedPoint, p1: FixedPoint) -> Self {
+    pub fn new_from_fixedpoint(p0: FixedPoint, p1: FixedPoint) -> Self {
         FixedPointV2(Vector2::new(*p0, *p1))
     }
 
-    pub(crate) fn zero() -> Self {
+    pub fn zero() -> Self {
         FixedPointV2(Vector2::new(BaseType::from_num(0.0), BaseType::from_num(0.0)))
     }
 }

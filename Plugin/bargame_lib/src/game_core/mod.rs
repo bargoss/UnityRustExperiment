@@ -1,9 +1,9 @@
-mod spatial_indexing;
-mod game_world;
-mod math;
+pub mod spatial_indexing;
+pub mod game_world;
+pub mod math;
 
-mod components;
+pub mod components;
 
 mod bevy_experiment;
 
-mod verlet_physics;
+pub mod verlet_physics;
