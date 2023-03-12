@@ -24,6 +24,7 @@ struct DrawerState {
     vertices: Vec<Vertex>,
     indices: Vec<u32>,
     colors: Vec<Color>,
+    time: f32,
 }
 
 impl DrawerState {
@@ -32,6 +33,7 @@ impl DrawerState {
             vertices: vec![],
             indices: vec![],
             colors: vec![],
+            time: 0.0,
         };
         Ok(s)
     }
@@ -110,6 +112,13 @@ impl DrawerState {
         };
         mesh_data
     }
+
+    fn get_time(&self) -> f32 {
+        self.time
+    }
+    fn set_time(&mut self, time: f32) {
+        self.time = time;
+    }
 }
 
 impl event::EventHandler<ggez::GameError> for DrawerState {
@@ -122,15 +131,6 @@ impl event::EventHandler<ggez::GameError> for DrawerState {
             ctx,
             graphics::Color::from([0.1, 0.2, 0.3, 1.0]),
         );
-
-        let circle = graphics::Mesh::new_circle(
-            ctx,
-            graphics::DrawMode::fill(),
-            Vec2::new(0.0, 0.0),
-            100.0,
-            2.0,
-            Color::WHITE,
-        )?;
 
         let vertices = vec![
             Vertex{
@@ -157,13 +157,18 @@ impl event::EventHandler<ggez::GameError> for DrawerState {
             vertices: &vertices,
         };
 
+
+        //let mesh = Mesh::from_data(ctx, mesh_data);
+
+        self.draw_circle(Vec2::new(100.0 + self.time, 100.0), 50.0, Color::from([1.0, 0.0, 0.0, 1.0]));
+        let mesh_data = self.get_mesh();
         let mesh = Mesh::from_data(ctx, mesh_data);
-
-
         canvas.draw(&mesh, Vec2::new(0.0, 0.0));
-
-
         canvas.finish(ctx)?;
+        self.clear();
+
+
+        self.time += 1.0;
         Ok(())
     }
 }
