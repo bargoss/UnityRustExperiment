@@ -269,6 +269,15 @@ mod tests {
         assert_eq!(spacial_partitioning.grids.len(), 2);
         assert_eq!(spacial_partitioning.grids.get(&(0, 0)).unwrap().len, 2);
         assert_eq!(spacial_partitioning.grids.get(&(1, 0)).unwrap().len, 1);
+
+
+        let mut my_list = Vec::new();
+        my_list.push(1);
+        my_list.push(2);
+
+        println!("my_list: {:?}", my_list);
+
+        println!("my_list: {:?}", my_list);
     }
 }
 

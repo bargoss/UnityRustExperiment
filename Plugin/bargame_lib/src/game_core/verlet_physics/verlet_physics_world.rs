@@ -3,7 +3,9 @@ use crate::game_core::verlet_physics::verlet_beam::VerletBeam;
 use crate::game_core::verlet_physics::verlet_object::VerletObject;
 use super::*;
 
-#[derive(Copy, Clone, Debug, Hash, PartialEq, Eq, Ord, PartialOrd)]
+use derive_more::{Add, AddAssign, Sub, SubAssign};
+
+#[derive(Copy, Clone, Debug, Hash, PartialEq, Eq, Ord, PartialOrd, Add, AddAssign, Sub, SubAssign)]
 pub struct Index(u32);
 
 impl Index {
@@ -13,7 +15,7 @@ impl Index {
 }
 
 
-#[derive(Copy, Clone, Debug, Hash, PartialEq, Eq, Ord, PartialOrd)]
+#[derive(Copy, Clone, Debug, Hash, PartialEq, Eq, Ord, PartialOrd, Add, AddAssign, Sub, SubAssign)]
 pub struct Id(pub u32);
 
 impl Id {
