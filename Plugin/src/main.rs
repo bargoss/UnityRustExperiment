@@ -210,9 +210,13 @@ impl UserBehaviour for BaransBehavior {
     }
 }
 
-pub fn main() -> GameResult {
+pub fn run_drawer(user_behaviour: Option<Box<dyn UserBehaviour>>) -> GameResult {
     let cb = ggez::ContextBuilder::new("super_simple", "ggez");
     let (ctx, event_loop) = cb.build()?;
-    let state = DrawerState::new(Some(Box::new(BaransBehavior)))?;
+    let state = DrawerState::new(user_behaviour)?;
     event::run(ctx, event_loop, state)
+}
+
+pub fn main() -> GameResult {
+    run_drawer(Some(Box::new(BaransBehavior)))
 }
