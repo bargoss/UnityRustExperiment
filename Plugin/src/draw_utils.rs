@@ -173,6 +173,8 @@ impl event::EventHandler<ggez::GameError> for DrawerState {
     }
 
     fn draw(&mut self, ctx: &mut Context) -> GameResult {
+        let delta_time = 0.2;
+
         let mut canvas = graphics::Canvas::from_frame(
             ctx,
             graphics::Color::from([0.1, 0.2, 0.3, 1.0]),
@@ -206,7 +208,7 @@ impl event::EventHandler<ggez::GameError> for DrawerState {
         }
 
         if let Some(mut user_behaviour) = self.user_behaviour.take() {
-            user_behaviour.update(self.time, 1.0,self);
+            user_behaviour.update(self.time, delta_time,self);
             self.user_behaviour = Some(user_behaviour);
         }
 
@@ -221,7 +223,10 @@ impl event::EventHandler<ggez::GameError> for DrawerState {
         self.clear();
 
 
-        self.time += 1.0;
+        self.time += delta_time;
+
+        // pause the thread for delta_time seconds
+        //std::thread::sleep(std::time::Duration::from_millis((delta_time * 1000.0) as u64));
         Ok(())
     }
 }

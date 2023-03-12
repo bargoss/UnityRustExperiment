@@ -91,6 +91,21 @@ impl VerletPhysicsWorld {
         *object2.position += obj2_translation;
     }
 
+    pub fn overlap_circle(&self, position: FixedPointV2, radius: FixedPoint, overlap_circle_buffer: &mut Vec<u32>) {
+        self.spatial_partitioning.overlap_circle(position, radius, overlap_circle_buffer);
+
+        // sqr mag check and remove
+        overlap_circle_buffer.retain(|id| {
+            let obj = self.objects.get(&Id(*id)).unwrap().val;
+            let delta = *obj.position - *position;
+            let sqr_dist = delta.magnitude_squared();
+
+            let collision_dist_squared = (*radius + *obj.radius) * (*radius + *obj.radius);
+
+            sqr_dist < collision_dist_squared
+        });
+    }
+
     fn solve_object_collisions(&mut self, iteration_id_buffer: &mut Vec<u32>, overlap_circle_buffer: &mut Vec<u32>) {
         iteration_id_buffer.clear();
         self.objects
@@ -103,10 +118,10 @@ impl VerletPhysicsWorld {
             let mut obj0 = self.objects.get(&Id(*id0)).unwrap().val;
 
             // get possible neighbours
-            self.spatial_partitioning.overlap_circle(obj0.position, obj0.radius, overlap_circle_buffer);
+            self.overlap_circle(obj0.position, obj0.radius, overlap_circle_buffer);
 
             // check for collisions
-            for other_id in overlap_circle_buffer.iter() { // 000000000000000000
+            for other_id in overlap_circle_buffer.iter().filter(|id| **id != *id0) {
                 let mut obj1 = self.objects.get(&Id(*other_id)).unwrap().val;
 
                 let min_dist = FixedPoint(*obj0.radius + *obj1.radius);
