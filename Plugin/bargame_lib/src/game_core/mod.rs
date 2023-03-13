@@ -3,6 +3,7 @@ pub mod game_world;
 pub mod math;
 
 pub mod components;
+pub mod systems;
 
 mod bevy_experiment;
 

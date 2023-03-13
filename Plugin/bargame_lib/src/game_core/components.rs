@@ -1,10 +1,10 @@
 pub use bevy_ecs::component::Component;
 pub use super::math::*;
 
-mod net_id;
-mod position;
-mod velocity;
-mod circle_collider;
+pub mod net_id;
+pub mod position;
+pub mod velocity;
+pub mod circle_collider;
 
 
 
