@@ -67,11 +67,6 @@ impl Default for FixedPoint {
 #[derive(Debug, Clone, Copy, Add, Sub, Mul, Div, AddAssign, SubAssign, MulAssign, DivAssign, Neg)]
 pub struct FixedPointV2(Vector2<BaseType>);
 
-impl FixedPointV2 {
-    pub fn magnitude_squared(&self) -> FixedPoint {
-        FixedPoint(self.0.magnitude_squared())
-    }
-}
 
 // impl Div for FixedPointV2 / FixedPoint
 impl Div<FixedPoint> for FixedPointV2 {
@@ -92,6 +87,20 @@ impl Mul<FixedPoint> for FixedPointV2 {
 impl FixedPointV2 {
     pub fn magnitude(&self) -> FixedPoint {
         FixedPoint(self.0.magnitude())
+    }
+    pub fn magnitude_squared(&self) -> FixedPoint {
+        FixedPoint(self.0.magnitude_squared())
+    }
+    pub fn normalize(&self) -> FixedPointV2 {
+        FixedPointV2(self.0.normalize())
+    }
+    pub fn safe_normalize(&self) -> FixedPointV2 {
+        let sqr_magnitude = self.magnitude_squared();
+        if sqr_magnitude.0 > BaseType::from_num(0.0) {
+            FixedPointV2(self.0 / sqr_magnitude.0.sqrt())
+        } else {
+            FixedPointV2::zero()
+        }
     }
 }
 
@@ -138,8 +147,26 @@ impl FixedPointV3 {
     pub fn new(x: FixedPoint, y: FixedPoint, z: FixedPoint) -> Self {
         FixedPointV3(Vector3::new(x.0, y.0, z.0))
     }
+    // mag
+    pub fn magnitude(&self) -> FixedPoint {
+        FixedPoint(self.0.magnitude())
+    }
+    pub fn magnitude_squared(&self) -> FixedPoint {
+        FixedPoint(self.0.magnitude_squared())
+    }
     pub fn from_num(p0: f64, p1: f64, p2: f64) -> Self {
         FixedPointV3(Vector3::new(BaseType::from_num(p0), BaseType::from_num(p1), BaseType::from_num(p2)))
+    }
+    pub fn normalize(&self) -> FixedPointV3 {
+        FixedPointV3(self.0.normalize())
+    }
+    pub fn safe_normalize(&self) -> FixedPointV3 {
+        let sqr_magnitude = self.magnitude_squared();
+        if sqr_magnitude.0 > BaseType::from_num(0.0) {
+            FixedPointV3(self.0 / sqr_magnitude.0.sqrt())
+        } else {
+            FixedPointV3::zero()
+        }
     }
 
     // getter and setter for x and y

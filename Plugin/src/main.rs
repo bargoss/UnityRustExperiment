@@ -30,8 +30,13 @@ impl UserBehaviour for BubbleTests {
         if(time > self.last_shoot + 1.0){
             shoot_new_object(&mut self.physics_world, self.next_id);
             self.next_id += Id::new(1);
+            if self.next_id.0 > 500{
+                self.next_id = Id::new(250);
+            }
             self.last_shoot = time;
         }
+
+        central_gravity(&mut self.physics_world, FixedPoint::new(0.5));
 
 
         self.physics_world.update(FixedPoint::new(0.02), &mut buffer_a, &mut buffer_b);
@@ -57,6 +62,18 @@ impl UserBehaviour for BubbleTests {
     }
 }
 
+//fn central_gravity(physics_world : verlet_physics_world::VerletPhysicsWorld, gravity : FixedPoint){
+// physics world is mut
+fn central_gravity(physics_world : &mut verlet_physics_world::VerletPhysicsWorld, gravity : FixedPoint){
+    let gravity_center = FixedPointV2::from_num(0.0, 0.0);
+    for obj in physics_world.get_obj_iter_mut(){
+        let gravity_direction = (gravity_center - obj.position).safe_normalize();
+        let acceleration = gravity_direction * gravity;
+        obj.acceleration += acceleration;
+
+    }
+}
+
 fn create_beam(physics_world: &mut verlet_physics_world::VerletPhysicsWorld, id_a: Id, id_b: Id, id_beam : Id){
     let obj_0 = physics_world.get_object(id_a).unwrap();
     let obj_1 = physics_world.get_object(id_b).unwrap();
@@ -74,13 +91,14 @@ fn shoot_new_object(physics_world: &mut verlet_physics_world::VerletPhysicsWorld
 
     let id_as_f64 = id.0 as f64;
     let id_mapped = (id_as_f64 % 5.0 - 2.0);
+    let radius = FixedPoint::new(0.1 + 0.25 * ((id_as_f64 % 10.0) / 10.0));
 
     let obj = VerletObject{
         position: FixedPointV2::from_num(-20.0, 0.01 * id_as_f64),
         position_last: FixedPointV2::from_num(-20.0, 0.01 * id_as_f64),
         acceleration: FixedPointV2::from_num(700.0, id_mapped * 15.0),
-        radius: FixedPoint::new(0.1),
-        mass: FixedPoint::new(  0.1),
+        radius: radius,
+        mass: radius * radius,
         is_static: false,
     };
 

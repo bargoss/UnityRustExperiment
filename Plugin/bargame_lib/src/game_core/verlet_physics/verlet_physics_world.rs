@@ -214,6 +214,10 @@ impl VerletPhysicsWorld {
         self.objects.iter().map(|(_, entry)| &entry.val)
     }
 
+    pub fn get_obj_iter_mut(&mut self) -> impl Iterator<Item = &mut VerletObject> {
+        self.objects.iter_mut().map(|(_, entry)| &mut entry.val)
+    }
+
     pub fn get_beam_iter(&self) -> impl Iterator<Item = &VerletBeam> {
         self.beams.iter().map(|(_, entry)| &entry.val)
     }
