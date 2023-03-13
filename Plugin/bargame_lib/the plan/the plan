@@ -1,0 +1,16 @@
+----    -   move the rollback controller from c# to here
+----    -   a partial rollback demo is needed after rollback controller is done
+----    -   static objects in physics world
+----    -   ecs world needed
+----    -   physics system needed
+----    -   collider without velocity needs to be treated as a "static" collider, it won't move during collisions
+
+----    -   figure out what to do when a player takes too long to send an input
+            options are:
+            -   stop the time and wait for the player (easiest option)
+            -   stop the game (not a good idea for more than two players)
+            -   just have a server (backend complexity)
+            -   make a p2p consensus system (learn valuable stuff)
+                that gives us synced info on which players have become inactive in which tick
+                so all the other peers know when a players inputs are invalidated and the game will will continue without them
+
