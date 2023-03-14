@@ -1,0 +1,19 @@
+Example world state:
+    -tank bubble entities
+    -tank entities
+    -beam entities
+
+
+update cycle:
+    sample inputs
+
+    if agreed state can progress:
+        rollback prediction enabled entity states
+        simulate the world until the last tick where all inputs are known
+        save prediction enabled entity states
+
+
+    advance the world with a filter on the prediction enabled entities
+    if(current (predicted) tick > agreed tick):
+        register keyframes in interpolation buffers
+
