@@ -8,3 +8,4 @@ pub mod systems;
 mod bevy_experiment;
 
 pub mod verlet_physics;
+pub mod serialization;

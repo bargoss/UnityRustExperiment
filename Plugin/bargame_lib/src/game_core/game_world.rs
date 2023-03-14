@@ -15,7 +15,8 @@ impl GameWorld{
     pub fn new() -> GameWorld{
         let mut world = World::new();
         let mut init_schedule = Schedule::default();
-        let mut update_schedule = Schedule::default();
+        let mut advance_tick_schedule = Schedule::default();
+        let mut register_keyframes_schedule = Schedule::default();
 
         GameWorld{
             world,
@@ -32,6 +33,9 @@ mod tests {
     use crate::game_core::components::position::Position;
     use crate::game_core::components::velocity::Velocity;
     use super::*;
+    use bevy_ecs::bundle::Bundle;
+    use bevy_ecs::schedule::SystemStage;
+
 
     // derive bundle
     #[derive(Bundle)]
@@ -53,9 +57,13 @@ mod tests {
         let mut init_schedule = Schedule::default();
 
         let mut update_schedule = Schedule::default();
+        update_schedule
+            .add_stage(
+                "update",
+                    SystemStage::parallel()
+                    .with_system(simple_rigidbody_system)
+        );
 
-        // add simple rigidbody system to the update_schedule the quickest way
-        update_schedule.add_system(simple_rigidbody_system.system());
 
     }
 }
