@@ -1,6 +1,7 @@
 use std::ops::{Div, Mul};
 use nalgebra::Vector2;
 use nalgebra::Vector3;
+use serde::{Deserialize, Serialize};
 use derive_more::{Add, Sub, Mul, Div, AddAssign, SubAssign, MulAssign, DivAssign, Neg};
 use simba::scalar::ComplexField;
 
@@ -8,6 +9,25 @@ type BaseType = simba::scalar::FixedI40F24;
 
 #[derive(Debug, Clone, Copy, Add, Sub, Mul, Div, AddAssign, SubAssign, MulAssign, DivAssign, Neg)]
 pub struct FixedPoint(BaseType);
+
+// impl serialize and deserialize
+impl Serialize for FixedPoint {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        serializer.serialize_i64(self.0.to_bits())
+    }
+}
+impl<'de> Deserialize<'de> for FixedPoint {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        let i = i64::deserialize(deserializer)?;
+        Ok(FixedPoint(BaseType::from_bits(i)))
+    }
+}
 
 // impl PartialOrd, PartialEq
 impl PartialOrd for FixedPoint {
