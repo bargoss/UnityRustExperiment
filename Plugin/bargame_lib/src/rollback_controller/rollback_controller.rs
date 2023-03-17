@@ -5,8 +5,6 @@ use crate::game_core::components::FixedPoint;
 pub trait Input where Self: Serialize + Deserialize<'static> + Default + Copy + Clone, {}
 pub trait RollbackData where Self: Serialize + Deserialize<'static> + Default, {}
 
-
-//pub trait RollbackControllerHandle<TInput, TRollbackData> but implements the "Default" trait as well
 pub trait RollbackControllerHandle<TInput, TRollbackData>
     where
         TInput: Input,
@@ -23,6 +21,15 @@ pub trait RollbackControllerHandle<TInput, TRollbackData>
 
     fn register_keyframes(&mut self);
     fn update_interpolations(&mut self, viewing_time : f32);
+}
+
+pub struct InputPackage<TInput>
+    where
+        TInput: Input
+{
+    pub tick: u32,
+    pub player_id: u32,
+    pub input: TInput,
 }
 
 pub struct PlayerInputBuffer<TInput>
@@ -120,41 +127,22 @@ impl<TInput, TRollbackData> RollbackController<TInput, TRollbackData>
         }
     }
 
-    pub fn step_game_state(&mut self) {
-        let inputs_for_current_tick = self.input_buffer.get_all_inputs_for_tick(self.get_current_tick());
-        self.rollback_controller_handle.step_game_state(inputs_for_current_tick);
+    pub fn on_update(network_time: f64, local_player_input: TInput){
+        
     }
 
-    pub fn step_game_state_predictive(&mut self) {
-        let inputs_for_current_tick = self.input_buffer.get_all_inputs_for_tick(self.get_current_tick());
-        self.rollback_controller_handle.step_game_state_predictive(inputs_for_current_tick);
+    fn simulate_until(&mut self, tick: u32) {
+        let mut current_tick = self.rollback_controller_handle.get_current_tick();
+        while current_tick < tick {
+            let inputs = self.input_buffer.get_all_inputs_for_tick(current_tick);
+            self.rollback_controller_handle.step_game_state(inputs);
+            current_tick = self.rollback_controller_handle.get_current_tick();
+        }
     }
 
-    pub fn save_rollback_data(&mut self) {
-        self.rollback_data = self.rollback_controller_handle.save_rollback_data();
-    }
-
-    pub fn load_rollback_data(&mut self) {
-        self.rollback_controller_handle.load_rollback_data(&self.rollback_data);
-    }
-
-    pub fn register_keyframes(&mut self) {
-        self.rollback_controller_handle.register_keyframes();
-    }
-
-    pub fn update_interpolations(&mut self, viewing_time : f32) {
-        self.rollback_controller_handle.update_interpolations(viewing_time);
-    }
-
-    pub fn get_current_tick(&self) -> u32 {
-        self.rollback_controller_handle.get_current_tick()
-    }
-
-    pub fn get_fixed_delta_time(&self) -> FixedPoint {
-        self.rollback_controller_handle.get_fixed_delta_time()
-    }
-
-    pub fn add_input(&mut self, input: TInput) {
-        self.input_buffer.add_input(0, self.get_current_tick(), input);
+    pub fn register_inputs(&mut self, inputs: Vec<InputPackage<TInput>>) {
+        for input in inputs {
+            self.input_buffer.add_input(input.player_id, input.tick, input.input);
+        }
     }
 }
