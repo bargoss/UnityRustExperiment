@@ -1,0 +1,1 @@
+pub trait RollbackData where Self: Default, {}

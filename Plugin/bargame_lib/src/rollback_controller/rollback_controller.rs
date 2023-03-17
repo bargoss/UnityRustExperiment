@@ -1,29 +1,11 @@
 use std::collections::HashMap;
 use serde::{Deserialize, Serialize};
 use crate::game_core::components::FixedPoint;
+use crate::rollback_controller::input::Input;
+use crate::rollback_controller::rollback_controller_handle::RollbackControllerHandle;
+use crate::rollback_controller::rollback_data::RollbackData;
 
-pub trait Input where Self: Serialize + Deserialize<'static> + Default + Copy + Clone, {}
-pub trait RollbackData where Self: Serialize + Deserialize<'static> + Default, {}
-
-pub trait RollbackControllerHandle<TInput, TRollbackData>
-    where
-        TInput: Input,
-        TRollbackData: RollbackData
-{
-    fn save_rollback_data(&mut self) -> TRollbackData;
-    fn load_rollback_data(&mut self, game_state: &TRollbackData);
-
-    fn step_game_state(&mut self, inputs: HashMap<u32,TInput>);
-    fn step_game_state_predictive(&mut self, inputs: HashMap<u32,TInput>);
-
-    fn get_current_tick(&self) -> u32;
-    fn get_fixed_delta_time(&self) -> FixedPoint;
-
-    fn register_keyframes(&mut self);
-    fn update_interpolations(&mut self, viewing_time : f32);
-}
-
-pub struct InputPackage<TInput>
+pub struct InputData<TInput>
     where
         TInput: Input
 {
@@ -135,7 +117,7 @@ impl<TInput, TRollbackData> RollbackController<TInput, TRollbackData>
 
     pub fn on_update(&mut self, network_time: f64, local_player_input: TInput){
         let target_tick = self.get_target_tick(network_time);
-        
+
     }
 
     fn simulate_until(&mut self, tick: u32) {
@@ -152,4 +134,10 @@ impl<TInput, TRollbackData> RollbackController<TInput, TRollbackData>
             self.input_buffer.add_input(input.player_id, input.tick, input.input);
         }
     }
+}
+
+pub struct InputPackage<TInput> {
+    pub tick: u32,
+    pub player_id: u32,
+    pub input: TInput,
 }

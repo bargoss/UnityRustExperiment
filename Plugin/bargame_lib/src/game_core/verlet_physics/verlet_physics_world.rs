@@ -255,4 +255,10 @@ impl VerletPhysicsWorld {
     pub fn get_beam(&self, id : Id) -> Option<VerletBeam> {
         self.beams.get(&id).map(|entry| entry.val)
     }
+
+    pub fn clear(&mut self) {
+        self.objects.clear();
+        self.beams.clear();
+        self.spatial_partitioning.clear();
+    }
 }

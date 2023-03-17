@@ -4,6 +4,7 @@ pub mod math;
 
 pub mod components;
 pub mod systems;
+pub mod resources;
 
 mod bevy_experiment;
 
