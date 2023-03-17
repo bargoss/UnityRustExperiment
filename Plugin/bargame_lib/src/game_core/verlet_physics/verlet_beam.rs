@@ -1,5 +1,5 @@
+use crate::game_core::common::id::Id;
 use super::*;
-use super::verlet_physics_world::Id;
 
 #[derive(Debug, Clone, Copy)]
 pub struct VerletBeam {

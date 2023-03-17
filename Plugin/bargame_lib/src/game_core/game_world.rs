@@ -31,7 +31,7 @@ impl GameWorld{
 mod tests {
     use bevy_ecs::system::Query;
     use crate::game_core::components::position::Position;
-    use crate::game_core::components::velocity::Velocity;
+    use crate::game_core::components::rigidbody::Rigidbody;
     use super::*;
     use bevy_ecs::bundle::Bundle;
     use bevy_ecs::schedule::SystemStage;
@@ -41,13 +41,13 @@ mod tests {
     #[derive(Bundle)]
     pub struct ParticleBundle {
         pub position: Position,
-        pub velocity: Velocity,
+        pub velocity: Rigidbody,
     }
 
 
-    fn simple_rigidbody_system(mut query: Query<(&mut Position, &Velocity)>) {
+    fn simple_rigidbody_system(mut query: Query<(&mut Position, &Rigidbody)>) {
         for (mut position, velocity) in query.iter_mut() {
-            position.value += velocity.value;
+            position.value += velocity.velocity;
         }
     }
 

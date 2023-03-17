@@ -3,8 +3,10 @@ pub use super::math::*;
 
 pub mod net_id;
 pub mod position;
-pub mod velocity;
+pub mod rigidbody;
 pub mod circle_collider;
+pub mod beam;
+
 
 
 

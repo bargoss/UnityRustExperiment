@@ -1,28 +1,9 @@
 use std::collections::{BTreeMap, HashMap};
+use crate::game_core::common::id::Id;
 use crate::game_core::verlet_physics::verlet_beam::VerletBeam;
 use crate::game_core::verlet_physics::verlet_object::VerletObject;
 use super::*;
 
-use derive_more::{Add, AddAssign, Sub, SubAssign};
-
-#[derive(Copy, Clone, Debug, Hash, PartialEq, Eq, Ord, PartialOrd, Add, AddAssign, Sub, SubAssign)]
-pub struct Index(u32);
-
-impl Index {
-    pub fn new(p0: u32) -> Self {
-        Index(p0)
-    }
-}
-
-
-#[derive(Copy, Clone, Debug, Hash, PartialEq, Eq, Ord, PartialOrd, Add, AddAssign, Sub, SubAssign)]
-pub struct Id(pub u32);
-
-impl Id {
-    pub fn new(p0: u32) -> Self {
-        Id(p0)
-    }
-}
 
 pub struct Entry<TVal> {
     pub val: TVal,

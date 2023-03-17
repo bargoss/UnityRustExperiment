@@ -3,14 +3,14 @@ use bevy_ecs::world::World;
 use crate::game_core::components::circle_collider::CircleCollider;
 use super::components::*;
 use crate::game_core::components::position::Position;
-use crate::game_core::components::velocity::Velocity;
+use crate::game_core::components::rigidbody::Rigidbody;
 use bevy_ecs::bundle::Bundle;
 
 // "particle" bundle that has components Position, Velocity, Collider
 #[derive(Bundle)]
 pub struct ParticleBundle {
     pub position: Position,
-    pub velocity: Velocity,
+    pub velocity: Rigidbody,
     pub collider: CircleCollider,
 }
 
