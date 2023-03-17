@@ -74,6 +74,10 @@ impl FixedPoint {
         // convert simba::scalar::FixedI40F24 to f32
         self.0.0.to_num()
     }
+    // to f64
+    pub fn to_f64(&self) -> f64 {
+        self.0.0.to_num()
+    }
 }
 
 //impl Default

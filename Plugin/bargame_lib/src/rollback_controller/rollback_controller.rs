@@ -127,7 +127,14 @@ impl<TInput, TRollbackData> RollbackController<TInput, TRollbackData>
         }
     }
 
-    pub fn on_update(network_time: f64, local_player_input: TInput){
+    fn get_target_tick(&self, network_time: f64) -> u32 {
+        let div = (network_time / self.rollback_controller_handle.get_fixed_delta_time().to_f64());
+        let target_tick = div as u32;
+        target_tick
+    }
+
+    pub fn on_update(&mut self, network_time: f64, local_player_input: TInput){
+        let target_tick = self.get_target_tick(network_time);
         
     }
 
