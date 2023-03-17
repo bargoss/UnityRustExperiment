@@ -1,9 +1,9 @@
-use crate::game_core::components::net_id::NetId;
+use crate::game_core::common::id::Id;
 use super::*;
 
 #[derive(Component, Debug, Clone, Copy, Default)]
 pub struct Beam {
-    pub a: NetId,
-    pub b: NetId,
+    pub a: Id,
+    pub b: Id,
     pub length: FixedPoint,
 }
