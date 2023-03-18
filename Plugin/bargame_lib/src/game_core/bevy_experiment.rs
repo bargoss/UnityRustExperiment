@@ -69,7 +69,7 @@ mod tests {
         let mut update_schedule = Schedule::default();
         update_schedule.add_stage(
             "update",
-            SystemStage::parallel()
+            SystemStage::single_threaded()
                 .with_system(destroy_and_check_system)
                 .with_system(print_system)
         );

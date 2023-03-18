@@ -13,11 +13,12 @@ pub fn sphere_view_system(
     sphere_views: Query<(Entity, &SphereView, &InterpolatedPosition)>,
     mut sphere_snapshots: ResMut<SphereSnapshots>
 ) {
-    sphere_snapshots.spheres.clear();
-    for (entity, sphere_view, interpolated_position) in sphere_views.iter() {
-        sphere_snapshots.spheres.push(SphereSnapshot{
-            position: interpolated_position.value.into(),
-            radius: sphere_view.radius.into(),
-        });
-    }
+    todo!("sphere_view_system");
+    //sphere_snapshots.spheres.clear();
+    //for (entity, sphere_view, interpolated_position) in sphere_views.iter() {
+    //    sphere_snapshots.spheres.push(SphereSnapshot{
+    //        position: interpolated_position.value.into(),
+    //        radius: sphere_view.radius.into(),
+    //    });
+    //}
 }

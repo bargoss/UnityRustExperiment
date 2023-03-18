@@ -1,1 +1,1 @@
-pub trait Input where Self: Default + Copy + Clone, {}
+pub trait Input where Self: Default + Copy + Clone + Send + Sync {}
