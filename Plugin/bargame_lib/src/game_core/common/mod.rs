@@ -5,6 +5,7 @@ pub mod index;
 
 pub mod buffered_vector_interpolator;
 
+#[derive(Copy, Clone, Debug, PartialEq)]
 pub struct Vector2{
     pub x: f32,
     pub y: f32,
@@ -21,10 +22,21 @@ impl From<FixedPointV2> for Vector2 {
     }
 }
 
+#[derive(Copy, Clone, Debug, PartialEq)]
 pub struct Vector3{
     pub x: f32,
     pub y: f32,
     pub z: f32,
+}
+
+impl Vector3 {
+    pub(crate) fn new(p0: f32, p1: f32, p2: f32) -> Vector3 {
+        Vector3 {
+            x: p0,
+            y: p1,
+            z: p2,
+        }
+    }
 }
 
 // make FixedPointV3 castable to Vector3

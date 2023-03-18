@@ -1,12 +1,13 @@
 use std::collections::VecDeque;
 use std::cmp::Ordering;
+use crate::game_core::common::Vector3;
 
 pub struct BufferedVectorInterpolator {
     key_frames: VecDeque<InterpolationKeyFrame>,
 }
 
 pub struct InterpolationKeyFrame {
-    pub value: nalgebra::Vector3<f32>,
+    pub value: Vector3,
     pub time: f32,
 }
 
@@ -17,8 +18,12 @@ impl BufferedVectorInterpolator {
         }
     }
 
-    pub fn try_interpolate(&self, target_time: f32) -> Option<nalgebra::Vector3<f32>> {
-        let mut interpolated_value = nalgebra::Vector3::zeros();
+    pub fn try_interpolate(&self, target_time: f32) -> Option<Vector3> {
+        let mut interpolated_value = Vector3{
+            x : 0.0,
+            y : 0.0,
+            z : 0.0,
+        };
 
         // assert that keyframes times are sorted
         if !self.key_frames.iter().zip(self.key_frames.iter().skip(1)).all(|(a, b)| a.time <= b.time) {
@@ -37,11 +42,11 @@ impl BufferedVectorInterpolator {
                 let time = target_time - start.time;
                 let t = time / time_diff;
 
-                interpolated_value = nalgebra::Vector3::new(
-                    start.value.x + (end.value.x - start.value.x) * t,
-                    start.value.y + (end.value.y - start.value.y) * t,
-                    start.value.z + (end.value.z - start.value.z) * t,
-                );
+                interpolated_value = Vector3 {
+                    x:start.value.x + (end.value.x - start.value.x) * t,
+                    y:start.value.y + (end.value.y - start.value.y) * t,
+                    z:start.value.z + (end.value.z - start.value.z) * t,
+                };
 
                 return Some(interpolated_value);
             }
@@ -50,11 +55,12 @@ impl BufferedVectorInterpolator {
         None
     }
 
-    pub fn interpolate(&self, target_time: f32) -> nalgebra::Vector3<f32> {
-        self.try_interpolate(target_time).unwrap_or_else(|| nalgebra::Vector3::new(1000.0, 1000.0, 1000.0))
+    pub fn interpolate(&self, target_time: f32) -> Vector3 {
+        //self.try_interpolate(target_time).unwrap_or_else(|| Vector3{x:1000.0, y:1000.0, z:1000.0})
+        self.try_interpolate(target_time).unwrap_or_else(|| Vector3{x:1000.0, y:1000.0, z:1000.0})
     }
 
-    pub fn push(&mut self, value: nalgebra::Vector3<f32>, time: f32) {
+    pub fn push(&mut self, value: Vector3, time: f32) {
         self.key_frames.push_back(InterpolationKeyFrame { value, time });
     }
 
@@ -70,7 +76,7 @@ impl BufferedVectorInterpolator {
 
 #[cfg(test)]
 mod tests {
-    use nalgebra::Vector3;
+    use Vector3;
     use super::*;
 
     #[test]
