@@ -11,3 +11,6 @@ mod bevy_experiment;
 pub mod verlet_physics;
 pub mod serialization;
 pub mod common;
+pub mod view_components;
+pub mod view_systems;
+pub mod view_resources;

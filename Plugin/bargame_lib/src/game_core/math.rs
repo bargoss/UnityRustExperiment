@@ -10,6 +10,12 @@ type BaseType = simba::scalar::FixedI40F24;
 #[derive(Debug, Clone, Copy, Add, Sub, Mul, Div, AddAssign, SubAssign, MulAssign, DivAssign, Neg)]
 pub struct FixedPoint(BaseType);
 
+impl From<FixedPoint> for f32 {
+    fn from(fixed_point: FixedPoint) -> Self {
+        fixed_point.to_f32()
+    }
+}
+
 // impl serialize and deserialize
 impl Serialize for FixedPoint {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>

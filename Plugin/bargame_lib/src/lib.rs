@@ -1,5 +1,6 @@
 pub mod game_core;
 pub mod rollback_controller;
+pub mod bubble_tanks_game;
 
 pub fn add(left: usize, right: usize) -> usize {
     left + right
