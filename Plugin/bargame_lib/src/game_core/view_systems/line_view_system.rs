@@ -4,7 +4,8 @@ use crate::game_core::resources::id_entity_map::IdEntityMap;
 use crate::game_core::view_components::beam_view::LineView;
 use crate::game_core::view_components::interpolated_position::InterpolatedPosition;
 use crate::game_core::view_components::sphere_view::SphereView;
-
+use crate::game_core::view_resources::view_snapshot_interpolator::BufferedViewSnapshotInterpolator;
+use crate::game_core::view_resources::view_snapshots::LineSnapshot::LineSnapshot;
 
 
 //pub fn sphere_view_system(
@@ -25,9 +26,9 @@ pub fn line_view_system(
     beam_entities: Query<(Entity, &LineView)>,
     interpolated_position_entities: Query<(Entity, &InterpolatedPosition)>,
     id_entity_map: Res<IdEntityMap>,
-    //mut line_snapshots: ResMut<LineSnapshots>
+    mut line_snapshots: BufferedViewSnapshotInterpolator<LineSnapshot>
 ) {
-
+    
     todo!("need to figure out a good net_id mapping system");
     //line_snapshots.lines.clear();
     //for (entity, line_view) in beam_entities.iter() {

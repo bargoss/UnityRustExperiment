@@ -1,6 +1,4 @@
 use std::collections::VecDeque;
-use std::cmp::Ordering;
-use crate::game_core::common::Vector3;
 use crate::game_core::view_resources::view_snapshot::{interpolate_snapshots, ViewSnapshot};
 
 pub struct InterpolationKeyFrame<T> where T: ViewSnapshot{
@@ -72,7 +70,7 @@ impl <T> BufferedViewSnapshotInterpolator<T> where T: ViewSnapshot {
 
 #[cfg(test)]
 mod tests {
-    use Vector3;
+    use crate::game_core::common::Vector3;
     use super::*;
 
     impl ViewSnapshot for Vector3 {

@@ -1,6 +1,5 @@
 use std::collections::HashMap;
 use serde::{Deserialize, Serialize};
-use crate::game_core::components::FixedPoint;
 use crate::rollback_controller::input::Input;
 use crate::rollback_controller::rollback_controller_handle::RollbackControllerHandle;
 use crate::rollback_controller::rollback_data::RollbackData;
