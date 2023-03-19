@@ -2,7 +2,7 @@ use bevy_ecs::prelude::*;
 use crate::game_core::common::Vector2;
 use crate::game_core::view_components::interpolated_position::InterpolatedPosition;
 use crate::game_core::view_components::sphere_view::SphereView;
-use crate::game_core::view_resources::view_snapshots::{LineSnapshots, SphereSnapshot, SphereSnapshots};
+
 
 
 // fn run_physics_step(
@@ -11,7 +11,7 @@ use crate::game_core::view_resources::view_snapshots::{LineSnapshots, SphereSnap
 // ){
 pub fn sphere_view_system(
     sphere_views: Query<(Entity, &SphereView, &InterpolatedPosition)>,
-    mut sphere_snapshots: ResMut<SphereSnapshots>
+    //mut sphere_snapshots: ResMut<SphereSnapshots>
 ) {
     todo!("sphere_view_system");
     //sphere_snapshots.spheres.clear();
