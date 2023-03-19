@@ -1,3 +1,9 @@
+----    -   looks like interpolated position component is not a good idea nor needed
+----    -   need to figure how to avoid having same time keyframe duplicates in the snapshot interpolation buffers
+
+
+
+
 ----    -   move the rollback controller from c# to here
 ----    -   a partial rollback demo is needed after rollback controller is done
 ----    -   static objects in physics world

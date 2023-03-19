@@ -1,5 +1,5 @@
 use std::collections::HashMap;
-use bevy_ecs::prelude::Entity;
+use bevy_ecs::prelude::{Entity, World};
 use crate::game_core::view_components::Id;
 
 pub struct IdEntityMap {

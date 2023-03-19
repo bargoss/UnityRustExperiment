@@ -50,12 +50,14 @@ impl <T> BufferedViewSnapshotInterpolator<T> where T: ViewSnapshot {
     }
 
     pub fn interpolate(&self, target_time: f32) -> T {
-        //self.try_interpolate(target_time).unwrap_or_else(|| Vector3{x:1000.0, y:1000.0, z:1000.0})
         self.try_interpolate(target_time).unwrap_or_else(|| T::default())
     }
 
     pub fn push(&mut self, value: T, time: f32) {
         self.key_frames.push_back(InterpolationKeyFrame { value, time });
+        if self.key_frames.len() > MAX_KEYFRAMES {
+            self.key_frames.pop_front();
+        }
     }
 
     pub fn clear_before(&mut self, time: f32) {

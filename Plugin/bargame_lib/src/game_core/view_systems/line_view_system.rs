@@ -1,50 +1,51 @@
 use bevy_ecs::prelude::*;
-use crate::game_core::common::Vector2;
+use crate::game_core::components::position::Position;
 use crate::game_core::resources::id_entity_map::IdEntityMap;
 use crate::game_core::view_components::beam_view::LineView;
-use crate::game_core::view_components::interpolated_position::InterpolatedPosition;
-use crate::game_core::view_components::sphere_view::SphereView;
 use crate::game_core::view_resources::view_snapshot_interpolator::BufferedViewSnapshotInterpolator;
 use crate::game_core::view_resources::view_snapshots::LineSnapshot::LineSnapshot;
+use crate::game_core::view_resources::view_time::ViewTime;
 
-
-//pub fn sphere_view_system(
-//    sphere_views: Query<(Entity, &SphereView, &InterpolatedPosition)>,
-//    mut sphere_snapshots: ResMut<SphereSnapshots>
-//) {
-//    sphere_snapshots.spheres.clear();
-//    for (entity, sphere_view, interpolated_position) in sphere_views.iter() {
-//        sphere_snapshots.spheres.push(SphereSnapshot{
-//            position: interpolated_position.value.into(),
-//            radius: sphere_view.radius.into(),
-//        });
-//    }
-//}
 
 
 pub fn line_view_system(
-    beam_entities: Query<(Entity, &LineView)>,
-    interpolated_position_entities: Query<(Entity, &InterpolatedPosition)>,
+    line_view_query: Query<(Entity, &LineView)>,
+    position_query: Query<(Entity, &Position)>,
     id_entity_map: Res<IdEntityMap>,
-    mut line_snapshots: BufferedViewSnapshotInterpolator<LineSnapshot>
+    mut line_snapshots: BufferedViewSnapshotInterpolator<LineSnapshot>,
+    view_time: Res<ViewTime>
 ) {
-    
-    todo!("need to figure out a good net_id mapping system");
-    //line_snapshots.lines.clear();
-    //for (entity, line_view) in beam_entities.iter() {
+    for (entity, line_view) in line_view_query.iter() {
+        // id_entity_map.get(line_view.start)
+        let start_pos = match id_entity_map.get(line_view.start) {
+            Some(entity) => {
+                match position_query.get(entity) {
+                    Ok(interpolated_position_entity) => {
+                        interpolated_position_entity.1.value
+                    },
+                    Err(_) => continue,
+                }
+            }
+            None => continue,
+        };
+        let end_pos = match id_entity_map.get(line_view.end) {
+            Some(entity) => {
+                match position_query.get(entity) {
+                    Ok(interpolated_position_entity) => {
+                        interpolated_position_entity.1.value
+                    },
+                    Err(_) => continue,
+                }
+            }
+            None => continue,
+        };
 
+        let view_time = view_time.time;
 
-        //let start = match interpolated_position_entities.get(line_view.start) {
-        //    Ok(interpolated_position) => interpolated_position.value,
-        //    Err(_) => continue,
-        //};
-        //let end = match interpolated_position_entities.get(line_view.end) {
-        //    Ok(interpolated_position) => interpolated_position.value,
-        //    Err(_) => continue,
-        //};
-        //line_snapshots.lines.push(LineSnapshot{
-        //    start: start.into(),
-        //    end: end.into(),
-        //    width: line_view.width.into(),
-        //});
+        line_snapshots.push(LineSnapshot{
+            start : start_pos.into(),
+            end : end_pos.into(),
+            width : line_view.thickness.into()
+        }, view_time as f32);
     }
+}
