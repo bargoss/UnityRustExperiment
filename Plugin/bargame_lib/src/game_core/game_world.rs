@@ -64,7 +64,9 @@ impl<TInput> GameWorld<TInput> where TInput: Input + 'static
     pub fn register_keyframes(&mut self){
         self.register_keyframes_schedule.run(&mut self.world);
     }
-    pub fn sample_view_snapshots(&mut self, viewing_time: f64){
+    pub fn sample_view_snapshots(&mut self, viewing_time: f64)
+    {
+        todo!();
         self.world.get_resource_mut::<ViewTime>().unwrap().time = viewing_time;
         self.sample_view_snapshots_schedule.run(&mut self.world);
     }

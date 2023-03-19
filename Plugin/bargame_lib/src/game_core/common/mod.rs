@@ -22,11 +22,37 @@ impl From<FixedPointV2> for Vector2 {
     }
 }
 
-#[derive(Copy, Clone, Debug, PartialEq)]
+#[derive(Copy, Clone, Debug, PartialEq, Default)]
 pub struct Vector3{
     pub x: f32,
     pub y: f32,
     pub z: f32,
+}
+
+// impl add for Vector3
+impl std::ops::Add for Vector3 {
+    type Output = Vector3;
+
+    fn add(self, other: Vector3) -> Vector3 {
+        Vector3 {
+            x: self.x + other.x,
+            y: self.y + other.y,
+            z: self.z + other.z,
+        }
+    }
+}
+
+// impl Mul<f32>
+impl std::ops::Mul<f32> for Vector3 {
+    type Output = Vector3;
+
+    fn mul(self, other: f32) -> Vector3 {
+        Vector3 {
+            x: self.x * other,
+            y: self.y * other,
+            z: self.z * other,
+        }
+    }
 }
 
 impl Vector3 {
