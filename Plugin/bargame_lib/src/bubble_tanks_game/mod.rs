@@ -1,6 +1,8 @@
 use std::collections::HashMap;
+use bevy_ecs::prelude::SystemStage;
 use crate::game_core::game_world::GameWorld;
 use crate::game_core::math::{FixedPoint, FixedPointV2};
+use crate::game_core::systems::physics_system::{pull_bodies, push_all_bodies, run_physics_step};
 use crate::game_core::view_components::Id;
 use crate::rollback_controller::input::Input;
 
@@ -12,6 +14,7 @@ mod components;
 #[derive(Copy, Clone, Debug, Default)]
 pub struct BubbleTanksInput{
     pub movement_dir : FixedPointV2,
+    pub steer : FixedPoint,
     pub fire : bool,
 }
 
@@ -25,8 +28,18 @@ pub struct BubbleTanksGame{
 
 impl BubbleTanksGame {
     pub fn new(fixed_delta_time: FixedPoint) -> Self {
+        let mut game_core = GameWorld::new(fixed_delta_time);
+        game_core.add_stage_to_advance_tick_schedule("physics", SystemStage::single_threaded()
+            .with_system(push_all_bodies)
+            .with_system(run_physics_step)
+            .with_system(pull_bodies)
+        );
+
+        game_core.add_stage_to_advance_tick_schedule("update", SystemStage::single_threaded()
+            .with_system(systems::bubble_tank_system::bubble_tank_system));
+
         Self {
-            game_core: GameWorld::new(fixed_delta_time),
+            game_core,
         }
     }
 

@@ -10,6 +10,13 @@ type BaseType = simba::scalar::FixedI40F24;
 #[derive(Debug, Clone, Copy, Add, Sub, Mul, Div, AddAssign, SubAssign, MulAssign, DivAssign, Neg)]
 pub struct FixedPoint(BaseType);
 
+// impl From<i32> for FixedPoint
+impl From<i32> for FixedPoint {
+    fn from(i: i32) -> Self {
+        FixedPoint(BaseType::from_num(i as f64))
+    }
+}
+
 impl From<FixedPoint> for f32 {
     fn from(fixed_point: FixedPoint) -> Self {
         fixed_point.to_f32()

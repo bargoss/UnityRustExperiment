@@ -15,7 +15,7 @@ use crate::game_core::verlet_physics::verlet_physics_world::VerletPhysicsWorld;
 
 
 // also get the resource from bevy, of type VerletPhysicsWorld
-fn push_all_bodies(
+pub fn push_all_bodies(
     body_query: Query<(&Position, &CircleCollider, &Rigidbody, &NetId)>,
     beam_query: Query<(&Beam, &NetId)>,
     mut physics_world: ResMut<VerletPhysicsWorld>,
@@ -44,14 +44,14 @@ fn push_all_bodies(
     }
 }
 
-fn run_physics_step(mut physics_world: ResMut<VerletPhysicsWorld>, time: Res<Time>){
+pub fn run_physics_step(mut physics_world: ResMut<VerletPhysicsWorld>, time: Res<Time>){
     //&mut self, dt: FixedPoint, iteration_id_buffer: &mut Vec<u32>, overlap_circle_buffer: &mut Vec<u32>
     let mut buffer_a = Vec::new();
     let mut buffer_b = Vec::new();
     physics_world.update(time.fixed_delta_time,&mut buffer_a, &mut buffer_b);
 }
 
-fn pull_bodies(
+pub fn pull_bodies(
     mut body_query: Query<(&mut Position, &CircleCollider, &mut Rigidbody, &NetId)>,
     physics_world: Res<VerletPhysicsWorld>,
     time: Res<Time>
