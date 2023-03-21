@@ -1,18 +1,7 @@
 use std::collections::HashMap;
 use bevy_ecs::prelude::{Entity, Query, World};
-use bevy_ecs::query::{QueryEntityError, ROQueryItem, WorldQuery};
+use bevy_ecs::query::{Fetch, QueryEntityError, ROQueryItem, WorldQuery, WorldQueryGats};
 use crate::game_core::view_components::Id;
-
-macro_rules! get_query_result {
-        ($self:ident, $id:ident, $query:ident) => {
-            match $self.map.get(&$id) {
-                Some(entity) => {
-                    $query.get(*$entity)
-                },
-                None => Err(QueryEntityError::NoSuchEntity(Entity::from_raw(0))),
-            }
-        };
-    }
 
 pub struct IdEntityMap {
     map: HashMap<Id, Entity>,
@@ -32,6 +21,45 @@ impl IdEntityMap {
     pub fn get(&self, id: Id) -> Option<Entity> {
         self.map.get(&id).copied()
     }
+
+    /*
+    pub fn get_query_result<'a, 'w, T: WorldQuery>(
+        &self,
+        id: Id,
+        query: Query<'a, 'w, (Entity, T)>,
+    ) -> Option<(Entity, &'a T::Fetch::Item)>
+        where
+            T::Fetch: bevy_ecs::query::Fetch<'a>,
+    {
+        if let Some(entity) = self.get(id) {
+            match query.get(entity) {
+                Ok((_, component)) => Some((entity, component)),
+                Err(_) => None,
+            }
+        } else {
+            None
+        }
+    }
+
+     */
+
+    //pub fn get_query_result<'w, 's, Q, F>(id : Id, query: Query<'w, 's, Q, F>) -> Result<ROQueryItem<'w, Q>, QueryEntityError>
+    //    where
+    //        Q: WorldQuery + 'w,
+    //        F: WorldQuery + 'w,
+    //{
+    //}
+
+    //pub fn get_query_result<'w, 's, Q, F>(query: &mut Query<'w, 's, Q, F>, entity: Entity) -> Option<<<<Q as WorldQuery>::ReadOnly as WorldQueryGats>::Fetch as Fetch<'_>>::Item>
+    //    where
+    //        Q: WorldQuery + 'w,
+    //        F: WorldQuery + 'w,
+    //{
+    //    query.get(entity).ok()
+    //}
+
+    // TQuery is <'w, 's, Q: WorldQuery, F: WorldQuery> Query<'w, 's, Q, F>
+
 
     // like that but return Result<ROQueryItem<'_, Q>, QueryEntityError>
     //pub fn get_query_result<Q: WorldQuery>(&self, id: Id, query: &Query<Q>) -> Result<ROQueryItem<'_, Q>, QueryEntityError> {

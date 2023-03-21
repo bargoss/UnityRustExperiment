@@ -13,6 +13,7 @@ use crate::game_core::view_components::Id;
 // Q: how can I describe something like Query<(Entity, &TankBubble, &Position, &Rigidbody)> in a generic way?
 
 
+/*
 pub fn bubble_tank_system(
     query: Query<(Entity, &TankBubble, &Position, &Rigidbody)>,
     player_input_map: Res<PlayerInputMap<BubbleTanksInput>>,
@@ -132,3 +133,4 @@ pub fn bubble_tank_system(
     
     
 }
+ */

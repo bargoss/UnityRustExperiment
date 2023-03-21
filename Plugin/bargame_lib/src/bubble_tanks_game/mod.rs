@@ -35,8 +35,8 @@ impl BubbleTanksGame {
             .with_system(pull_bodies)
         );
 
-        game_core.add_stage_to_advance_tick_schedule("update", SystemStage::single_threaded()
-            .with_system(systems::bubble_tank_system::bubble_tank_system));
+        //game_core.add_stage_to_advance_tick_schedule("update", SystemStage::single_threaded()
+            //.with_system(systems::bubble_tank_system::bubble_tank_system));
 
         Self {
             game_core,
