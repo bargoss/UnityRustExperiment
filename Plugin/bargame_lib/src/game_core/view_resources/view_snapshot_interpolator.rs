@@ -1,25 +1,20 @@
-use std::collections::VecDeque;
+use std::collections::{HashMap, VecDeque};
+use crate::game_core::view_components::Id;
 use crate::game_core::view_resources::view_snapshot::{interpolate_snapshots, ViewSnapshot};
 
 pub struct InterpolationKeyFrame<T> where T: ViewSnapshot{
     pub value: T,
     pub time: f32,
 }
-
-pub struct BufferedViewSnapshotInterpolator<T> where T: ViewSnapshot {
-    key_frames: VecDeque<InterpolationKeyFrame<T>>,
-}
-
 const MAX_KEYFRAMES: usize = 8;
 
-// BufferedViewSnapshotInterpolator
-impl <T> BufferedViewSnapshotInterpolator<T> where T: ViewSnapshot {
-    pub fn new() -> Self {
-        Self {
-            key_frames: VecDeque::with_capacity(MAX_KEYFRAMES),
-        }
-    }
+#[derive(Default)]
+struct BufferedViewSnapshotInterpolatorItem<T> where T: ViewSnapshot {
+    key_frames: VecDeque<InterpolationKeyFrame<T>>, //todo: make it into a fixed size array
+}
 
+
+impl <T> BufferedViewSnapshotInterpolatorItem<T> where T: ViewSnapshot {
     pub fn try_interpolate(&self, target_time: f32) -> Option<T> {
         let mut interpolated_value = T::default();
 
@@ -68,6 +63,45 @@ impl <T> BufferedViewSnapshotInterpolator<T> where T: ViewSnapshot {
     }
 }
 
+#[derive(Default)]
+pub struct BufferedViewSnapshotInterpolator<T> where T: ViewSnapshot {
+    items: HashMap<Id, BufferedViewSnapshotInterpolatorItem<T>>,
+}
+
+impl <T> BufferedViewSnapshotInterpolator<T> where T: ViewSnapshot {
+    pub fn try_interpolate(&self, id: Id, target_time: f32) -> Option<T> {
+        self.items.get(&id).and_then(|item| item.try_interpolate(target_time))
+    }
+
+    pub fn interpolate(&self, id: Id, target_time: f32) -> T {
+        self.try_interpolate(id, target_time).unwrap_or_else(|| T::default())
+    }
+
+    pub fn push(&mut self, view_custom_id: Id, time: f32, value: T) {
+        self.items.entry(view_custom_id).or_insert_with(BufferedViewSnapshotInterpolatorItem::default).push(value, time);
+    }
+
+    pub fn clear_before(&mut self, time: f32) {
+        for item in self.items.values_mut() {
+            item.clear_before(time);
+        }
+    }
+    // iterate
+    //pub fn iter(&self) -> impl Iterator<Item = (&Id, &BufferedViewSnapshotInterpolatorItem<T>)> {
+    //    self.items.iter()
+    //}
+
+    pub fn interpolated_keyframes(
+        &self,
+        view_time: f32,
+    ) -> impl Iterator<Item = (Id, T)> + '_ {
+        self.items.iter().map(move |(id, item)| {
+            println!("interpolating {} at {}", id.0, view_time);
+            let interpolated_value = item.interpolate(view_time);
+            (*id, interpolated_value)
+        })
+    }
+}
 
 
 #[cfg(test)]
@@ -80,7 +114,7 @@ mod tests {
 
     #[test]
     fn test_interpolation() {
-        let mut buffer = BufferedViewSnapshotInterpolator::<Vector3>::new();
+        let mut buffer = BufferedViewSnapshotInterpolatorItem::<Vector3>::default();
 
         buffer.push(Vector3::new(0.0, 0.0, 0.0), 0.0);
         buffer.push(Vector3::new(1.0, 0.0, 0.0), 1.0);
@@ -99,7 +133,7 @@ mod tests {
 
     #[test]
     fn test_clear_before() {
-        let mut buffer = BufferedViewSnapshotInterpolator::<Vector3>::new();
+        let mut buffer = BufferedViewSnapshotInterpolatorItem::<Vector3>::default();
 
         buffer.push(Vector3::new(0.0, 0.0, 0.0), 0.0);
         buffer.push(Vector3::new(1.0, 0.0, 0.0), 1.0);

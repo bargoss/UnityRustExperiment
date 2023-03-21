@@ -1,15 +1,18 @@
-----    -   looks like interpolated position component is not a good idea nor needed
+DONE    -   looks like interpolated position component is not a good idea nor needed
 ----    -   need to figure how to avoid having same time keyframe duplicates in the snapshot interpolation buffers
 
+DONE    -   do the id->entity synchronization system
+----    -   test out the view interpolation stuff with the game_world
 
 
 
-----    -   move the rollback controller from c# to here
-----    -   a partial rollback demo is needed after rollback controller is done
+
+----    -   a partial rollback demo is needed
 ----    -   static objects in physics world
-----    -   ecs world needed
-----    -   physics system needed
 ----    -   collider without velocity needs to be treated as a "static" collider, it won't move during collisions
+CANCEL  -   move the rollback controller from c# to here (only serialization and interpolation will be here for now)
+DONE    -   ecs world needed
+DONE    -   physics system needed
 
 ----    -   figure out what to do when a player takes too long to send an input
             options are:

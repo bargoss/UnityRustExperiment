@@ -6,4 +6,5 @@ pub struct LineView {
     pub thickness : FixedPoint,
     pub start : Id,
     pub end : Id,
+    pub view_custom_id : Id
 }

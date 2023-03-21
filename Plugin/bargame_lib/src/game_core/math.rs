@@ -10,7 +10,13 @@ type BaseType = simba::scalar::FixedI40F24;
 #[derive(Debug, Clone, Copy, Add, Sub, Mul, Div, AddAssign, SubAssign, MulAssign, DivAssign, Neg)]
 pub struct FixedPoint(BaseType);
 
-// impl From<i32> for FixedPoint
+impl std::fmt::Display for FixedPoint {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        //write!(f, "{}", self.0.0.to_num::<f64>())
+        write!(f, "{}", self.to_f64())
+    }
+}
+
 impl From<i32> for FixedPoint {
     fn from(i: i32) -> Self {
         FixedPoint(BaseType::from_num(i as f64))
@@ -104,6 +110,13 @@ impl Default for FixedPoint {
 #[derive(Debug, Clone, Copy, Add, Sub, Mul, Div, AddAssign, SubAssign, MulAssign, DivAssign, Neg)]
 pub struct FixedPointV2(Vector2<BaseType>);
 
+// impl display
+impl std::fmt::Display for FixedPointV2 {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "({}, {})", self.x().to_f64(), self.y().to_f64())
+    }
+}
+
 
 // impl Div for FixedPointV2 / FixedPoint
 impl Div<FixedPoint> for FixedPointV2 {
@@ -179,6 +192,13 @@ impl FixedPointV2 {
 
 #[derive(Debug, Clone, Copy, Add, Sub, Mul, Div, AddAssign, SubAssign, MulAssign, DivAssign, Neg)]
 pub struct FixedPointV3(Vector3<BaseType>);
+
+// impl display
+impl std::fmt::Display for FixedPointV3 {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "({}, {}, {})", self.x().to_f64(), self.y().to_f64(), self.z().to_f64())
+    }
+}
 
 impl FixedPointV3 {
     pub fn new(x: FixedPoint, y: FixedPoint, z: FixedPoint) -> Self {

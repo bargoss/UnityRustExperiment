@@ -3,8 +3,6 @@ use crate::game_core::math::{FixedPoint, FixedPointV2, FixedPointV3};
 pub mod id;
 pub mod index;
 
-pub mod buffered_vector_interpolator;
-
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub struct Vector2{
     pub x: f32,
