@@ -1,24 +1,22 @@
 use bevy_ecs::prelude::*;
-use crate::game_core::common::Vector2;
-use crate::game_core::view_components::interpolated_position::InterpolatedPosition;
+use crate::game_core::components::position::Position;
 use crate::game_core::view_components::sphere_view::SphereView;
+use crate::game_core::view_resources::view_snapshot_interpolator::BufferedViewSnapshotInterpolator;
+use crate::game_core::view_resources::view_snapshots::SphereSnapshot::SphereSnapshot;
+use crate::game_core::view_resources::view_time::ViewTime;
 
-
-
-// fn run_physics_step(
-// mut physics_world: ResMut<VerletPhysicsWorld>,
-// time: Res<Time>
-// ){
 pub fn sphere_view_system(
-    sphere_views: Query<(Entity, &SphereView, &InterpolatedPosition)>,
-    //mut sphere_snapshots: ResMut<SphereSnapshots>
+    sphere_views: Query<(&SphereView, &Position)>,
+    mut sphere_snapshots: ResMut<BufferedViewSnapshotInterpolator<SphereSnapshot>>,
+    view_time: Res<ViewTime>
 ) {
-    todo!("sphere_view_system");
-    //sphere_snapshots.spheres.clear();
-    //for (entity, sphere_view, interpolated_position) in sphere_views.iter() {
-    //    sphere_snapshots.spheres.push(SphereSnapshot{
-    //        position: interpolated_position.value.into(),
-    //        radius: sphere_view.radius.into(),
-    //    });
-    //}
+    for (sphere_view, interpolated_position) in sphere_views.iter() {
+        let view_time = view_time.time;
+        let position = interpolated_position.value;
+
+        sphere_snapshots.push(SphereSnapshot{
+            position : position.into(),
+            radius : sphere_view.radius.into()
+        }, view_time as f32);
+    }
 }
