@@ -15,13 +15,13 @@ pub fn line_view_system(
 ) {
     for line_view in line_view_query.iter() {
         let start_pos = match id_entity_map.get_from_query(&position_query, line_view.start) {
-            Ok((_, interpolated_position)) => interpolated_position.value,
-            Err(_) => continue,
+            Some((_, interpolated_position)) => interpolated_position.value,
+            None => continue,
         };
 
         let end_pos = match id_entity_map.get_from_query(&position_query, line_view.end) {
-            Ok((_, interpolated_position)) => interpolated_position.value,
-            Err(_) => continue,
+            Some((_, interpolated_position)) => interpolated_position.value,
+            None => continue,
         };
 
         let time = (time.tick as f32) * time.fixed_delta_time.to_f32();

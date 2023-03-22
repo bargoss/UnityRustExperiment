@@ -45,7 +45,7 @@ mod tests {
             entities.push(entity);
             commands.entity(entity).despawn();
         }
-        commands.spawn().insert_bundle(SimpleBundle {
+        commands.spawn(SimpleBundle {
             id: NetId { value: Id::new(2) },
         });
 
@@ -67,18 +67,16 @@ mod tests {
     fn after_destroy_experiment() {
         let mut world = World::new();
         let mut update_schedule = Schedule::default();
-        update_schedule.add_stage(
-            "update",
-            SystemStage::single_threaded()
-                .with_system(destroy_and_check_system)
-                .with_system(print_system)
-        );
+        update_schedule.add_systems((
+            destroy_and_check_system,
+            print_system,
+        ).chain());
 
-        // spawn bundle
-        world.spawn().insert_bundle(SimpleBundle {
+        world.spawn(SimpleBundle {
             id: NetId { value: Id::new(0) },
         });
-        world.spawn().insert_bundle(SimpleBundle {
+
+        world.spawn(SimpleBundle {
             id: NetId { value: Id::new(1) },
         });
 
@@ -93,15 +91,14 @@ mod tests {
         let mut update_schedule = Schedule::default();
 
         // spawn bundle
-        let mut new_spawn = world.spawn();
-        new_spawn.insert_bundle(ParticleBundle{
+        world.spawn(ParticleBundle{
             position: Position{value: FixedPointV2::from_num(0.0, 0.0)},
             velocity: Default::default(),
             collider: Default::default(),
         });
 
         // access the entity, add one more component
-        let entity = new_spawn.id();
+        let entity = world.spawn_empty().id();
         let mut position = world.get_mut::<Position>(entity).unwrap();
         (*position).value = FixedPointV2::from_num(1.0, 1.0);
         println!("position: {:?}", *position);

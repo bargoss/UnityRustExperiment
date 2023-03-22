@@ -1,6 +1,7 @@
 use std::collections::{HashMap, VecDeque};
 use crate::game_core::view_components::Id;
 use crate::game_core::view_resources::view_snapshot::{interpolate_snapshots, ViewSnapshot};
+use bevy_ecs::prelude::Resource;
 
 pub struct InterpolationKeyFrame<T> where T: ViewSnapshot{
     pub value: T,
@@ -63,7 +64,7 @@ impl <T> BufferedViewSnapshotInterpolatorItem<T> where T: ViewSnapshot {
     }
 }
 
-#[derive(Default)]
+#[derive(Resource, Default)]
 pub struct BufferedViewSnapshotInterpolator<T> where T: ViewSnapshot {
     items: HashMap<Id, BufferedViewSnapshotInterpolatorItem<T>>,
 }

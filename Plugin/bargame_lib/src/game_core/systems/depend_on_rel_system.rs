@@ -10,8 +10,8 @@ pub fn depend_on_rel_system(
     commands: &mut Commands,
 ){
     for (entity, depend_on_rel_2) in depend_on_rel_2_query.iter(){
-        let rel_0_exists = id_entity_map.get_from_query(&entity_query, depend_on_rel_2.net_id_0).is_ok();
-        let rel_1_exists = id_entity_map.get_from_query(&entity_query, depend_on_rel_2.net_id_1).is_ok();
+        let rel_0_exists = id_entity_map.get_from_query(&entity_query, depend_on_rel_2.net_id_0).is_some();
+        let rel_1_exists = id_entity_map.get_from_query(&entity_query, depend_on_rel_2.net_id_1).is_some();
 
         if !rel_0_exists || !rel_1_exists {
             commands.entity(entity).despawn();

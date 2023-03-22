@@ -1,4 +1,5 @@
 use std::collections::{BTreeMap, HashMap};
+use bevy_ecs::prelude::Resource;
 use crate::game_core::common::id::Id;
 use crate::game_core::verlet_physics::verlet_beam::VerletBeam;
 use crate::game_core::verlet_physics::verlet_object::VerletObject;
@@ -9,6 +10,7 @@ pub struct Entry<TVal> {
     pub val: TVal,
 }
 
+#[derive(Resource)]
 pub struct VerletPhysicsWorld {
     objects: BTreeMap<Id, Entry<VerletObject>>,
     beams: BTreeMap<Id, Entry<VerletBeam>>,
