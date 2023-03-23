@@ -43,7 +43,7 @@ impl<TInput> GameWorld<TInput> where TInput: Input + 'static
         let player_input_map = PlayerInputMap::<TInput>::default();
         world.insert_resource(player_input_map);
 
-        let id_entity_map = IdEntityMap::new();
+        let id_entity_map = IdEntityMap::default();
         world.insert_resource(id_entity_map);
 
         let verlet_physics_world = VerletPhysicsWorld::new();
