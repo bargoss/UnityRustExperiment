@@ -6,6 +6,7 @@ use crate::game_core::systems::physics_system::{pull_bodies, push_all_bodies, ru
 use crate::game_core::view_components::Id;
 use crate::game_core::view_resources::view_snapshot::ViewSnapshot;
 use crate::rollback_controller::input::Input;
+use bevy_ecs::schedule::IntoSystemConfigs;
 
 mod systems;
 mod components;
@@ -26,10 +27,13 @@ impl Input for BubbleTanksInput {
 pub struct BubbleTanksGame{
     game_core: GameWorld<BubbleTanksInput>,
 }
+pub fn dummy_system() {
+    println!("dummy system bubble tanks");
+}
 
 impl BubbleTanksGame {
     pub fn new(fixed_delta_time: FixedPoint) -> Self {
-        let mut game_core = GameWorld::new(fixed_delta_time);
+        let mut game_core = GameWorld::new(fixed_delta_time, (dummy_system,).chain());
 
         //game_core.add_stage_to_advance_tick_schedule("update", SystemStage::single_threaded()
             //.with_system(systems::bubble_tank_system::bubble_tank_system));

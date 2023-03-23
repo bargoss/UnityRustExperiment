@@ -15,7 +15,7 @@ use crate::game_core::view_resources::view_snapshots::SphereSnapshot::SphereSnap
 use crate::game_core::view_systems::line_view_system::line_view_system;
 use crate::game_core::view_systems::sphere_view_system::sphere_view_system;
 use crate::rollback_controller::input::Input;
-use bevy_ecs::schedule::Schedule;
+use bevy_ecs::schedule::{BoxedSystemSet, Schedule, SystemSetConfig};
 
 
 #[derive(Resource, Default)]
@@ -35,10 +35,10 @@ pub struct GameWorld<TInput> where TInput: Input
 
 impl<TInput> GameWorld<TInput> where TInput: Input + 'static
 {
-    pub fn new(fixed_delta_time: FixedPoint) -> GameWorld<TInput>{
+    pub fn new<M>(fixed_delta_time: FixedPoint, systems: impl IntoSystemConfigs<M>) -> GameWorld<TInput>{
         let mut world = World::new();
-        let advance_tick_schedule = Schedule::default();
-        let register_keyframes_schedule = Schedule::default();
+        let mut advance_tick_schedule = Schedule::default();
+        let mut register_keyframes_schedule = Schedule::default();
 
         let player_input_map = PlayerInputMap::<TInput>::default();
         world.insert_resource(player_input_map);
@@ -59,6 +59,42 @@ impl<TInput> GameWorld<TInput> where TInput: Input + 'static
         let line_snapshots = BufferedViewSnapshotInterpolator::<LineSnapshot>::default();
         world.insert_resource(line_snapshots);
 
+
+        let internal_systems = (
+            id_entity_map_sync_system,
+            push_all_bodies,
+            run_physics_step,
+            pull_bodies,
+        );
+
+        let external_systems = (
+            line_view_system,
+            sphere_view_system,
+        );
+
+        SystemSet::is_base()
+        let a = SystemSetConfig::new(BoxedSystemSet::new());
+        //let all_systems = (internal_systems, external_systems).chain();
+
+        //let into_configs_a = internal_systems;
+        //let into_configs_b = systems;
+        //IntoSystemSetConfigs::
+        //let chained = (into_configs_a, into_configs_b).chain();
+
+        //let mut chained = internal_systems.chain().after(internal_systems.into());
+
+        //let chained = internal_systems.chain().after(internal_systems.into());
+        //let advance_tick_systems = internal_systems.chain().after(systems.chain());
+        //advance_tick_schedule.add_systems(advance_tick_systems);
+        let view_systems = (
+            sphere_view_system,
+            line_view_system,
+        );
+
+        let register_keyframes_systems = view_systems.chain();
+        register_keyframes_schedule.add_systems(register_keyframes_systems);
+
+
         let mut game_world = GameWorld{
             world,
             advance_tick_schedule,
@@ -66,17 +102,7 @@ impl<TInput> GameWorld<TInput> where TInput: Input + 'static
             player_id_to_input_map : HashMap::new(),
         };
 
-        game_world.add_systems_to_advance_tick_schedule((
-            id_entity_map_sync_system,
-            push_all_bodies,
-            run_physics_step,
-            pull_bodies,
-        ).chain());
 
-        game_world.add_systems_to_register_keyframes_schedule((
-            sphere_view_system,
-            line_view_system,
-        ).chain());
 
         game_world
     }
@@ -166,11 +192,16 @@ mod view_interpolation_tests {
 
     impl Input for DummyInput {}
 
+    fn dummy_system() {
+        println!("dummy system");
+    }
 
     #[test]
     fn test_view_interpolation_logic() {
         // Initialize the GameWorld
-        let mut game_world = GameWorld::<DummyInput>::new(FixedPoint::new(1.000));
+        let mut game_world = GameWorld::<DummyInput>::new(FixedPoint::new(1.000), (
+            dummy_system,
+        ).chain());
 
         // Spawn some entities with Position and Rigidbody components
         for i in 0..10 {
