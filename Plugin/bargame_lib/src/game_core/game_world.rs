@@ -30,6 +30,7 @@ pub struct GameWorld<TInput> where TInput: Input
     world: World,
     advance_tick_internal_schedule: Schedule,
     advance_tick_schedule: Schedule,
+    register_keyframes_internal_schedule: Schedule,
     register_keyframes_schedule: Schedule,
     player_id_to_input_map: HashMap<Id, TInput>,
 }
@@ -40,28 +41,15 @@ impl<TInput> GameWorld<TInput> where TInput: Input + 'static
         let mut world = World::new();
         let mut advance_tick_schedule = Schedule::default();
         let mut advance_tick_internal_schedule = Schedule::default();
-
+        let mut register_keyframes_internal_schedule = Schedule::default();
         let mut register_keyframes_schedule = Schedule::default();
 
-        let player_input_map = PlayerInputMap::<TInput>::default();
-        world.insert_resource(player_input_map);
-
-        let id_entity_map = IdEntityMap::default();
-        world.insert_resource(id_entity_map);
-
-        let verlet_physics_world = VerletPhysicsWorld::new();
-        world.insert_resource(verlet_physics_world);
-
-        let time = Time{ tick: 0, fixed_delta_time };
-        world.insert_resource(time);
-
-
-        let sphere_snapshots = BufferedViewSnapshotInterpolator::<SphereSnapshot>::default();
-        world.insert_resource(sphere_snapshots);
-
-        let line_snapshots = BufferedViewSnapshotInterpolator::<LineSnapshot>::default();
-        world.insert_resource(line_snapshots);
-
+        world.insert_resource(PlayerInputMap::<TInput>::default());
+        world.insert_resource(IdEntityMap::default());
+        world.insert_resource(VerletPhysicsWorld::new());
+        world.insert_resource(Time{ tick: 0, fixed_delta_time });
+        world.insert_resource(BufferedViewSnapshotInterpolator::<SphereSnapshot>::default());
+        world.insert_resource(BufferedViewSnapshotInterpolator::<LineSnapshot>::default());
 
         let internal_systems = (
             id_entity_map_sync_system,
@@ -72,37 +60,26 @@ impl<TInput> GameWorld<TInput> where TInput: Input + 'static
         advance_tick_internal_schedule.add_systems(internal_systems.chain());
         advance_tick_schedule.add_systems(systems.chain());
 
-        let view_systems = (
+        let register_keyframes_systems_internal = (
             sphere_view_system,
             line_view_system,
         );
 
-        register_keyframes_schedule.add_systems(view_systems.chain());
+        register_keyframes_internal_schedule.add_systems(register_keyframes_systems_internal.chain());
 
 
         let mut game_world = GameWorld{
             world,
             advance_tick_schedule,
             advance_tick_internal_schedule,
+            register_keyframes_internal_schedule,
             register_keyframes_schedule,
             player_id_to_input_map : HashMap::new(),
         };
 
-
-
         game_world
     }
-
-    // delete this
-    pub fn add_systems_to_advance_tick_schedule<M>(&mut self, systems: impl IntoSystemConfigs<M>) {
-        self.advance_tick_schedule.add_systems(systems);
-    }
-
-    // delete this
-    pub fn add_systems_to_register_keyframes_schedule<M>(&mut self, systems: impl IntoSystemConfigs<M>) {
-        self.register_keyframes_schedule.add_systems(systems);
-    }
-
+    
     pub fn advance_tick(&mut self, input_map: HashMap<Id, TInput>){
         let mut input_map_res = self.world.get_resource_mut::<PlayerInputMap<TInput>>().unwrap();
         input_map_res.map.clear();
@@ -112,18 +89,15 @@ impl<TInput> GameWorld<TInput> where TInput: Input + 'static
         self.world.get_resource_mut::<Time>().unwrap().tick += 1;
     }
     pub fn register_keyframes(&mut self){
+        self.register_keyframes_internal_schedule.run(&mut self.world);
         self.register_keyframes_schedule.run(&mut self.world);
     }
     // where T: ViewSnapshot
     pub fn sample_view_snapshots<T>(&mut self, viewing_time: f64, buffer: &mut Vec<T>) where T: ViewSnapshot + 'static
     {
         buffer.clear();
-        // get Res<ViewTime> and set viewing time
-        //let mut view_time_res = self.world.get_resource_mut::<ViewTime>().unwrap();
-        //view_time_res.time = viewing_time;
 
         let res = self.world.get_resource::<BufferedViewSnapshotInterpolator<T>>().unwrap();
-        // iter
         res.interpolated_keyframes(viewing_time as f32).for_each(|snapshot| {
             buffer.push(snapshot.1);
         });
