@@ -79,7 +79,7 @@ impl<TInput> GameWorld<TInput> where TInput: Input + 'static
 
         game_world
     }
-    
+
     pub fn advance_tick(&mut self, input_map: HashMap<Id, TInput>){
         let mut input_map_res = self.world.get_resource_mut::<PlayerInputMap<TInput>>().unwrap();
         input_map_res.map.clear();

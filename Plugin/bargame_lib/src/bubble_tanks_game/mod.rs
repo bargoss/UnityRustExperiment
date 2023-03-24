@@ -7,6 +7,7 @@ use crate::game_core::view_components::Id;
 use crate::game_core::view_resources::view_snapshot::ViewSnapshot;
 use crate::rollback_controller::input::Input;
 use bevy_ecs::schedule::IntoSystemConfigs;
+systems::bubble_tank_system::bubble_tank_system
 
 mod systems;
 mod components;
@@ -33,11 +34,10 @@ pub fn dummy_system() {
 
 impl BubbleTanksGame {
     pub fn new(fixed_delta_time: FixedPoint) -> Self {
-        let mut game_core = GameWorld::new(fixed_delta_time, (dummy_system,).chain());
+        let mut game_core = GameWorld::new(fixed_delta_time, (bubble_ta,).chain());
 
         //game_core.add_stage_to_advance_tick_schedule("update", SystemStage::single_threaded()
             //.with_system(systems::bubble_tank_system::bubble_tank_system));
-
         Self {
             game_core,
         }
