@@ -2,7 +2,12 @@ DONE    -   looks like interpolated position component is not a good idea nor ne
 ----    -   need to figure how to avoid having same time keyframe duplicates in the snapshot interpolation buffers
 
 DONE    -   do the id->entity synchronization system
-----    -   test out the view interpolation stuff with the game_world
+DONE    -   test out the view interpolation stuff with the game_world
+
+prediction seperation:
+    do it with PredictedTag:
+        -need to figure out which entities to set this tag on and retain that info during deserialization
+        
 
 
 
