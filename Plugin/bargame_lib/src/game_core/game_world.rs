@@ -15,7 +15,7 @@ use crate::game_core::view_resources::view_snapshots::SphereSnapshot::SphereSnap
 use crate::game_core::view_systems::line_view_system::line_view_system;
 use crate::game_core::view_systems::sphere_view_system::sphere_view_system;
 use crate::rollback_controller::input::Input;
-use bevy_ecs::schedule::{BoxedSystemSet, Schedule, SystemSetConfig};
+use bevy_ecs::schedule::{BoxedSystemSet, Schedule, SystemConfig, SystemSetConfig};
 
 
 #[derive(Resource, Default)]
@@ -28,6 +28,7 @@ pub struct PlayerInputMap<TInput> where TInput: Input
 pub struct GameWorld<TInput> where TInput: Input
 {
     world: World,
+    advance_tick_internal_schedule: Schedule,
     advance_tick_schedule: Schedule,
     register_keyframes_schedule: Schedule,
     player_id_to_input_map: HashMap<Id, TInput>,
@@ -38,6 +39,8 @@ impl<TInput> GameWorld<TInput> where TInput: Input + 'static
     pub fn new<M>(fixed_delta_time: FixedPoint, systems: impl IntoSystemConfigs<M>) -> GameWorld<TInput>{
         let mut world = World::new();
         let mut advance_tick_schedule = Schedule::default();
+        let mut advance_tick_internal_schedule = Schedule::default();
+
         let mut register_keyframes_schedule = Schedule::default();
 
         let player_input_map = PlayerInputMap::<TInput>::default();
@@ -66,38 +69,21 @@ impl<TInput> GameWorld<TInput> where TInput: Input + 'static
             run_physics_step,
             pull_bodies,
         );
+        advance_tick_internal_schedule.add_systems(internal_systems.chain());
+        advance_tick_schedule.add_systems(systems.chain());
 
-        let external_systems = (
-            line_view_system,
-            sphere_view_system,
-        );
-
-        SystemSet::is_base()
-        let a = SystemSetConfig::new(BoxedSystemSet::new());
-        //let all_systems = (internal_systems, external_systems).chain();
-
-        //let into_configs_a = internal_systems;
-        //let into_configs_b = systems;
-        //IntoSystemSetConfigs::
-        //let chained = (into_configs_a, into_configs_b).chain();
-
-        //let mut chained = internal_systems.chain().after(internal_systems.into());
-
-        //let chained = internal_systems.chain().after(internal_systems.into());
-        //let advance_tick_systems = internal_systems.chain().after(systems.chain());
-        //advance_tick_schedule.add_systems(advance_tick_systems);
         let view_systems = (
             sphere_view_system,
             line_view_system,
         );
 
-        let register_keyframes_systems = view_systems.chain();
-        register_keyframes_schedule.add_systems(register_keyframes_systems);
+        register_keyframes_schedule.add_systems(view_systems.chain());
 
 
         let mut game_world = GameWorld{
             world,
             advance_tick_schedule,
+            advance_tick_internal_schedule,
             register_keyframes_schedule,
             player_id_to_input_map : HashMap::new(),
         };
@@ -107,10 +93,12 @@ impl<TInput> GameWorld<TInput> where TInput: Input + 'static
         game_world
     }
 
+    // delete this
     pub fn add_systems_to_advance_tick_schedule<M>(&mut self, systems: impl IntoSystemConfigs<M>) {
         self.advance_tick_schedule.add_systems(systems);
     }
 
+    // delete this
     pub fn add_systems_to_register_keyframes_schedule<M>(&mut self, systems: impl IntoSystemConfigs<M>) {
         self.register_keyframes_schedule.add_systems(systems);
     }
@@ -119,6 +107,7 @@ impl<TInput> GameWorld<TInput> where TInput: Input + 'static
         let mut input_map_res = self.world.get_resource_mut::<PlayerInputMap<TInput>>().unwrap();
         input_map_res.map.clear();
         input_map_res.map.extend(input_map);
+        self.advance_tick_internal_schedule.run(&mut self.world);
         self.advance_tick_schedule.run(&mut self.world);
         self.world.get_resource_mut::<Time>().unwrap().tick += 1;
     }
