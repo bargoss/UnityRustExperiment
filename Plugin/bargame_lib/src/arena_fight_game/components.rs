@@ -10,7 +10,7 @@ pub struct Character {
 }
 
 #[derive(Component, Clone, Copy, Serialize, Deserialize)]
-pub struct PlayerControl{
+pub struct PlayerCharacterControl {
     pub controlling_player_id: Id,
 }
 
@@ -19,11 +19,6 @@ pub struct Health{
     pub health: FixedPoint,
     pub max_health: FixedPoint,
     pub health_regen_per_second: FixedPoint,
-}
-
-#[derive(Component, Clone, Copy, Serialize, Deserialize)]
-pub struct Stunned{
-    pub stun_duration_left: FixedPoint,
 }
 
 

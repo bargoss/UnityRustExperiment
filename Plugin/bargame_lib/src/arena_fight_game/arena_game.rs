@@ -3,17 +3,21 @@ use crate::game_core::game_world::GameWorld;
 use crate::game_core::view_components::{FixedPoint, Id};
 use crate::rollback_controller::input::Input;
 //use bevy_ecs::schedule::IntoSystemConfigs;
-use crate::arena_fight_game::components::{Character, Health, PlayerControl};
+use crate::arena_fight_game::components::{Character, Health, PlayerCharacterControl};
 use crate::game_core::components::circle_collider::CircleCollider;
 use crate::game_core::components::position::Position;
 use crate::game_core::components::rigidbody::Rigidbody;
 use crate::game_core::view_resources::view_snapshot::ViewSnapshot;
 use bevy_ecs::prelude::*;
 use crate::arena_fight_game::systems::character_movement_system::character_movement;
+use crate::arena_fight_game::systems::player_input_system::player_input_system;
 use crate::game_core::components::impulse::Impulse;
+use crate::game_core::math::FixedPointV2;
 
 #[derive(Copy, Clone, Debug, Default)]
-pub struct ArenaFightInput{}
+pub struct ArenaFightInput{
+    pub movement_direction: FixedPointV2,
+}
 unsafe impl Sync for ArenaFightInput {}
 unsafe impl Send for ArenaFightInput {}
 impl Input for ArenaFightInput {}
@@ -25,7 +29,7 @@ pub struct PlayerCharacterBundle {
     pub impulse: Impulse,
     pub collider: CircleCollider,
     pub health: Health,
-    pub player_control: PlayerControl,
+    pub player_control: PlayerCharacterControl,
     pub character: Character,
 }
 
@@ -33,13 +37,15 @@ pub struct ArenaFightGame {
     pub game_world: GameWorld<ArenaFightInput>,
 }
 
-pub fn dummy_system() {
-    println!("dummy system arena fight");
-}
-
 impl ArenaFightGame {
     pub fn new() -> Self {
-        let mut game_world = GameWorld::new(FixedPoint::new(0.02) ,(dummy_system,character_movement, ).chain());
+        let mut game_world = GameWorld::new(
+            FixedPoint::new(0.02) ,
+            (
+                player_input_system,
+                character_movement
+            ).chain()
+        );
         Self {
             game_world,
         }
