@@ -1,9 +1,10 @@
 use std::ops::{Div, Mul};
 use nalgebra::Vector2;
 use nalgebra::Vector3;
-use serde::{Deserialize, Serialize};
 use derive_more::{Add, Sub, Mul, Div, AddAssign, SubAssign, MulAssign, DivAssign, Neg};
 use simba::scalar::ComplexField;
+use serde::{Serialize, Deserialize, Serializer, Deserializer};
+use serde::ser::SerializeTuple;
 
 type BaseType = simba::scalar::FixedI40F24;
 
@@ -41,7 +42,7 @@ impl Serialize for FixedPoint {
 impl<'de> Deserialize<'de> for FixedPoint {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
-        D: serde::Deserializer<'de>,
+        D: Deserializer<'de>,
     {
         let i = i64::deserialize(deserializer)?;
         Ok(FixedPoint(BaseType::from_bits(i)))
@@ -133,6 +134,65 @@ impl Mul<FixedPoint> for FixedPointV2 {
         FixedPointV2(self.0 * rhs.0)
     }
 }
+
+impl Serialize for FixedPointV2 {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+        where
+            S: serde::Serializer,
+    {
+        // Serialize the two i64 values into a tuple
+        let mut tuple = serializer.serialize_tuple(2)?;
+        tuple.serialize_element(&self.0.x.to_bits())?;
+        tuple.serialize_element(&self.0.y.to_bits())?;
+        tuple.end()
+    }
+}
+impl<'de> Deserialize<'de> for FixedPointV2 {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+        where
+            D: Deserializer<'de>,
+    {
+        let (x_bits, y_bits): (i64, i64) = Deserialize::deserialize(deserializer)?;
+        let x = BaseType::from_bits(x_bits);
+        let y = BaseType::from_bits(y_bits);
+        return Ok(FixedPointV2{
+            0: Vector2::new(x, y)
+        });
+
+
+        //Ok(FixedPointV2(FixedPoint { x, y }))
+    }
+}
+
+impl Serialize for FixedPointV3 {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+        where
+            S: serde::Serializer,
+    {
+        // Serialize the two i64 values into a tuple
+        let mut tuple = serializer.serialize_tuple(3)?;
+        tuple.serialize_element(&self.0.x.to_bits())?;
+        tuple.serialize_element(&self.0.y.to_bits())?;
+        tuple.serialize_element(&self.0.z.to_bits())?;
+        tuple.end()
+    }
+}
+
+impl<'de> Deserialize<'de> for FixedPointV3 {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+        where
+            D: Deserializer<'de>,
+    {
+        let (x_bits, y_bits, z_bits): (i64, i64, i64) = Deserialize::deserialize(deserializer)?;
+        let x = BaseType::from_bits(x_bits);
+        let y = BaseType::from_bits(y_bits);
+        let z = BaseType::from_bits(z_bits);
+        return Ok(FixedPointV3{
+            0: Vector3::new(x, y, z)
+        });
+    }
+}
+
 
 impl FixedPointV2 {
     pub fn magnitude(&self) -> FixedPoint {

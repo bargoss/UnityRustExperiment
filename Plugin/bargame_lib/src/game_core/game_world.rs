@@ -21,7 +21,13 @@ use bevy_ecs::schedule::{BoxedSystemSet, Schedule, SystemConfig, SystemSetConfig
 #[derive(Resource, Default)]
 pub struct PlayerInputMap<TInput> where TInput: Input
 {
-    pub map: HashMap<Id, TInput>,
+    map: HashMap<Id, TInput>,
+}
+impl<TInput> PlayerInputMap<TInput> where TInput: Input
+{
+    pub fn get(&self, id: &Id) -> Option<&TInput> { self.map.get(id) }
+    pub fn insert(&mut self, id: Id, input: TInput) { self.map.insert(id, input); }
+    pub fn remove(&mut self, id: &Id) { self.map.remove(id); }
 }
 
 
