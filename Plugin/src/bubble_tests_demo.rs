@@ -20,24 +20,36 @@ struct BubbleTests {
     physics_world: verlet_physics_world::VerletPhysicsWorld,
     next_id: Id,
     last_shoot: f32,
+    shoot_dir_y: f64,
 }
 
 impl UserBehaviour for BubbleTests {
     fn start(&mut self) {}
 
     fn update(&mut self, time: f32, delta_time: f32, drawer: &mut dyn DrawHandlers, pressed_keys: &HashSet<KeyCode>) {
+
+        if pressed_keys.contains(&KeyCode::W) {
+            self.shoot_dir_y -= 0.01;
+        }
+        if pressed_keys.contains(&KeyCode::S) {
+            self.shoot_dir_y += 0.01;
+        }
+
+
         // let mut 2 buffers
         let mut buffer_a = vec![];
         let mut buffer_b = vec![];
 
         if (time > self.last_shoot + 1.0) {
-            shoot_new_object(&mut self.physics_world, self.next_id);
+            shoot_new_object(&mut self.physics_world, self.next_id, FixedPointV2::from_num(1.0, self.shoot_dir_y));
             self.next_id += Id::new(1);
             if self.next_id.0 > 500 {
                 self.next_id = Id::new(250);
             }
             self.last_shoot = time;
         }
+
+
 
         central_gravity(&mut self.physics_world, FixedPoint::new(0.5));
 
@@ -87,7 +99,7 @@ fn create_beam(physics_world: &mut verlet_physics_world::VerletPhysicsWorld, id_
     physics_world.add_or_set_beam(beam, id_beam);
 }
 
-fn shoot_new_object(physics_world: &mut verlet_physics_world::VerletPhysicsWorld, id: Id) {
+fn shoot_new_object(physics_world: &mut verlet_physics_world::VerletPhysicsWorld, id: Id, shoot_direction: FixedPointV2) {
     //physics_world.remove_object(id);
 
     let id_as_f64 = id.0 as f64;
@@ -97,7 +109,8 @@ fn shoot_new_object(physics_world: &mut verlet_physics_world::VerletPhysicsWorld
     let obj = VerletObject {
         position: FixedPointV2::from_num(-20.0, 0.01 * id_as_f64),
         position_last: FixedPointV2::from_num(-20.0, 0.01 * id_as_f64),
-        acceleration: FixedPointV2::from_num(700.0, id_mapped * 15.0),
+        //acceleration: FixedPointV2::from_num(700.0, id_mapped * 15.0),
+        acceleration: shoot_direction * FixedPoint::new(700.0),
         radius: radius,
         mass: radius * radius,
         is_static: false,
@@ -159,5 +172,6 @@ pub fn create_bubble_tests_demo() -> Box<dyn UserBehaviour> {
         physics_world: physics_world,
         next_id: Id::new(100),
         last_shoot: 0.0,
+        shoot_dir_y: 0.0,
     })
 }

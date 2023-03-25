@@ -98,6 +98,11 @@ impl FixedPoint {
     pub fn to_f64(&self) -> f64 {
         self.0.0.to_num()
     }
+
+    // zero
+    pub fn zero() -> Self {
+        FixedPoint(BaseType::from_num(0.0))
+    }
 }
 
 //impl Default

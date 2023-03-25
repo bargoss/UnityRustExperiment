@@ -60,7 +60,8 @@ impl VerletPhysicsWorld {
 
 
 
-        let n = v / dist;
+        //let n = v / dist;
+        let n = if dist == FixedPoint::zero() { FixedPointV2::zero() } else { v / dist };
         let mass_ratio_1 = object1.mass / (object1.mass + object2.mass);
         let mass_ratio_2 = object2.mass / (object1.mass + object2.mass);
         let delta = FixedPoint::new(0.5) * response_coef * (dist - min_dist);
