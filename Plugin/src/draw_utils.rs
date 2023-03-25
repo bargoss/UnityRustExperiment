@@ -1,7 +1,9 @@
+use std::collections::HashSet;
 pub use ggez::event;
 pub use ggez::graphics::{self, Color, DrawMode, Mesh, MeshBuilder, MeshData, Vertex};
 pub use ggez::{Context, GameResult};
 pub use ggez::glam::*;
+use ggez::winit::event::VirtualKeyCode;
 
 struct Line {
     start: Vec2,
@@ -16,7 +18,7 @@ struct Circle {
 
 pub trait UserBehaviour {
     fn start(&mut self);
-    fn update(&mut self, time: f32, delta_time: f32, draw_handlers: &mut dyn DrawHandlers);
+    fn update(&mut self, time: f32, delta_time: f32, draw_handlers: &mut dyn DrawHandlers, pressed_keys: &HashSet<VirtualKeyCode>);
 }
 
 pub trait DrawHandlers{
@@ -180,25 +182,6 @@ impl event::EventHandler<ggez::GameError> for DrawerState {
             graphics::Color::from([0.1, 0.2, 0.3, 1.0]),
         );
 
-        let vertices = vec![
-            Vertex{
-                position: [0.0,0.0],
-                color: [1.0, 1.0, 1.0, 1.0],
-                uv: [0.0, 0.0],
-            },
-            Vertex{
-                position: [100.0,100.0],
-                color: [1.0, 1.0, 1.0, 1.0],
-                uv: [0.0, 0.0],
-            },
-            Vertex{
-                position: [200.0,0.0],
-                color: [1.0, 1.0, 1.0, 1.0],
-                uv: [0.0, 0.0],
-            },
-        ];
-
-        let indices = vec![0u32, 1, 2];
 
         if self.time == 0.0 {
             if let Some(mut user_behaviour) = self.user_behaviour.take() {
@@ -207,21 +190,23 @@ impl event::EventHandler<ggez::GameError> for DrawerState {
             }
         }
 
+        // get keypress
+        let keys = ctx.keyboard.pressed_keys();
+
+
+
+
+
         if let Some(mut user_behaviour) = self.user_behaviour.take() {
-            user_behaviour.update(self.time, delta_time,self);
+            user_behaviour.update(self.time, delta_time,self, keys);
             self.user_behaviour = Some(user_behaviour);
         }
 
-
-
-
-        //self.draw_circle(Vec2::new(100.0 + self.time, 100.0), 50.0, Color::from([1.0, 0.0, 0.0, 1.0]));
         let mesh_data = self.get_mesh();
         let mesh = Mesh::from_data(ctx, mesh_data);
         canvas.draw(&mesh, Vec2::new(0.0, 0.0));
         canvas.finish(ctx)?;
         self.clear();
-
 
         self.time += delta_time;
 
@@ -232,7 +217,7 @@ impl event::EventHandler<ggez::GameError> for DrawerState {
 }
 
 
-pub fn run_drawer(user_behaviour: Option<Box<dyn UserBehaviour>>) -> GameResult {
+pub fn run_game(user_behaviour: Option<Box<dyn UserBehaviour>>) -> GameResult {
     let cb = ggez::ContextBuilder::new("super_simple", "ggez");
     let (ctx, event_loop) = cb.build()?;
     let state = DrawerState::new(user_behaviour)?;
