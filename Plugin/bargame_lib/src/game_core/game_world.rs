@@ -53,6 +53,7 @@ impl<TInput> GameWorld<TInput> where TInput: Input + 'static
 
         let internal_systems = (
             id_entity_map_sync_system,
+            process_impulses,
             push_all_bodies,
             run_physics_step,
             pull_bodies,
@@ -173,7 +174,6 @@ mod view_interpolation_tests {
             }).insert(Rigidbody {
                 velocity: FixedPointV2::from_num(1.0, 0.0),
                 mass: FixedPoint::new(1.0),
-                impulse: FixedPointV2::from_num(0.0, 0.0),
             }).insert(SphereView{
                 radius: FixedPoint::new(0.5),
                 view_custom_id: Id::new(i),

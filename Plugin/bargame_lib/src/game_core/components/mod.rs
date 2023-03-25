@@ -4,6 +4,7 @@ pub use super::math::*;
 pub mod net_id;
 pub mod position;
 pub mod rigidbody;
+pub mod impulse;
 pub mod circle_collider;
 pub mod beam;
 pub mod depend_on_2_entities;

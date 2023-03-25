@@ -3,6 +3,7 @@
 use bevy_ecs::prelude::*;
 use crate::game_core::components::beam::Beam;
 use crate::game_core::components::circle_collider::CircleCollider;
+use crate::game_core::components::impulse::Impulse;
 use crate::game_core::components::net_id::NetId;
 use crate::game_core::components::position::Position;
 use crate::game_core::components::rigidbody::Rigidbody;
@@ -12,9 +13,17 @@ use crate::game_core::verlet_physics::verlet_beam::VerletBeam;
 use crate::game_core::verlet_physics::verlet_object::VerletObject;
 use crate::game_core::verlet_physics::verlet_physics_world::VerletPhysicsWorld;
 
+pub fn process_impulses(
+    mut body_query: Query<(&mut Rigidbody, &mut Impulse)>,
+    time: Res<Time>
+) {
+    for (mut rigidbody, mut impulse) in body_query.iter_mut() {
+        let mass = rigidbody.mass;
+        rigidbody.velocity += impulse.value / mass;
+        impulse.value = FixedPointV2::zero();
+    }
+}
 
-
-// also get the resource from bevy, of type VerletPhysicsWorld
 pub fn push_all_bodies(
     body_query: Query<(&Position, &CircleCollider, &Rigidbody, &NetId)>,
     beam_query: Query<(&Beam, &NetId)>,
