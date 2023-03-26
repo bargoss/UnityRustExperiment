@@ -1,4 +1,4 @@
-use crate::game_core::view_components::Id;
+use crate::game_core::common::*;
 use bevy_ecs::component::Component;
 
 #[derive(Component, Debug, Clone, Copy, Default)]

@@ -1,6 +1,7 @@
 use bevy_ecs::prelude::*;
 use crate::game_core::components::position::Position;
 use crate::game_core::resources::time::Time;
+use crate::game_core::verlet_physics::FixedPoint;
 use crate::game_core::view_components::sphere_view::SphereView;
 use crate::game_core::view_resources::view_snapshot_interpolator::BufferedViewSnapshotInterpolator;
 use crate::game_core::view_resources::view_snapshots::SphereSnapshot::SphereSnapshot;
@@ -11,7 +12,7 @@ pub fn sphere_view_system(
     time: Res<Time>
 ) {
     for (sphere_view, interpolated_position) in sphere_views.iter() {
-        let time = (time.tick as f32) * time.fixed_delta_time.to_f32();
+        let time = FixedPoint::new(time.tick as f64) * time.fixed_delta_time;
         let position = interpolated_position.value;
 
         // put them in one line

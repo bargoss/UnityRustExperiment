@@ -1,7 +1,7 @@
 use std::collections::{HashMap, HashSet};
 use bargame_lib::arena_fight_game::arena_game::{ArenaFightGame, ArenaFightInput};
 use bargame_lib::game_core::math::{FixedPoint, FixedPointV2};
-use bargame_lib::game_core::view_components::Id;
+use bargame_lib::game_core::common;
 use bargame_lib::game_core::view_resources::view_snapshots::SphereSnapshot::SphereSnapshot;
 use ggez::graphics::Color;
 use ggez::input::keyboard::KeyCode;

@@ -7,7 +7,7 @@ use crate::game_core::components::rigidbody::Rigidbody;
 use crate::game_core::game_world::PlayerInputMap;
 use crate::game_core::math::{FixedPoint, FixedPointV2};
 use crate::game_core::resources::id_entity_map::IdEntityMap;
-use crate::game_core::view_components::Id;
+use crate::game_core::common::*;
 
 
 // Q: how can I describe something like Query<(Entity, &TankBubble, &Position, &Rigidbody)> in a generic way?

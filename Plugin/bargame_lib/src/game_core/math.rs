@@ -128,6 +128,14 @@ impl std::fmt::Display for FixedPointV2 {
     }
 }
 
+// make FixedPointV2 convertable to FixedPointV3
+impl From<FixedPointV2> for FixedPointV3 {
+    fn from(fixed_point_v2: FixedPointV2) -> Self {
+        FixedPointV3(Vector3::new(fixed_point_v2.0.x, fixed_point_v2.0.y, BaseType::from_num(0.0)))
+    }
+}
+
+
 
 // impl Div for FixedPointV2 / FixedPoint
 impl Div<FixedPoint> for FixedPointV2 {
@@ -260,7 +268,7 @@ impl FixedPointV2 {
 
 
 
-#[derive(Debug, Clone, Copy, Add, Sub, Mul, Div, AddAssign, SubAssign, MulAssign, DivAssign, Neg)]
+#[derive(Debug, Clone, Copy, Add, Sub, Mul, Div, AddAssign, SubAssign, MulAssign, DivAssign, Neg, PartialEq)]
 pub struct FixedPointV3(Vector3<BaseType>);
 
 // impl display
@@ -343,6 +351,13 @@ impl FixedPointExt for BaseType {
 impl FixedPointExt for FixedPoint {
     fn floor_to_i32(&self) -> i32 {
         self.0.floor_to_i32()
+    }
+}
+
+impl Mul<FixedPoint> for FixedPointV3 {
+    type Output = FixedPointV3;
+    fn mul(self, rhs: FixedPoint) -> Self::Output {
+        FixedPointV3(self.0 * rhs.0)
     }
 }
 

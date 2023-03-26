@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use bevy_ecs::prelude::*;
 use bevy_ecs::query::{QueryEntityError, ROQueryItem, WorldQuery};
-use crate::game_core::view_components::Id;
+use crate::game_core::common::*;
 
 #[derive(Default, Resource)]
 pub struct IdEntityMap {

@@ -1,12 +1,12 @@
 use std::ops::{Add, Mul};
-use crate::game_core::common::Vector3;
+use crate::game_core::math::{FixedPoint, FixedPointV3};
 use crate::game_core::view_resources::view_snapshot::ViewSnapshot;
 
 #[derive(Copy, Clone, Debug, Default)]
 pub struct LineSnapshot {
-    pub start: Vector3,
-    pub end: Vector3,
-    pub width: f32,
+    pub start: FixedPointV3,
+    pub end: FixedPointV3,
+    pub width: FixedPoint,
 }
 impl Add for LineSnapshot{
     type Output = LineSnapshot;
@@ -19,10 +19,10 @@ impl Add for LineSnapshot{
         }
     }
 }
-impl Mul<f32> for LineSnapshot{
+impl Mul<FixedPoint> for LineSnapshot{
     type Output = LineSnapshot;
 
-    fn mul(self, other: f32) -> LineSnapshot {
+    fn mul(self, other: FixedPoint) -> LineSnapshot {
         LineSnapshot{
             start: self.start * other,
             end: self.end * other,

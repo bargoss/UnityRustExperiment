@@ -24,7 +24,7 @@ pub struct SimpleBundle {
 #[cfg(test)]
 mod tests {
     use bevy_ecs::prelude::*;
-    use crate::game_core::view_components::Id;
+    use crate::game_core::common::*;
     use super::*;
 
     fn query_directly_from_world_experiment(mut world: World) {

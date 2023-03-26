@@ -1,5 +1,5 @@
 use crate::game_core::components::FixedPoint;
-use crate::game_core::view_components::Id;
+use crate::game_core::common::*;
 use serde::{Serialize, Deserialize};
 use bevy_ecs::component::Component;
 use crate::game_core::math::FixedPointV2;

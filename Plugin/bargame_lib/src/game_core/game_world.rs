@@ -7,7 +7,7 @@ use crate::game_core::resources::time::Time;
 use crate::game_core::systems::id_entity_map_sync_system::id_entity_map_sync_system;
 use crate::game_core::systems::physics_system::*;
 use crate::game_core::verlet_physics::verlet_physics_world::VerletPhysicsWorld;
-use crate::game_core::view_components::Id;
+use crate::game_core::common::*;
 use crate::game_core::view_resources::view_snapshot::ViewSnapshot;
 use crate::game_core::view_resources::view_snapshot_interpolator::{BufferedViewSnapshotInterpolator};
 use crate::game_core::view_resources::view_snapshots::LineSnapshot::LineSnapshot;
@@ -100,12 +100,12 @@ impl<TInput> GameWorld<TInput> where TInput: Input + 'static
         self.register_keyframes_schedule.run(&mut self.world);
     }
     // where T: ViewSnapshot
-    pub fn sample_view_snapshots<T>(&mut self, viewing_time: f64, buffer: &mut Vec<T>) where T: ViewSnapshot + 'static
+    pub fn sample_view_snapshots<T>(&mut self, viewing_time: FixedPoint, buffer: &mut Vec<T>) where T: ViewSnapshot + 'static
     {
         buffer.clear();
 
         let res = self.world.get_resource::<BufferedViewSnapshotInterpolator<T>>().unwrap();
-        res.interpolated_keyframes(viewing_time as f32).for_each(|snapshot| {
+        res.interpolated_keyframes(viewing_time).for_each(|snapshot| {
             buffer.push(snapshot.1);
         });
     }
@@ -197,16 +197,17 @@ mod view_interpolation_tests {
 
         // Test the view interpolation logic by sampling view snapshots
         let mut buffer: Vec<SphereSnapshot> = Vec::new();
-        game_world.sample_view_snapshots(0.5, &mut buffer);
+        game_world.sample_view_snapshots(FixedPoint::new(0.5), &mut buffer);
 
         // sort the buffer
         // compare position.x
-        buffer.sort_by(|a, b| a.position.x.partial_cmp(&b.position.x).unwrap());
+        buffer.sort_by(|a, b| a.position.x().partial_cmp(&b.position.x()).unwrap());
 
         // print the buffer
         for (i, snapshot) in buffer.iter().enumerate() {
             println!("snapshot: {:?}", snapshot);
-            assert_eq!(snapshot.position.x, i as f32 + 0.5);
+            //assert_eq!(snapshot.position.x, i as f32 + 0.5);
+            assert_eq!(snapshot.position.x(), FixedPoint::new(i as f64 + 0.5));
         }
     }
 }
