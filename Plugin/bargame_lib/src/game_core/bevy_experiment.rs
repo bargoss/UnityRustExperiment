@@ -25,14 +25,8 @@ pub struct SimpleBundle {
 mod tests {
     use bevy_ecs::prelude::*;
     use crate::game_core::common::*;
+    use crate::game_core::math::*;
     use super::*;
-
-    fn query_directly_from_world_experiment(mut world: World) {
-        //let mut entities = world.query::<&NetId>().iter().collect::<Vec<_>>();
-        //for entity in entities {
-        //    world.despawn(entity);
-        //}
-    }
 
     // get the command queue as well
     fn destroy_and_check_system(
