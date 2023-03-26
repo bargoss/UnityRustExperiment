@@ -10,8 +10,8 @@ use crate::game_core::verlet_physics::verlet_physics_world::VerletPhysicsWorld;
 use crate::game_core::common::*;
 use crate::game_core::view_resources::view_snapshot::ViewSnapshot;
 use crate::game_core::view_resources::view_snapshot_interpolator::{BufferedViewSnapshotInterpolator};
-use crate::game_core::view_resources::view_snapshots::LineSnapshot::LineSnapshot;
-use crate::game_core::view_resources::view_snapshots::SphereSnapshot::SphereSnapshot;
+use crate::game_core::view_resources::view_snapshots::line_snapshot::LineSnapshot;
+use crate::game_core::view_resources::view_snapshots::sphere_snapshot::SphereSnapshot;
 use crate::game_core::view_systems::line_view_system::line_view_system;
 use crate::game_core::view_systems::sphere_view_system::sphere_view_system;
 use crate::rollback_controller::input::Input;
@@ -154,7 +154,7 @@ mod view_interpolation_tests {
     use crate::game_core::components::rigidbody::Rigidbody;
     use crate::game_core::math::FixedPointV2;
     use crate::game_core::view_components::sphere_view::SphereView;
-    use crate::game_core::view_resources::view_snapshots::SphereSnapshot::SphereSnapshot;
+    use crate::game_core::view_resources::view_snapshots::sphere_snapshot::SphereSnapshot;
 
     #[derive(Default, Copy, Clone)]
     pub struct DummyInput;

@@ -4,7 +4,7 @@ use crate::game_core::resources::time::Time;
 use crate::game_core::verlet_physics::FixedPoint;
 use crate::game_core::view_components::sphere_view::SphereView;
 use crate::game_core::view_resources::view_snapshot_interpolator::BufferedViewSnapshotInterpolator;
-use crate::game_core::view_resources::view_snapshots::SphereSnapshot::SphereSnapshot;
+use crate::game_core::view_resources::view_snapshots::sphere_snapshot::SphereSnapshot;
 
 pub fn sphere_view_system(
     sphere_views: Query<(&SphereView, &Position)>,
