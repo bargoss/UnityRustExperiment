@@ -213,3 +213,69 @@ mod view_interpolation_tests {
         }
     }
 }
+
+#[cfg(test)]
+mod system_adding_tests
+{
+    use bevy_ecs::prelude::*;
+    use bevy_ecs::schedule::BoxedSystemSet;
+
+    pub fn system0() {
+        println!("system0");
+    }
+    pub fn system1() {
+        println!("system1");
+    }
+    pub fn system2() {
+        println!("system2");
+    }
+    pub fn system3() {
+        println!("system3");
+    }
+    pub fn system4() {
+        println!("system4");
+    }
+    pub fn system5() {
+        println!("system5");
+    }
+    pub fn system6() {
+        println!("system6");
+    }
+    pub fn system7() {
+        println!("system7");
+    }
+    pub fn system8() {
+        println!("system8");
+    }
+    pub fn system9() {
+        println!("system9");
+    }
+
+
+
+    #[test]
+    fn test_system_adding() {
+        let mut schedule = Schedule::default();
+        schedule.add_system(system0);
+        schedule.add_system(system1.after(system0));
+        schedule.add_system(system2.after(system1));
+        schedule.add_system(system3.after(system2));
+        schedule.add_system(system4.after(system3));
+        schedule.run(&mut World::new());
+    }
+
+    #[test]
+    fn test_system_adding2() {
+        let mut schedule = Schedule::default();
+        schedule.add_systems(
+            (system0, system1, system2, system3, system4).chain()
+        );
+        schedule.add_systems(
+            (system5, system6.after(system5), system7.after(system6), system8.after(system7), system9.after(system8)).after(system4)
+        );
+
+
+        schedule.run(&mut World::new());
+    }
+
+}
