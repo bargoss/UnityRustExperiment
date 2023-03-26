@@ -33,7 +33,7 @@ impl<TInput> PlayerInputMap<TInput> where TInput: Input
 
 pub struct GameWorld<TInput> where TInput: Input
 {
-    world: World,
+    pub world: World,
     advance_tick_internal_schedule: Schedule,
     advance_tick_schedule: Schedule,
     register_keyframes_internal_schedule: Schedule,

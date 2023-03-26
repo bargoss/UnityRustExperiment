@@ -4,7 +4,7 @@ use serde::{Serialize, Deserialize};
 use bevy_ecs::component::Component;
 use crate::game_core::math::FixedPointV2;
 
-#[derive(Component, Clone, Copy, Serialize, Deserialize)]
+#[derive(Component, Clone, Copy, Serialize, Deserialize, Default)]
 pub struct Character {
     pub movement_direction: FixedPointV2,
 }

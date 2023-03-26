@@ -89,6 +89,11 @@ impl FixedPoint {
         FixedPoint(BaseType::from_num(p0))
     }
 
+    // one
+    pub fn one() -> Self {
+        FixedPoint(BaseType::from_num(1.0))
+    }
+
     // to_f32
     pub fn to_f32(&self) -> f32 {
         // convert simba::scalar::FixedI40F24 to f32
@@ -241,11 +246,11 @@ impl FixedPointV2 {
     pub fn y(&self) -> FixedPoint {
         FixedPoint(self.0.y)
     }
-    pub fn set_x(&mut self, x: f64) {
-        self.0.x = BaseType::from_num(x);
+    pub fn set_x(&mut self, x: FixedPoint) {
+        self.0.x = x.0;
     }
-    pub fn set_y(&mut self, y: f64) {
-        self.0.y = BaseType::from_num(y);
+    pub fn set_y(&mut self, y: FixedPoint) {
+        self.0.y = y.0;
     }
 
     pub fn zero() -> Self {

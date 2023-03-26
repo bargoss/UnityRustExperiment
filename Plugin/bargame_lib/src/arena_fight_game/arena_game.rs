@@ -13,6 +13,7 @@ use crate::arena_fight_game::systems::character_movement_system::character_movem
 use crate::arena_fight_game::systems::player_input_system::player_input_system;
 use crate::game_core::components::impulse::Impulse;
 use crate::game_core::math::FixedPointV2;
+use crate::game_core::view_components::sphere_view::SphereView;
 
 #[derive(Copy, Clone, Debug, Default)]
 pub struct ArenaFightInput{
@@ -31,6 +32,7 @@ pub struct PlayerCharacterBundle {
     pub health: Health,
     pub player_control: PlayerCharacterControl,
     pub character: Character,
+    pub sphere_view: SphereView,
 }
 
 pub struct ArenaFightGame {
@@ -49,6 +51,20 @@ impl ArenaFightGame {
         Self {
             game_world,
         }
+    }
+
+    pub fn add_player_character(&mut self, id: Id, position: FixedPointV2) {
+        // default bundle
+        self.game_world.world.spawn(PlayerCharacterBundle {
+            position: Position{ value: position, },
+            rigidbody: Rigidbody::default(),
+            impulse: Impulse::default(),
+            collider: CircleCollider { radius: FixedPoint::new(0.5), },
+            health: Health{health: FixedPoint::new(100.0), max_health: FixedPoint::new(100.0), health_regen_per_second: FixedPoint::new(10.0),},
+            player_control: PlayerCharacterControl{controlling_player_id: id},
+            character: Character::default(),
+            sphere_view: SphereView{view_custom_id: Id::new(0), radius: FixedPoint::new(0.5),},
+        });
     }
 
     pub fn advance_tick(&mut self, input_map: HashMap<Id, ArenaFightInput>){ self.game_world.advance_tick(input_map); }
