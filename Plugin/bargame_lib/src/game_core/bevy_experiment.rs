@@ -1,11 +1,5 @@
-use bevy_ecs::prelude::Schedule;
-use bevy_ecs::world::World;
-use crate::game_core::components::circle_collider::CircleCollider;
-use super::components::*;
-use crate::game_core::components::position::Position;
-use crate::game_core::components::rigidbody::Rigidbody;
-use bevy_ecs::bundle::Bundle;
-use crate::game_core::components::net_id::NetId;
+use crate::game_core::components::*;
+use bevy_ecs::prelude::*;
 
 // "particle" bundle that has components Position, Velocity, Collider
 #[derive(Bundle)]
@@ -81,8 +75,6 @@ mod tests {
     #[test]
     fn spawn_and_mutate_experiment() {
         let mut world = World::new();
-        let mut init_schedule = Schedule::default();
-        let mut update_schedule = Schedule::default();
 
         // spawn bundle
         world.spawn(ParticleBundle{
