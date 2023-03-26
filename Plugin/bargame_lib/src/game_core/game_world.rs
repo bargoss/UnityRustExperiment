@@ -209,7 +209,6 @@ mod view_interpolation_tests {
         // print the buffer
         for (i, snapshot) in buffer.iter().enumerate() {
             println!("snapshot: {:?}", snapshot);
-            //assert_eq!(snapshot.position.x, i as f32 + 0.5);
             assert_eq!(snapshot.position.x(), FixedPoint::new(i as f64 + 0.5));
         }
     }

@@ -12,6 +12,7 @@ pub fn player_input_system(
         let input = player_input_map
             .get(&player_control.controlling_player_id)
             .unwrap_or_default();
+        print!("input: {:?}", input);
         character.movement_direction = input.movement_direction;
     }
 }

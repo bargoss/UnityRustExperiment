@@ -11,7 +11,7 @@ use bevy_ecs::prelude::*;
 use crate::arena_fight_game::systems::character_movement_system::character_movement;
 use crate::arena_fight_game::systems::player_input_system::player_input_system;
 //use crate::game_core::common::Id;
-use crate::game_core::components::impulse::Impulse;
+use crate::game_core::components::*;
 use crate::game_core::math::FixedPointV2;
 use crate::game_core::view_components::sphere_view::SphereView;
 use crate::game_core::common::*;
@@ -27,6 +27,7 @@ impl Input for ArenaFightInput {}
 
 #[derive(Bundle)]
 pub struct PlayerCharacterBundle {
+    pub net_id: NetId,
     pub position: Position,
     pub rigidbody: Rigidbody,
     pub impulse: Impulse,
@@ -58,6 +59,7 @@ impl ArenaFightGame {
     pub fn add_player_character(&mut self, id: Id, position: FixedPointV2) {
         // default bundle
         self.game_world.world.spawn(PlayerCharacterBundle {
+            net_id: NetId{ value: id, }, //todo use proper logic to generate net id
             position: Position{ value: position, },
             rigidbody: Rigidbody::default(),
             impulse: Impulse::default(),

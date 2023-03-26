@@ -1,6 +1,3 @@
-pub use bevy_ecs::component::Component;
-pub use super::math::*;
-
 pub mod net_id;
 pub use net_id::*;
 
