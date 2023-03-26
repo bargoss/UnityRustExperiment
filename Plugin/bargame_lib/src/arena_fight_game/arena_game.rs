@@ -69,6 +69,8 @@ impl ArenaFightGame {
         });
     }
 
+    pub fn get_tick(&self) -> u32 { self.game_world.get_tick() }
+    pub fn get_fixed_delta_time(&self) -> FixedPoint { self.game_world.get_fixed_delta_time() }
     pub fn advance_tick(&mut self, input_map: HashMap<Id, ArenaFightInput>){ self.game_world.advance_tick(input_map); }
     pub fn register_keyframes(&mut self){ self.game_world.register_keyframes(); }
     pub fn sample_view_snapshots<T>(&mut self, viewing_time: FixedPoint, buffer: &mut Vec<T>) where T: ViewSnapshot + 'static { self.game_world.sample_view_snapshots(viewing_time, buffer); }

@@ -87,6 +87,9 @@ impl<TInput> GameWorld<TInput> where TInput: Input + 'static
         game_world
     }
 
+    pub fn get_tick(&self) -> u32 { self.world.get_resource::<Time>().unwrap().tick }
+    pub fn get_fixed_delta_time(&self) -> FixedPoint { self.world.get_resource::<Time>().unwrap().fixed_delta_time }
+
     pub fn advance_tick(&mut self, input_map: HashMap<Id, TInput>){
         let mut input_map_res = self.world.get_resource_mut::<PlayerInputMap<TInput>>().unwrap();
         input_map_res.map.clear();

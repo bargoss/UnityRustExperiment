@@ -39,7 +39,10 @@ impl <T> BufferedViewSnapshotInterpolatorItem<T> where T: ViewSnapshot {
                 let time = target_time - start.time;
                 let t = time / time_diff;
 
+
                 interpolated_value = interpolate_snapshots(start.value, end.value, t);
+                // print params and result
+                println!("start: {:?}, end: {:?}, t: {:?}, result: {:?}", start.value, end.value, t, interpolated_value);
 
                 return Some(interpolated_value);
             }
@@ -102,6 +105,7 @@ impl <T> BufferedViewSnapshotInterpolator<T> where T: ViewSnapshot {
         self.items.iter().map(move |(id, item)| {
             println!("interpolating {} at {}", id.0, view_time);
             let interpolated_value = item.interpolate(view_time);
+            println!("interpolated value: {:?}", interpolated_value);
             (*id, interpolated_value)
         })
     }

@@ -11,12 +11,13 @@ pub fn sphere_view_system(
     mut sphere_snapshots: ResMut<BufferedViewSnapshotInterpolator<SphereSnapshot>>,
     time: Res<Time>
 ) {
-    for (sphere_view, interpolated_position) in sphere_views.iter() {
+    for (sphere_view, position) in sphere_views.iter() {
         let time = FixedPoint::new(time.tick as f64) * time.fixed_delta_time;
-        let position = interpolated_position.value;
+        let position = position.value;
+        let radius = sphere_view.radius;
 
         // put them in one line
-        println!("view_time: {}, view_position: {}", time, position);
+        println!("view_time: {}, view_position: {}, radius: {}", time, position, radius);
 
         sphere_snapshots.push(sphere_view.view_custom_id, time, SphereSnapshot{
             position : position.into(),

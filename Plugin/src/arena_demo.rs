@@ -1,12 +1,13 @@
 use std::collections::{HashMap, HashSet};
 use bargame_lib::arena_fight_game::arena_game::{ArenaFightGame, ArenaFightInput};
 use bargame_lib::game_core::math::{FixedPoint, FixedPointV2};
-use bargame_lib::game_core::common;
+use bargame_lib::game_core::common::*;
 use bargame_lib::game_core::view_resources::view_snapshots::SphereSnapshot::SphereSnapshot;
+use ggez::glam::Vec3;
 use ggez::graphics::Color;
 use ggez::input::keyboard::KeyCode;
 use ggez::winit::event::VirtualKeyCode;
-use crate::draw_utils::{DrawHandlers, UserBehaviour};
+use crate::draw_utils::{DrawHandlers, UserBehaviour, Vec2};
 
 struct ArenaDemo {
     game: ArenaFightGame,
@@ -32,19 +33,24 @@ impl UserBehaviour for ArenaDemo {
         self.game.advance_tick(input_map);
         self.game.register_keyframes();
 
+        let game_time = FixedPoint::new(self.game.get_tick() as f64) * self.game.get_fixed_delta_time();
+
         //let mut buffer = vec![];
         // define the vec with SphereSnapshot
         let mut buffer: Vec<SphereSnapshot> = vec![];
-        self.game.sample_view_snapshots(time as f64, &mut buffer);
+        self.game.sample_view_snapshots(game_time, &mut buffer);
 
         for snapshot in buffer {
-            drawer.draw_circle(snapshot.position, snapshot.radius, Color::RED);
+            let position = Vec2::new(snapshot.position.x().to_f32(), snapshot.position.y().to_f32());
+            let radius = snapshot.radius.to_f32();
+            drawer.draw_circle(position, radius, Color::RED);
         }
     }
 }
 
 
 pub fn create_arena_demo() -> Box<dyn UserBehaviour>{
-    let game = ArenaFightGame::new();
+    let mut game = ArenaFightGame::new();
+    game.add_player_character(Id::new(0), FixedPointV2::from_num(1.5, 1.6));
     Box::new(ArenaDemo{game})
 }

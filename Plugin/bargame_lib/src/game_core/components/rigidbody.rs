@@ -1,7 +1,17 @@
 use super::*;
 
-#[derive(Component, Debug, Clone, Copy, Default)]
+#[derive(Component, Debug, Clone, Copy)]
 pub struct Rigidbody {
     pub velocity: FixedPointV2,
     pub mass: FixedPoint,
+}
+
+// implement default
+impl Default for Rigidbody {
+    fn default() -> Self {
+        Rigidbody {
+            velocity: FixedPointV2::default(),
+            mass: FixedPoint::new(1.0),
+        }
+    }
 }

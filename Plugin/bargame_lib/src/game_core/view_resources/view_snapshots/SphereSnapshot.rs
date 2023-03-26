@@ -13,7 +13,7 @@ impl Add for SphereSnapshot{
     fn add(self, other: SphereSnapshot) -> SphereSnapshot {
         SphereSnapshot{
             position: self.position + other.position,
-            radius: self.radius,
+            radius: self.radius + other.radius,
         }
     }
 }
@@ -23,7 +23,7 @@ impl Mul<FixedPoint> for SphereSnapshot{
     fn mul(self, other: FixedPoint) -> SphereSnapshot {
         SphereSnapshot{
             position: self.position * other,
-            radius: self.radius,
+            radius: self.radius * other,
         }
     }
 }
