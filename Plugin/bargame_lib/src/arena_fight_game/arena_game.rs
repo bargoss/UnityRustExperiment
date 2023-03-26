@@ -16,6 +16,9 @@ use crate::game_core::math::FixedPointV2;
 use crate::game_core::view_components::sphere_view::SphereView;
 use crate::game_core::common::*;
 use crate::game_core::math::*;
+use crate::game_core::systems::*;
+use crate::game_core::view_systems::line_view_system::line_view_system;
+use crate::game_core::view_systems::sphere_view_system::sphere_view_system;
 
 #[derive(Copy, Clone, Debug, Default)]
 pub struct ArenaFightInput{
@@ -47,9 +50,18 @@ impl ArenaFightGame {
         let mut game_world = GameWorld::new(
             FixedPoint::new(0.02) ,
             (
+                id_entity_map_sync_system,
+                process_impulses,
+                push_all_bodies,
+                run_physics_step,
+                pull_bodies,
                 player_input_system,
-                character_movement
-            ).chain()
+                character_movement,
+            ).chain(),
+            (
+                line_view_system,
+                sphere_view_system,
+            ).chain(),
         );
         Self {
             game_world,
