@@ -2,7 +2,7 @@ use std::collections::HashMap;
 use crate::game_core::game_world::GameWorld;
 use crate::rollback_controller::input::Input;
 //use bevy_ecs::schedule::IntoSystemConfigs;
-use crate::arena_fight_game::components::{Character, Health, PlayerCharacterControl};
+use crate::arena_fight_game::components::{CharacterMovement, Health, PlayerCharacterControl};
 use crate::game_core::components::circle_collider::CircleCollider;
 use crate::game_core::components::position::Position;
 use crate::game_core::components::rigidbody::Rigidbody;
@@ -34,7 +34,7 @@ pub struct PlayerCharacterBundle {
     pub collider: CircleCollider,
     pub health: Health,
     pub player_control: PlayerCharacterControl,
-    pub character: Character,
+    pub character: CharacterMovement,
     pub sphere_view: SphereView,
 }
 
@@ -66,7 +66,7 @@ impl ArenaFightGame {
             collider: CircleCollider { radius: FixedPoint::new(0.5), },
             health: Health{health: FixedPoint::new(100.0), max_health: FixedPoint::new(100.0), health_regen_per_second: FixedPoint::new(10.0),},
             player_control: PlayerCharacterControl{controlling_player_id: id},
-            character: Character::default(),
+            character: CharacterMovement::default(),
             sphere_view: SphereView{view_custom_id: Id::new(0), radius: FixedPoint::new(0.5),},
         });
     }

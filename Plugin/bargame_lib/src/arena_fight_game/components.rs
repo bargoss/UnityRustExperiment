@@ -5,7 +5,7 @@ use bevy_ecs::component::Component;
 use crate::game_core::math::*;
 
 #[derive(Component, Clone, Copy, Serialize, Deserialize, Default)]
-pub struct Character {
+pub struct CharacterMovement {
     pub movement_direction: FixedPointV2,
 }
 
@@ -21,4 +21,31 @@ pub struct Health{
     pub health_regen_per_second: FixedPoint,
 }
 
+pub enum UnitType{
+    MeleeFighter{
+        attack_range: FixedPoint,
+        attack_damage: FixedPoint,
+        attack_cooldown: FixedPoint,
+    },
+    RangedFighter,
+    Builder,
+    ResourceCarrier,
+}
 
+
+#[derive(Component, Clone, Copy, Serialize, Deserialize)]
+pub enum Faction{
+    Neutral,
+    Blue,
+    Red,
+    Green,
+    Yellow,
+}
+
+#[derive(Component, Clone, Copy, Serialize, Deserialize)]
+pub struct Unit {
+    pub target_movement_position : FixedPointV2,
+    pub team: Faction,
+    pub belonging_player_id: Option<Id>,
+    pub belonging_building_id : Option<Id>,
+}
