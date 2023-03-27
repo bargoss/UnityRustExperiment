@@ -30,13 +30,15 @@ impl<TInput> PlayerInputMap<TInput> where TInput: Input
     pub fn remove(&mut self, id: &Id) { self.map.remove(id); }
 }
 
+pub fn core_systems_executed(){
+
+}
+
 
 pub struct GameWorld<TInput> where TInput: Input
 {
     pub world: World,
-    advance_tick_internal_schedule: Schedule,
     advance_tick_schedule: Schedule,
-    register_keyframes_internal_schedule: Schedule,
     register_keyframes_schedule: Schedule,
     player_id_to_input_map: HashMap<Id, TInput>,
 }
@@ -46,8 +48,6 @@ impl<TInput> GameWorld<TInput> where TInput: Input + 'static
     pub fn new<M>(fixed_delta_time: FixedPoint, systems: impl IntoSystemConfigs<M>) -> GameWorld<TInput>{
         let mut world = World::new();
         let mut advance_tick_schedule = Schedule::default();
-        let mut advance_tick_internal_schedule = Schedule::default();
-        let mut register_keyframes_internal_schedule = Schedule::default();
         let mut register_keyframes_schedule = Schedule::default();
 
         world.insert_resource(PlayerInputMap::<TInput>::default());
@@ -63,23 +63,22 @@ impl<TInput> GameWorld<TInput> where TInput: Input + 'static
             push_all_bodies,
             run_physics_step,
             pull_bodies,
+            core_systems_executed
         );
-        advance_tick_internal_schedule.add_systems(internal_systems.chain());
-        advance_tick_schedule.add_systems(systems.chain());
+        advance_tick_schedule.add_systems(internal_systems.chain());
+        advance_tick_schedule.add_systems(systems.chain().after(core_systems_executed));
 
         let register_keyframes_systems_internal = (
             sphere_view_system,
             line_view_system,
         );
 
-        register_keyframes_internal_schedule.add_systems(register_keyframes_systems_internal.chain());
+        register_keyframes_schedule.add_systems(register_keyframes_systems_internal);
 
 
         let mut game_world = GameWorld{
             world,
             advance_tick_schedule,
-            advance_tick_internal_schedule,
-            register_keyframes_internal_schedule,
             register_keyframes_schedule,
             player_id_to_input_map : HashMap::new(),
         };
@@ -94,12 +93,10 @@ impl<TInput> GameWorld<TInput> where TInput: Input + 'static
         let mut input_map_res = self.world.get_resource_mut::<PlayerInputMap<TInput>>().unwrap();
         input_map_res.map.clear();
         input_map_res.map.extend(input_map);
-        self.advance_tick_internal_schedule.run(&mut self.world);
         self.advance_tick_schedule.run(&mut self.world);
         self.world.get_resource_mut::<Time>().unwrap().tick += 1;
     }
     pub fn register_keyframes(&mut self){
-        self.register_keyframes_internal_schedule.run(&mut self.world);
         self.register_keyframes_schedule.run(&mut self.world);
     }
     // where T: ViewSnapshot

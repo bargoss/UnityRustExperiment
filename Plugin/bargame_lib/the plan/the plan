@@ -1,3 +1,31 @@
+THE GAME:
+Spawn things via cards:
+    Barracks<unit type>:
+        -spawns k units per seconds, can have up to n units
+        -drag and drop from Barracks to support or attack nearby structures or positions
+    MineStation:
+        -generates resources over time
+        -has to be built on top of a resource
+        -drag and drop from MineStation to support builder bases nearby or send workers
+        -or to support friendly structure via repairing
+    Units<unit type>:
+        -units spawned from cards have limited lifespans
+        -supports the units or building it was dropped next to
+    BuilderBase:
+        -spawns up to n builder units
+        -builders can reach up to m distance from the base
+        -drag and drop from BuilderBase to support nearby structures
+
+
+
+
+
+
+
+
+
+
+
 DONE    -   looks like interpolated position component is not a good idea nor needed
 ----    -   need to figure how to avoid having same time keyframe duplicates in the snapshot interpolation buffers
 
