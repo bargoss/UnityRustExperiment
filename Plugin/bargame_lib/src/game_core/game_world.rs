@@ -16,6 +16,7 @@ use crate::game_core::view_systems::line_view_system::line_view_system;
 use crate::game_core::view_systems::sphere_view_system::sphere_view_system;
 use crate::rollback_controller::input::Input;
 use bevy_ecs::schedule::{BoxedSystemSet, Schedule, SystemConfig, SystemSetConfig};
+use crate::game_core::resources::NetIdCounter;
 
 
 #[derive(Resource, Default)]
@@ -56,6 +57,7 @@ impl<TInput> GameWorld<TInput> where TInput: Input + 'static
         world.insert_resource(Time{ tick: 0, fixed_delta_time });
         world.insert_resource(BufferedViewSnapshotInterpolator::<SphereSnapshot>::default());
         world.insert_resource(BufferedViewSnapshotInterpolator::<LineSnapshot>::default());
+        world.insert_resource(NetIdCounter::new());
 
         let internal_systems = (
             id_entity_map_sync_system,

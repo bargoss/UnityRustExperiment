@@ -8,8 +8,16 @@ use serde::ser::SerializeTuple;
 
 type BaseType = simba::scalar::FixedI40F24;
 
-#[derive(Debug, Clone, Copy, Add, Sub, Mul, Div, AddAssign, SubAssign, MulAssign, DivAssign, Neg)]
+#[derive(Debug, Clone, Copy, Add, Sub, Div, AddAssign, SubAssign, MulAssign, DivAssign, Neg)]
 pub struct FixedPoint(BaseType);
+
+// impl Multiplication with u32
+impl Mul<u32> for FixedPoint {
+    type Output = FixedPoint;
+    fn mul(self, rhs: u32) -> Self::Output {
+        FixedPoint(self.0 * FixedPoint::new(rhs as f64).0)
+    }
+}
 
 impl std::fmt::Display for FixedPoint {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {

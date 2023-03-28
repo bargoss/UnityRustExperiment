@@ -1,3 +1,14 @@
+deterministic entity spawning solution:
+    figuring out NetId for new entities:
+        just generate entities with big id space with a good hash function to maintain determinism during entity creations
+    practical test for determinism:
+        have a generic determinism test that randomly does "serialize->shuffle->deserialize" to mess with the entity iteration order
+        execute it with saved inputs and then compare with the final state with the saved final state
+
+
+
+
+
 THE GAME:
 Spawn things via cards:
     Barracks<unit type>:

@@ -21,18 +21,6 @@ pub struct Health{
     pub health_regen_per_second: FixedPoint,
 }
 
-pub enum UnitType{
-    MeleeFighter{
-        attack_range: FixedPoint,
-        attack_damage: FixedPoint,
-        attack_cooldown: FixedPoint,
-    },
-    RangedFighter,
-    Builder,
-    ResourceCarrier,
-}
-
-
 #[derive(Component, Clone, Copy, Serialize, Deserialize)]
 pub enum Faction{
     Neutral,
@@ -45,7 +33,31 @@ pub enum Faction{
 #[derive(Component, Clone, Copy, Serialize, Deserialize)]
 pub struct Unit {
     pub target_movement_position : FixedPointV2,
-    pub team: Faction,
-    pub belonging_player_id: Option<Id>,
-    pub belonging_building_id : Option<Id>,
+}
+#[derive(Component, Clone, Copy, Serialize, Deserialize)]
+pub struct OwnedByPlayer {
+    pub player_id: Id,
+}
+#[derive(Component, Clone, Copy, Serialize, Deserialize)]
+pub struct BelongsToFaction {
+    pub faction: Faction,
+}
+
+#[derive(Component, Clone, Copy, Serialize, Deserialize)]
+pub struct BelongsToBuilding {
+    pub building_id: NetId,
+}
+#[derive(Component, Clone, Copy, Serialize, Deserialize)]
+pub struct Node {}
+#[derive(Component, Clone, Copy, Serialize, Deserialize)]
+pub struct UnitSpawner {
+    pub last_spawn_time: FixedPoint,
+    pub spawn_interval: FixedPoint,
+}
+#[derive(Component, Clone, Copy, Serialize, Deserialize)]
+pub struct Shield {
+    pub last_shield_up_time: FixedPoint,
+    pub shield_up_interval: FixedPoint,
+    pub shield_capacity: FixedPoint,
+    pub shield_radius: FixedPoint,
 }
