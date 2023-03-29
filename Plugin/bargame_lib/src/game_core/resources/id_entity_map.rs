@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 use bevy_ecs::prelude::*;
-use bevy_ecs::query::{QueryEntityError, ROQueryItem, WorldQuery};
+use bevy_ecs::query::{QueryEntityError, QueryItem, ROQueryItem, WorldQuery};
 use crate::game_core::common::*;
 
 #[derive(Default, Resource)]
@@ -38,6 +38,31 @@ impl IdEntityMap {
             None => None,
         }
     }
+    fn get_mut_component_from_query_wrapper<'a, Q: WorldQuery>(
+        query: &'a mut Query<'a, '_, Q>,
+        entity: Entity,
+    ) -> Result<QueryItem<'a, Q>, QueryEntityError> {
+        query.get_mut(entity)
+    }
+
+    pub fn get_mut_from_query<'a, Q: WorldQuery>(
+        &self,
+        query: &'a mut Query<'a, '_, Q>,
+        id: Id,
+    ) -> Option<QueryItem<'a, Q>> {
+        match self.get(id) {
+            Some(entity) => {
+                match query.get_mut(entity) {
+                    Ok(component) => Some(component),
+                    Err(_) => None,
+                }
+            }
+            None => None,
+        }
+    }
+
+
+
 
     pub fn remove(&mut self, id: Id) {
         self.map.remove(&id);

@@ -39,28 +39,10 @@ impl VerletPhysicsWorld {
         }
     }
 
-    /*
-        private void SolveDistanceConstraint(VerletObject object1, VerletObject object2, FixedPoint minDist, FixedPoint responseCoef, out FixedPointVector2 obj1Translation, out FixedPointVector2 obj2Translation)
-        {
-            var v = object1.Position - object2.Position;
-            var dist = v.Magnitude;
-            var n = v / dist;
-            var massRatio1 = object1.Radius / (object1.Radius + object2.Radius);
-            var massRatio2 = object2.Radius / (object1.Radius + object2.Radius);
-            var delta = (FixedPoint)0.5f * responseCoef * (dist - minDist);
-            obj1Translation = -n * (massRatio2 * delta);
-            obj2Translation = n * (massRatio1 * delta);
-        }
-    */
-
     pub fn solve_verlet_collision(object1: &mut VerletObject, object2: &mut VerletObject, min_dist: FixedPoint, response_coef: FixedPoint) {
         let v = object1.position - object2.position;
         let dist = v.magnitude();
-        // Q: its giving me error: private associated function defined here, what am I doing wrong?
 
-
-
-        //let n = v / dist;
         let n = if dist == FixedPoint::zero() { FixedPointV2::zero() } else { v / dist };
         let mass_ratio_1 = object1.mass / (object1.mass + object2.mass);
         let mass_ratio_2 = object2.mass / (object1.mass + object2.mass);

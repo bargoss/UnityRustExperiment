@@ -21,7 +21,7 @@ pub struct Health{
     pub health_regen_per_second: FixedPoint,
 }
 
-#[derive(Component, Clone, Copy, Serialize, Deserialize)]
+#[derive(Component, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
 pub enum Faction{
     Neutral,
     Blue,
@@ -33,7 +33,9 @@ pub enum Faction{
 #[derive(Component, Clone, Copy, Serialize, Deserialize)]
 pub struct Unit {
     pub target_movement_position : FixedPointV2,
+    pub last_attack_time: FixedPoint,
 }
+
 #[derive(Component, Clone, Copy, Serialize, Deserialize)]
 pub struct OwnedByPlayer {
     pub player_id: Id,
