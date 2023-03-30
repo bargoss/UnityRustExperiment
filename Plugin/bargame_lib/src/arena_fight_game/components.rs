@@ -50,7 +50,10 @@ pub struct BelongsToBuilding {
     pub building_id: NetId,
 }
 #[derive(Component, Clone, Copy, Serialize, Deserialize)]
-pub struct Node {}
+pub struct Node {
+    //pub capture_progress: FixedPoint,
+    //pub capture_faction: Faction,
+}
 #[derive(Component, Clone, Copy, Serialize, Deserialize)]
 pub struct UnitSpawner {
     pub last_spawn_time: FixedPoint,

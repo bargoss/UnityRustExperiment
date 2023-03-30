@@ -8,8 +8,12 @@ use crate::game_core::components::position::Position;
 use crate::game_core::components::rigidbody::Rigidbody;
 use crate::game_core::view_resources::view_snapshot::ViewSnapshot;
 use bevy_ecs::prelude::*;
-use crate::arena_fight_game::systems::character_movement_system::character_movement;
+use crate::arena_fight_game::systems::character_movement_system::character_movement_system;
+use crate::arena_fight_game::systems::health_system::health_system;
 use crate::arena_fight_game::systems::player_input_system::player_input_system;
+use crate::arena_fight_game::systems::unit_attack_system::unit_attack_system;
+use crate::arena_fight_game::systems::unit_movement_system::unit_movement_system;
+use crate::arena_fight_game::systems::unit_spawner_system::{unit_spawner_system};
 //use crate::game_core::common::Id;
 use crate::game_core::components::*;
 use crate::game_core::math::FixedPointV2;
@@ -18,12 +22,12 @@ use crate::game_core::common::*;
 use crate::game_core::math::*;
 
 #[derive(Copy, Clone, Debug, Default)]
-pub struct ArenaFightInput{
+pub struct ArenaInput {
     pub movement_direction: FixedPointV2,
 }
-unsafe impl Sync for ArenaFightInput {}
-unsafe impl Send for ArenaFightInput {}
-impl Input for ArenaFightInput {}
+unsafe impl Sync for ArenaInput {}
+unsafe impl Send for ArenaInput {}
+impl Input for ArenaInput {}
 
 #[derive(Bundle)]
 pub struct PlayerCharacterBundle {
@@ -39,16 +43,27 @@ pub struct PlayerCharacterBundle {
 }
 
 pub struct ArenaFightGame {
-    pub game_world: GameWorld<ArenaFightInput>,
+    pub game_world: GameWorld<ArenaInput>,
 }
-
+/*
+pub mod player_input_system;
+pub mod character_movement_system;
+pub mod unit_movement_system;
+pub mod unit_spawner_system;
+pub mod unit_attack_system;
+pub mod health_system;
+*/
 impl ArenaFightGame {
     pub fn new() -> Self {
         let mut game_world = GameWorld::new(
             FixedPoint::new(0.02) ,
             (
                 player_input_system,
-                character_movement
+                character_movement_system,
+                unit_movement_system,
+                unit_spawner_system,
+                unit_attack_system,
+                health_system,
             ).chain()
         );
         Self {
@@ -73,7 +88,7 @@ impl ArenaFightGame {
 
     pub fn get_tick(&self) -> u32 { self.game_world.get_tick() }
     pub fn get_fixed_delta_time(&self) -> FixedPoint { self.game_world.get_fixed_delta_time() }
-    pub fn advance_tick(&mut self, input_map: HashMap<Id, ArenaFightInput>){ self.game_world.advance_tick(input_map); }
+    pub fn advance_tick(&mut self, input_map: HashMap<Id, ArenaInput>){ self.game_world.advance_tick(input_map); }
     pub fn register_keyframes(&mut self){ self.game_world.register_keyframes(); }
     pub fn sample_view_snapshots<T>(&mut self, viewing_time: FixedPoint, buffer: &mut Vec<T>) where T: ViewSnapshot + 'static { self.game_world.sample_view_snapshots(viewing_time, buffer); }
 }

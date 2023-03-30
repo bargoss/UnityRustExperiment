@@ -6,9 +6,8 @@ use crate::game_core::common::Id;
 use crate::game_core::math::*;
 use crate::game_core::resources::*;
 use crate::game_core::view_components::SphereView;
-
-fn unit_spawner_system(
-    commands: &mut Commands,
+pub fn unit_spawner_system(
+    mut commands: Commands,
     time: Res<Time>,
     mut query: Query<(&mut UnitSpawner, &Position, &BelongsToFaction, &NetId)>,
     mut net_id_counter: ResMut<NetIdCounter>,
@@ -34,7 +33,7 @@ fn unit_spawner_system(
         execute_unit_creation_command(
             unit_creation_command,
              NetId{value: net_id_counter.next() },
-            commands
+            &mut commands
         );
     }
 }

@@ -116,6 +116,10 @@ impl FixedPoint {
     pub fn zero() -> Self {
         FixedPoint(BaseType::from_num(0.0))
     }
+
+    pub fn clamp(&self, min: FixedPoint, max: FixedPoint) -> FixedPoint {
+        FixedPoint(self.0.clamp(min.0, max.0))
+    }
 }
 
 //impl Default
@@ -128,6 +132,14 @@ impl Default for FixedPoint {
 
 #[derive(Debug, Clone, Copy, Add, Sub, Mul, Div, AddAssign, SubAssign, MulAssign, DivAssign, Neg)]
 pub struct FixedPointV2(Vector2<BaseType>);
+
+// implement multiplication via FixedPoint
+impl Mul<FixedPoint> for FixedPointV2 {
+    type Output = FixedPointV2;
+    fn mul(self, rhs: FixedPoint) -> Self::Output {
+        FixedPointV2(self.0 * rhs.0)
+    }
+}
 
 // impl display
 impl std::fmt::Display for FixedPointV2 {
@@ -153,11 +165,13 @@ impl Div<FixedPoint> for FixedPointV2 {
     }
 }
 
-// impl Mul for FixedPointV2 * FixedPoint
-impl Mul<FixedPoint> for FixedPointV2 {
+
+impl Mul<FixedPointV2> for FixedPoint {
     type Output = FixedPointV2;
-    fn mul(self, rhs: FixedPoint) -> Self::Output {
-        FixedPointV2(self.0 * rhs.0)
+    fn mul(self, rhs: FixedPointV2) -> Self::Output {
+        let x = self * rhs.x();
+        let y = self * rhs.y();
+        FixedPointV2(Vector2::new(x.0, y.0))
     }
 }
 
