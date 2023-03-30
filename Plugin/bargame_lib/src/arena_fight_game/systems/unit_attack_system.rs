@@ -6,6 +6,13 @@ use crate::game_core::math::*;
 use crate::game_core::resources::*;
 use crate::game_core::verlet_physics::verlet_physics_world::VerletPhysicsWorld;
 
+pub fn test_system(
+    mut query: Query<(&mut Position)>,
+    id_entity_map: Res<IdEntityMap>,
+) {
+    let res = id_entity_map.get_mut_from_query(&mut query, Id::new(0));
+}
+/*
 pub fn unit_attack_system(
     mut attacking_unit_query: Query<(&mut Unit, &Position, &BelongsToFaction)>,
     mut target_unit_query: Query<(&Unit, &Position, &mut Impulse, &mut Health, &BelongsToFaction)>,
@@ -40,3 +47,4 @@ pub fn unit_attack_system(
     }
 
 }
+*/

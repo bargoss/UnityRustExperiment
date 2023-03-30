@@ -45,11 +45,14 @@ impl IdEntityMap {
         query.get_mut(entity)
     }
 
-    pub fn get_mut_from_query<'a, Q: WorldQuery>(
+    pub fn get_mut_from_query<'a, 'b, Q: WorldQuery>(
         &self,
-        query: &'a mut Query<'a, '_, Q>,
+        query: &'a mut Query<'b, '_, Q>,
         id: Id,
-    ) -> Option<QueryItem<'a, Q>> {
+    ) -> Option<QueryItem<'a, Q>>
+        where
+            'b: 'a,
+    {
         match self.get(id) {
             Some(entity) => {
                 match query.get_mut(entity) {
