@@ -33,7 +33,6 @@ pub enum Faction{
 #[derive(Component, Clone, Copy, Serialize, Deserialize)]
 pub struct Unit {
     pub target_movement_position : FixedPointV2,
-    pub last_attack_time: FixedPoint,
 }
 
 #[derive(Component, Clone, Copy, Serialize, Deserialize)]
@@ -51,8 +50,8 @@ pub struct BelongsToBuilding {
 }
 #[derive(Component, Clone, Copy, Serialize, Deserialize)]
 pub struct Node {
-    //pub capture_progress: FixedPoint,
-    //pub capture_faction: Faction,
+    pub capture_progress: FixedPoint,
+    pub capture_progress_faction: Faction,
 }
 #[derive(Component, Clone, Copy, Serialize, Deserialize)]
 pub struct UnitSpawner {

@@ -117,7 +117,7 @@ impl FixedPoint {
         FixedPoint(BaseType::from_num(0.0))
     }
 
-    pub fn clamp(&self, min: FixedPoint, max: FixedPoint) -> FixedPoint {
+    pub fn clamp(self, min: FixedPoint, max: FixedPoint) -> FixedPoint {
         FixedPoint(self.0.clamp(min.0, max.0))
     }
 }
