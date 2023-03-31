@@ -64,7 +64,7 @@ fn create_unit_creation_command(
     let bundle = UnitBundle {
         net_id: NetId { value: Id::new(0) },
         unit: Unit {
-            target_movement_position: position,
+            following_entity: None
         },
         character_movement: CharacterMovement::default(),
         position: Position{value: position},

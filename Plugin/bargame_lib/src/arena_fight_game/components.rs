@@ -32,7 +32,7 @@ pub enum Faction{
 
 #[derive(Component, Clone, Copy, Serialize, Deserialize)]
 pub struct Unit {
-    pub target_movement_position : FixedPointV2,
+    pub following_entity : Option<NetId>,
 }
 
 #[derive(Component, Clone, Copy, Serialize, Deserialize)]
