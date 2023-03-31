@@ -11,7 +11,7 @@ pub fn unit_movement_system(
     let damping: FixedPoint = FixedPoint::new(0.05);
     for (unit, rigidbody, mut impulse, position) in unit_query.iter_mut() {
         let target_movement_position = unit.target_movement_position;
-        let movement_dir = (target_movement_position - position.value).normalize();
+        let movement_dir = (target_movement_position - position.value).safe_normalize();
         let movement_impulse = movement_dir * rigidbody.mass;
         let dampen_impulse = -rigidbody.velocity * rigidbody.mass * damping;
         let total = time.fixed_delta_time * (movement_impulse + dampen_impulse);

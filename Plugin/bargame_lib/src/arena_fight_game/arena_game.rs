@@ -12,6 +12,7 @@ use crate::arena_fight_game::systems::character_movement_system::character_movem
 use crate::arena_fight_game::systems::health_system::health_system;
 use crate::arena_fight_game::systems::player_input_system::player_input_system;
 use crate::arena_fight_game::systems::unit_attack_system::unit_attack_system;
+use crate::arena_fight_game::systems::unit_capture_node_system::unit_capture_node_system;
 use crate::arena_fight_game::systems::unit_movement_system::unit_movement_system;
 use crate::arena_fight_game::systems::unit_spawner_system::{unit_spawner_system};
 //use crate::game_core::common::Id;
@@ -61,6 +62,7 @@ impl ArenaFightGame {
                 player_input_system,
                 character_movement_system,
                 unit_movement_system,
+                unit_capture_node_system,
                 unit_spawner_system,
                 unit_attack_system,
                 health_system,
