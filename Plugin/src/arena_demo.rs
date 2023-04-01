@@ -36,16 +36,6 @@ impl UserBehaviour for ArenaDemo {
                 source_node_net_id: NetId { value: Id::new(0) },
                 target_node_net_id: NetId { value: Id::new(1) },
         })});
-        input_map.insert(Id::new(1), ArenaInput{
-            node_drag_drop: Some(NodeDragDropInput {
-                source_node_net_id: NetId { value: Id::new(0) },
-                target_node_net_id: NetId { value: Id::new(1) },
-            })});
-        input_map.insert(Id::new(0), ArenaInput{
-            node_drag_drop: Some(NodeDragDropInput {
-                source_node_net_id: NetId { value: Id::new(1) },
-                target_node_net_id: NetId { value: Id::new(2) },
-            })});
 
         self.game.advance_tick(input_map);
         self.game.register_keyframes();

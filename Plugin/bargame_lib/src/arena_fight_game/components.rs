@@ -21,7 +21,7 @@ pub struct Health{
     pub health_regen_per_second: FixedPoint,
 }
 
-#[derive(Component, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, Default)]
+#[derive(Clone, Copy, Serialize, Deserialize, PartialEq, Eq, Default)]
 pub enum Faction{
     #[default] Neutral,
     Blue,
