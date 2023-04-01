@@ -38,12 +38,6 @@ impl IdEntityMap {
             None => None,
         }
     }
-    fn get_mut_component_from_query_wrapper<'a, Q: WorldQuery>(
-        query: &'a mut Query<'a, '_, Q>,
-        entity: Entity,
-    ) -> Result<QueryItem<'a, Q>, QueryEntityError> {
-        query.get_mut(entity)
-    }
 
     pub fn get_mut_from_query<'a, 'b, Q: WorldQuery>(
         &self,

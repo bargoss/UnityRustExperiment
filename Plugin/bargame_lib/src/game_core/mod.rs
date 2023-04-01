@@ -14,3 +14,5 @@ pub mod common;
 pub mod view_components;
 pub mod view_systems;
 pub mod view_resources;
+
+pub mod input;

@@ -1,7 +1,7 @@
-use std::collections::HashMap;
+
 use bevy_ecs::prelude::*;
-use bevy_ecs::query::QueryEntityError;
-use nalgebra::DimAdd;
+
+
 use crate::arena_fight_game::components::*;
 use crate::game_core::common::Id;
 use crate::game_core::components::*;
@@ -28,7 +28,7 @@ pub fn unit_capture_node_system(
     let mut nearby_bodies_query_buffer = Vec::new();
 
     // iterate node_query
-    for (node_entity, mut node, node_position, node_net_id, node_collider) in node_query.iter_mut() {
+    for (node_entity, mut node, node_position, _node_net_id, node_collider) in node_query.iter_mut() {
         physics_world.overlap_circle(node_position.value, capture_range + node_collider.radius, &mut nearby_bodies_query_buffer);
 
         // iterate nearby_bodies_query_buffer

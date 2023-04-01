@@ -1,4 +1,4 @@
-use std::collections::{BTreeMap, HashMap};
+use std::collections::{BTreeMap};
 use bevy_ecs::prelude::Resource;
 use crate::game_core::common::id::Id;
 use crate::game_core::verlet_physics::verlet_beam::VerletBeam;
@@ -17,6 +17,12 @@ pub struct VerletPhysicsWorld {
     spatial_partitioning: SpacialPartitioning<20>,
     overlap_circle_buffer: Vec<u32>,
     iteration_id_buffer: Vec<u32>,
+}
+
+impl Default for VerletPhysicsWorld {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl VerletPhysicsWorld {
@@ -103,22 +109,22 @@ impl VerletPhysicsWorld {
         for i in 0..beam_keys.len() {
             let beam_key = beam_keys[i];
             let beam = self.beams.get(&beam_key).unwrap().val;
-            let id_A = beam.verlet_object_id_a;
-            let id_B = beam.verlet_object_id_b;
+            let id_a = beam.verlet_object_id_a;
+            let id_b = beam.verlet_object_id_b;
 
-            if let Some(entry_A) = self.objects.get(&id_A) {
-                if let Some(entry_B) = self.objects.get(&id_B) {
-                    let mut obj0 = entry_A.val.clone();
-                    let mut obj1 = entry_B.val.clone();
+            if let Some(entry_a) = self.objects.get(&id_a) {
+                if let Some(entry_b) = self.objects.get(&id_b) {
+                    let mut obj0 = entry_a.val.clone();
+                    let mut obj1 = entry_b.val.clone();
 
                     let min_dist = beam.length;
                     VerletPhysicsWorld::solve_verlet_collision(&mut obj0, &mut obj1, min_dist, FixedPoint::new(0.75));
 
                     if !obj0.is_static {
-                        self.add_or_set_object(obj0, id_A);
+                        self.add_or_set_object(obj0, id_a);
                     }
                     if !obj1.is_static {
-                        self.add_or_set_object(obj1, id_B);
+                        self.add_or_set_object(obj1, id_b);
                     }
                 }
             }
@@ -163,7 +169,7 @@ impl VerletPhysicsWorld {
 
     pub fn update(&mut self, dt: FixedPoint, iteration_id_buffer: &mut Vec<u32>, overlap_circle_buffer: &mut Vec<u32>) {
         let steps = 2;
-        let step_dt = dt / FixedPoint::new(steps as f64);
+        let _step_dt = dt / FixedPoint::new(steps as f64);
 
 
         self.sync_objects_and_beams();

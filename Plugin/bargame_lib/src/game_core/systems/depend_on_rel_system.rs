@@ -1,11 +1,11 @@
 use bevy_ecs::prelude::*;
-use bevy_ecs::query::QueryEntityError;
+
 use crate::game_core::components::depend_on_2_entities::DependOnRel2;
 use crate::game_core::resources::id_entity_map::IdEntityMap;
 
 pub fn depend_on_rel_system(
     depend_on_rel_2_query: Query<(Entity, &DependOnRel2)>,
-    entity_query: Query<(Entity)>,
+    entity_query: Query<Entity>,
     id_entity_map: Res<IdEntityMap>,
     commands: &mut Commands,
 ){

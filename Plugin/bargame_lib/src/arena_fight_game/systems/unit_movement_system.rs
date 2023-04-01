@@ -5,7 +5,7 @@ use crate::game_core::resources::*;
 
 pub fn unit_movement_system(
     mut unit_query: Query<(&Unit, &mut CharacterMovement, &Position)>,
-    position_query: Query<(&Position)>,
+    position_query: Query<&Position>,
     id_entity_map: Res<IdEntityMap>,
 ) {
     for (unit, mut character_movement, position) in unit_query.iter_mut() {

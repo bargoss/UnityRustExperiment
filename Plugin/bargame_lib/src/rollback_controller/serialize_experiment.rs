@@ -1,5 +1,5 @@
 use serde::{Serialize, Deserialize};
-use bincode;
+
 use super::super::game_core::math::FixedPoint;
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -44,15 +44,15 @@ mod tests {
     #[test]
     fn write_to_buffer_sequentially_example(){
         // define the buffer
-        let mut buffer: Vec<u8> = Vec::new();
+        let _buffer: Vec<u8> = Vec::new();
 
         // define the data
         let point1: Point = Point {x:FixedPoint::new(1.0), y:FixedPoint::new(2.0)};
         let point2: Point = Point {x:FixedPoint::new(3.0), y:FixedPoint::new(4.0)};
 
         // serialize the data
-        let point1s = bincode::serialize(&point1).unwrap();
-        let point2s = bincode::serialize(&point2).unwrap();
+        let _point1s = bincode::serialize(&point1).unwrap();
+        let _point2s = bincode::serialize(&point2).unwrap();
 
         /*
 

@@ -14,8 +14,8 @@ use crate::game_core::view_resources::view_snapshots::line_snapshot::LineSnapsho
 use crate::game_core::view_resources::view_snapshots::sphere_snapshot::SphereSnapshot;
 use crate::game_core::view_systems::line_view_system::line_view_system;
 use crate::game_core::view_systems::sphere_view_system::sphere_view_system;
-use crate::rollback_controller::input::Input;
 use bevy_ecs::schedule::Schedule;
+use crate::game_core::input::Input;
 use crate::game_core::resources::NetIdCounter;
 
 
@@ -41,7 +41,7 @@ pub struct GameWorld<TInput> where TInput: Input
     pub world: World,
     advance_tick_schedule: Schedule,
     register_keyframes_schedule: Schedule,
-    player_id_to_input_map: HashMap<Id, TInput>,
+    #[allow(dead_code)] player_id_to_input_map: HashMap<Id, TInput>,
 }
 
 impl<TInput> GameWorld<TInput> where TInput: Input + 'static
@@ -78,7 +78,7 @@ impl<TInput> GameWorld<TInput> where TInput: Input + 'static
         register_keyframes_schedule.add_systems(register_keyframes_systems_internal);
 
 
-        let mut game_world = GameWorld{
+        let game_world = GameWorld{
             world,
             advance_tick_schedule,
             register_keyframes_schedule,
@@ -136,8 +136,8 @@ mod tests {
 
     #[test]
     fn spawn_and_mutate_experiment() {
-        let mut world = World::new();
-        let mut init_schedule = Schedule::default();
+        let _world = World::new();
+        let _init_schedule = Schedule::default();
 
         let mut update_schedule = Schedule::default();
         update_schedule.add_system(simple_rigidbody_system);

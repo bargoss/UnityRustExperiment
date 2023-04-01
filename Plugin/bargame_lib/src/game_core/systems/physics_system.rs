@@ -15,7 +15,7 @@ use crate::game_core::verlet_physics::verlet_physics_world::VerletPhysicsWorld;
 
 pub fn process_impulses(
     mut body_query: Query<(&mut Rigidbody, &mut Impulse)>,
-    time: Res<Time>
+    _time: Res<Time>
 ) {
     for (mut rigidbody, mut impulse) in body_query.iter_mut() {
         let mass = rigidbody.mass;
@@ -66,7 +66,7 @@ pub fn pull_bodies(
     physics_world: Res<VerletPhysicsWorld>,
     time: Res<Time>
 ){
-    for (mut position, collider, mut rigidbody, net_id) in body_query.iter_mut() {
+    for (mut position, _collider, mut rigidbody, net_id) in body_query.iter_mut() {
         if let Some(entry) = physics_world.get_object(net_id.value) {
             //let obj = entry.val.clone();
             //position.value = obj.position;

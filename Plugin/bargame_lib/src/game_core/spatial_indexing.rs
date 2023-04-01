@@ -1,19 +1,18 @@
 use super::math::FixedPoint;
-use super::math::FixedPointExt;
 use std::collections::HashMap;
 use crate::game_core::math::FixedPointV2;
-use nalgebra;
+
 
 #[derive(Copy, Clone, Debug)]
-pub struct GridContent<const GridElementCount: usize> {
-    arr: [u32; GridElementCount],
+pub struct GridContent<const GRID_ELEMENT_COUNT: usize> {
+    arr: [u32; GRID_ELEMENT_COUNT],
     len: usize,
 }
-impl<const GridElementCount: usize> GridContent<GridElementCount>
+impl<const GRID_ELEMENT_COUNT: usize> GridContent<GRID_ELEMENT_COUNT>
 {
     fn new() -> Self {
         Self {
-            arr: [0; GridElementCount],
+            arr: [0; GRID_ELEMENT_COUNT],
             len: 0,
         }
     }
@@ -41,8 +40,8 @@ pub struct SpacialPartitioning<const N:usize>{
     grids: HashMap<(i32, i32), GridContent<N>>,
     object_grid_bounding_boxes: HashMap<u32, GridBoundingBox>,
 }
-impl<const GridMaxElementCount:usize> SpacialPartitioning<GridMaxElementCount>{
-    pub fn new(grid_size: FixedPoint) -> SpacialPartitioning<GridMaxElementCount> {
+impl<const GRID_ELEMENT_COUNT:usize> SpacialPartitioning<GRID_ELEMENT_COUNT>{
+    pub fn new(grid_size: FixedPoint) -> SpacialPartitioning<GRID_ELEMENT_COUNT> {
         SpacialPartitioning {
             grid_size,
             grids: HashMap::new(),
@@ -58,7 +57,7 @@ impl<const GridMaxElementCount:usize> SpacialPartitioning<GridMaxElementCount>{
         self.add_box(item, position, position);
     }
     pub fn add_box(&mut self, item: u32, start_corner: FixedPointV2, end_corner: FixedPointV2) {
-        if let Some(grid_bounding_box) = self.object_grid_bounding_boxes.get(&item) {
+        if let Some(_grid_bounding_box) = self.object_grid_bounding_boxes.get(&item) {
             // remove item from old grids
             self.remove_with_id(item);
         }
@@ -179,7 +178,7 @@ impl<const GridMaxElementCount:usize> SpacialPartitioning<GridMaxElementCount>{
     }
 
     pub fn get_grid(&self, position: FixedPointV2) -> (i32, i32) {
-        let div_x = position.x() / self.grid_size;
+        let _div_x = position.x() / self.grid_size;
         let x = (position.x() / self.grid_size).floor_to_i32();
         let y = (position.y() / self.grid_size).floor_to_i32();
 

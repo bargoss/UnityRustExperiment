@@ -15,8 +15,8 @@ pub fn player_to_faction(player_id: Id) -> Faction {
 }
 
 pub fn player_control_system(
-    mut player_input_map: ResMut<PlayerInputMap<ArenaInput>>,
-    mut character_query: Query<(&mut CharacterMovement, &PlayerCharacterControl)>,
+    _player_input_map: ResMut<PlayerInputMap<ArenaInput>>,
+    _character_query: Query<(&mut CharacterMovement, &PlayerCharacterControl)>,
 ) {
 
 }

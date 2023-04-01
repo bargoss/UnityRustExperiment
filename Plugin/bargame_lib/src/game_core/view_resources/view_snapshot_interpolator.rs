@@ -1,9 +1,9 @@
 use std::collections::{HashMap, VecDeque};
 use crate::game_core::common::*;
-use crate::game_core::math;
+
 use crate::game_core::view_resources::view_snapshot::{interpolate_snapshots, ViewSnapshot};
 use bevy_ecs::prelude::Resource;
-use crate::game_core::common::*;
+
 use crate::game_core::math::*;
 
 pub struct InterpolationKeyFrame<T> where T: ViewSnapshot{
@@ -20,7 +20,7 @@ struct BufferedViewSnapshotInterpolatorItem<T> where T: ViewSnapshot {
 
 impl <T> BufferedViewSnapshotInterpolatorItem<T> where T: ViewSnapshot {
     pub fn try_interpolate(&self, target_time: FixedPoint) -> Option<T> {
-        let mut interpolated_value = T::default();
+        let interpolated_value;
 
         // assert that keyframes times are sorted
         if !self.key_frames.iter().zip(self.key_frames.iter().skip(1)).all(|(a, b)| a.time <= b.time) {
@@ -114,7 +114,7 @@ impl <T> BufferedViewSnapshotInterpolator<T> where T: ViewSnapshot {
 
 #[cfg(test)]
 mod tests {
-    use crate::game_core::math::*;
+    
     use super::*;
 
     impl ViewSnapshot for FixedPointV3 {

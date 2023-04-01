@@ -41,7 +41,7 @@ impl Random {
     }
 
     pub fn next_fixed_point_on_unit_circle(&mut self) -> FixedPointV2 {
-        let angle = self.next_fixed_point_range(FixedPoint::new(0.0), FixedPoint::new(2.0) * FixedPoint::PI());
+        let angle = self.next_fixed_point_range(FixedPoint::new(0.0), FixedPoint::new(2.0) * FixedPoint::pi());
         FixedPointV2::new(angle.cos(), angle.sin())
     }
 

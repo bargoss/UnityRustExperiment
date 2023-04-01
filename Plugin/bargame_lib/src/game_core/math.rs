@@ -3,7 +3,7 @@ use nalgebra::Vector2;
 use nalgebra::Vector3;
 use derive_more::{Add, Sub, Mul, Div, AddAssign, SubAssign, MulAssign, DivAssign, Neg};
 use simba::scalar::ComplexField;
-use serde::{Serialize, Deserialize, Serializer, Deserializer};
+use serde::{Serialize, Deserialize, Deserializer};
 use serde::ser::SerializeTuple;
 
 type BaseType = simba::scalar::FixedI40F24;
@@ -121,7 +121,7 @@ impl FixedPoint {
     }
 
     // impl PI
-    pub fn PI() -> Self {
+    pub fn pi() -> Self {
         FixedPoint(BaseType::from_num(std::f64::consts::PI))
     }
 
@@ -427,13 +427,13 @@ mod tests {
         let num0 = FixedPoint::new(0.5);
         let num1 = FixedPoint::new(1.5);
         
-        let num2 = num0 + num1;
+        let _num2 = num0 + num1;
     }
 
     #[test]
     fn test_0() {
-        let num0 = FixedPoint::new(0.5);
-        let num1 = FixedPoint::new(1.5);
+        let _num0 = FixedPoint::new(0.5);
+        let _num1 = FixedPoint::new(1.5);
         let vec0 = FixedPointV2::from_num(0.5, 1.5);
         let normalized_vec0 = vec0.0.normalize();
         let adsa = normalized_vec0 + normalized_vec0;
