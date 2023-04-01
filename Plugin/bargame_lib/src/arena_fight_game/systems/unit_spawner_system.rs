@@ -2,15 +2,13 @@ use bevy_ecs::prelude::*;
 use crate::arena_fight_game::bundles::*;
 use crate::game_core::components::*;
 use crate::arena_fight_game::components::*;
-use crate::game_core::common::{Id, Random};
+use crate::game_core::common::{Id, IdGenerator, IdGeneratorBuilder, Random};
 use crate::game_core::math::*;
 use crate::game_core::resources::*;
-use crate::game_core::view_components::SphereView;
 pub fn unit_spawner_system(
     mut commands: Commands,
     time: Res<Time>,
     mut query: Query<(&mut UnitSpawner, &Position, &BelongsToFaction, &NetId, &CircleCollider)>,
-    mut net_id_counter: ResMut<NetIdCounter>,
 ) {
     let mut new_units = Vec::new();
 
@@ -33,9 +31,10 @@ pub fn unit_spawner_system(
     // sort by creator net_id and execute
     new_units.sort_by(|a, b| a.creators_net_id.value.cmp(&b.creators_net_id.value));
     for unit_creation_command in new_units {
+        let net_id = NetId::from_id(IdGeneratorBuilder::start().hash_u32(562313).hash_net_id(unit_creation_command.creators_net_id).finish());
         execute_unit_creation_command(
             unit_creation_command,
-             NetId{value: net_id_counter.next() },
+            net_id,
             &mut commands
         );
     }

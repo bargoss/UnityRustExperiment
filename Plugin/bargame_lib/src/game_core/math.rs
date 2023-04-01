@@ -1,3 +1,4 @@
+use std::hash::{Hash, Hasher};
 use std::ops::{Div, Mul};
 use nalgebra::Vector2;
 use nalgebra::Vector3;
@@ -10,6 +11,13 @@ type BaseType = simba::scalar::FixedI40F24;
 
 #[derive(Debug, Clone, Copy, Add, Sub, Div, AddAssign, SubAssign, MulAssign, DivAssign, Neg)]
 pub struct FixedPoint(BaseType);
+
+impl Hash for FixedPoint {
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        self.0.hash(state);
+    }
+}
+
 
 // implement Rem between FixedPoint and FixedPoint
 impl std::ops::Rem for FixedPoint {
@@ -189,6 +197,12 @@ impl Default for FixedPoint {
 #[derive(Debug, Clone, Copy, Add, Sub, Mul, Div, AddAssign, SubAssign, MulAssign, DivAssign, Neg)]
 pub struct FixedPointV2(Vector2<BaseType>);
 
+impl Hash for FixedPointV2 {
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        self.0.hash(state);
+    }
+}
+
 // implement multiplication via FixedPoint
 impl Mul<FixedPoint> for FixedPointV2 {
     type Output = FixedPointV2;
@@ -353,6 +367,12 @@ impl FixedPointV2 {
 
 #[derive(Debug, Clone, Copy, Add, Sub, Mul, Div, AddAssign, SubAssign, MulAssign, DivAssign, Neg, PartialEq)]
 pub struct FixedPointV3(Vector3<BaseType>);
+
+impl Hash for FixedPointV3 {
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        self.0.hash(state);
+    }
+}
 
 // impl display
 impl std::fmt::Display for FixedPointV3 {

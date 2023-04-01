@@ -16,7 +16,6 @@ use crate::game_core::view_systems::line_view_system::line_view_system;
 use crate::game_core::view_systems::sphere_view_system::sphere_view_system;
 use bevy_ecs::schedule::Schedule;
 use crate::game_core::input::Input;
-use crate::game_core::resources::NetIdCounter;
 
 
 #[derive(Resource, Default)]
@@ -58,7 +57,6 @@ impl<TInput> GameWorld<TInput> where TInput: Input + 'static
         world.insert_resource(Time{ tick: 0, fixed_delta_time });
         world.insert_resource(BufferedViewSnapshotInterpolator::<SphereSnapshot>::default());
         world.insert_resource(BufferedViewSnapshotInterpolator::<LineSnapshot>::default());
-        world.insert_resource(NetIdCounter::new());
 
         let internal_systems = (
             id_entity_map_sync_system,
@@ -173,9 +171,10 @@ mod view_interpolation_tests {
     #[test]
     fn test_view_interpolation_logic() {
         // Initialize the GameWorld
-        let mut game_world = GameWorld::<DummyInput>::new(FixedPoint::new(1.000), (
-            dummy_system,
-        ).chain());
+        let mut game_world = GameWorld::<DummyInput>::new(FixedPoint::new(1.000),
+    (dummy_system, ).chain(),
+    (dummy_system, ).chain()
+        );
 
         // Spawn some entities with Position and Rigidbody components
         for i in 0..10 {
