@@ -20,8 +20,8 @@ pub fn unit_spawner_system(
             // Update last_spawn_time to the current time
             unit_spawner.last_spawn_time = time_fixed_point;
 
-            let spawn_offset = Random::seed_fixed_point(time.fixed_delta_time +  position.value.y() + position.value.x())
-                .next_fixed_point_on_unit_circle() * circle_collider.radius;
+            let spawn_offset = Random::seed_fixed_point(time.fixed_delta_time +  position.value.y())
+                .next_fixed_point_on_unit_circle() * (circle_collider.radius + FP::from_num(1.5));
 
             let unit_spawn_position = position.value + spawn_offset;
             new_units.push(create_unit_creation_command(*net_id, unit_spawn_position, belongs_to_faction.faction));

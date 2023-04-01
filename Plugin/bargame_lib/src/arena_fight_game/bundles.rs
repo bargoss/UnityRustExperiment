@@ -22,7 +22,7 @@ pub struct UnitBundle{
 pub struct UnitSpawnerNodeBundle{
     pub net_id: NetId,
     pub position: Position,
-    pub rigidbody: Rigidbody,
+    //pub rigidbody: Rigidbody,
     pub collider: CircleCollider,
     pub unit_view: UnitView,
 

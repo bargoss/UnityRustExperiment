@@ -113,7 +113,7 @@ impl ArenaFightGame {
             },
             net_id : NetId{value:next_id},
             collider: CircleCollider { radius: FP::new(1.5), },
-            rigidbody: Rigidbody{velocity: FP2::zero(),mass: FP::new(1000.0),},
+            //rigidbody: Rigidbody{velocity: FP2::zero(),mass: FP::new(1000.0),},
             unit_view: UnitView{view_custom_id: next_id},
             belongs_to_faction: BelongsToFaction{faction: faction},
         });

@@ -7,7 +7,7 @@ use crate::game_core::components::impulse::Impulse;
 use crate::game_core::components::net_id::NetId;
 use crate::game_core::components::position::Position;
 use crate::game_core::components::rigidbody::Rigidbody;
-use crate::game_core::math::FP2;
+use crate::game_core::math::{FP, FP2};
 use crate::game_core::resources::time::Time;
 use crate::game_core::verlet_physics::verlet_beam::VerletBeam;
 use crate::game_core::verlet_physics::verlet_object::VerletObject;
@@ -26,23 +26,37 @@ pub fn process_impulses(
 }
 
 pub fn push_all_bodies(
-    body_query: Query<(&Position, &CircleCollider, &Rigidbody, &NetId)>,
+    body_query: Query<(&Position, &CircleCollider, Option<&Rigidbody>, &NetId)>,
     beam_query: Query<(&Beam, &NetId)>,
     mut physics_world: ResMut<VerletPhysicsWorld>,
     time: Res<Time>
 ) {
     physics_world.clear();
     // iterate over the query
-    for (position, collider, rigidbody, net_id) in body_query.iter() {
+    for (position, collider, rigidbody_opt, net_id) in body_query.iter() {
         // add the body to the physics world
-        physics_world.add_or_set_object(VerletObject{
-            acceleration: FP2::zero(),
-            position: position.value,
-            position_last: position.value - rigidbody.velocity*time.fixed_delta_time,
-            radius: collider.radius,
-            mass: rigidbody.mass,
-            is_static: false,
-        }, net_id.value);
+        match rigidbody_opt {
+            Some(rigidbody) => {
+                physics_world.add_or_set_object(VerletObject{
+                    acceleration: FP2::zero(),
+                    position: position.value,
+                    position_last: position.value - rigidbody.velocity*time.fixed_delta_time,
+                    radius: collider.radius,
+                    mass: rigidbody.mass,
+                    is_static: false,
+                }, net_id.value);
+            },
+            None => {
+                physics_world.add_or_set_object(VerletObject{
+                    acceleration: FP2::zero(),
+                    position: position.value,
+                    position_last: position.value,
+                    radius: collider.radius,
+                    mass: FP::one(),
+                    is_static: true,
+                }, net_id.value);
+            }
+        }
     }
 
     for (beam, net_id) in beam_query.iter() {
@@ -62,17 +76,19 @@ pub fn run_physics_step(mut physics_world: ResMut<VerletPhysicsWorld>, time: Res
 }
 
 pub fn pull_bodies(
-    mut body_query: Query<(&mut Position, &CircleCollider, &mut Rigidbody, &NetId)>,
+    mut body_query: Query<(&mut Position, &CircleCollider, Option<&mut Rigidbody>, &NetId)>,
     physics_world: Res<VerletPhysicsWorld>,
     time: Res<Time>
 ){
-    for (mut position, _collider, mut rigidbody, net_id) in body_query.iter_mut() {
+    for (mut position, _collider, mut rigidbody_opt, net_id) in body_query.iter_mut() {
         if let Some(entry) = physics_world.get_object(net_id.value) {
-            //let obj = entry.val.clone();
-            //position.value = obj.position;
-            position.value = entry.position;
-            //rigidbody.velocity = (obj.position - obj.position_last)/time.fixed_delta_time;
-            rigidbody.velocity = (entry.position - entry.position_last)/time.fixed_delta_time;
+            match rigidbody_opt {
+                Some(mut rigidbody) => {
+                    position.value = entry.position;
+                    rigidbody.velocity = (entry.position - entry.position_last)/time.fixed_delta_time;
+                },
+                None => {}
+            }
         }
     }
 }
