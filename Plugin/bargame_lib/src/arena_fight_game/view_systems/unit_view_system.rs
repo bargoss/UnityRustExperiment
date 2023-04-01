@@ -30,12 +30,6 @@ pub fn unit_view_system(
         let position = position.value;
         let radius = circle_collider.radius;
 
-        sphere_snapshots.push(unit_view.view_custom_id, time, SphereSnapshot{
-            position : position.into(),
-            radius : circle_collider.radius,
-            color: faction_to_color(&belongs_to_faction.faction)
-        });
-
         if let Some(health) = health_opt {
             let health_ratio = FixedPoint::one() - health.health / health.max_health;
             let health_radius = radius * health_ratio;
@@ -44,10 +38,22 @@ pub fn unit_view_system(
 
             let more_smaller_prime = 100003;
             let black_circle_custom_view_id = Id::new(unit_view.view_custom_id.0*more_smaller_prime + 1);
-            sphere_snapshots.push(black_circle_custom_view_id, time, SphereSnapshot{
-                position : position_v3 + FixedPointV3::from_num(0.0,0.0,-1.0),
-                radius : health_radius,
-                color: [0.1, 0.1, 0.1, 1.0]
+            //sphere_snapshots.push(black_circle_custom_view_id, time, SphereSnapshot{
+            //    position : position_v3 + FixedPointV3::from_num(0.0,0.0,-1.0),
+            //    radius : health_radius,
+            //    color: [0.1, 0.1, 0.1, 1.0]
+            //});
+            sphere_snapshots.push(unit_view.view_custom_id, time, SphereSnapshot{
+                position : position.into(),
+                radius : circle_collider.radius * (FixedPoint::one() - health_ratio),
+                color: faction_to_color(&belongs_to_faction.faction)
+            });
+        }
+        else{
+            sphere_snapshots.push(unit_view.view_custom_id, time, SphereSnapshot{
+                position : position.into(),
+                radius : circle_collider.radius,
+                color: faction_to_color(&belongs_to_faction.faction)
             });
         }
     }
