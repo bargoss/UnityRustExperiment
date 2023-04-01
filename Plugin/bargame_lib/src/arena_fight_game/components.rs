@@ -21,16 +21,16 @@ pub struct Health{
     pub health_regen_per_second: FixedPoint,
 }
 
-#[derive(Component, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[derive(Component, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, Default)]
 pub enum Faction{
-    Neutral,
+    #[default] Neutral,
     Blue,
     Red,
     Green,
     Yellow,
 }
 
-#[derive(Component, Clone, Copy, Serialize, Deserialize)]
+#[derive(Component, Clone, Copy, Serialize, Deserialize, Default)]
 pub struct Unit {
     pub following_entity : Option<NetId>,
 }
@@ -48,12 +48,12 @@ pub struct BelongsToFaction {
 pub struct BelongsToBuilding {
     pub building_id: NetId,
 }
-#[derive(Component, Clone, Copy, Serialize, Deserialize)]
+#[derive(Component, Clone, Copy, Serialize, Deserialize, Default)]
 pub struct Node {
     pub capture_progress: FixedPoint,
     pub capture_progress_faction: Faction,
 }
-#[derive(Component, Clone, Copy, Serialize, Deserialize)]
+#[derive(Component, Clone, Copy, Serialize, Deserialize, Default)]
 pub struct UnitSpawner {
     pub last_spawn_time: FixedPoint,
     pub spawn_interval: FixedPoint,

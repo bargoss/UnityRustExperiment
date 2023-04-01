@@ -24,7 +24,6 @@ pub struct UnitSpawnerNodeBundle{
     pub position: Position,
     pub rigidbody: Rigidbody,
     pub collider: CircleCollider,
-    pub health: Health,
     pub sphere_view: SphereView,
 
     pub belongs_to_faction: BelongsToFaction,

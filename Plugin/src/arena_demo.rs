@@ -1,8 +1,8 @@
 use std::collections::{HashMap, HashSet};
-use bargame_lib::arena_fight_game::arena_game::{ArenaFightGame, ArenaFightInput};
-use bargame_lib::game_core::math::{FixedPoint, FixedPointV2};
+use bargame_lib::arena_fight_game::arena_game::*;
+use bargame_lib::game_core::math::*;
 use bargame_lib::game_core::common::*;
-use bargame_lib::game_core::view_resources::view_snapshots::SphereSnapshot::SphereSnapshot;
+use bargame_lib::game_core::view_resources::view_snapshots::*;
 use ggez::glam::Vec3;
 use ggez::graphics::Color;
 use ggez::input::keyboard::KeyCode;
@@ -25,7 +25,7 @@ impl UserBehaviour for ArenaDemo {
         if pressed_keys.contains(&VirtualKeyCode::D) { my_input_movement_direction.set_x(FixedPoint::one()) }
 
         let mut input_map = HashMap::new();
-        let my_input = ArenaFightInput {
+        let my_input = ArenaInput {
             movement_direction: my_input_movement_direction,
         };
         input_map.insert(Id::new(0), my_input);

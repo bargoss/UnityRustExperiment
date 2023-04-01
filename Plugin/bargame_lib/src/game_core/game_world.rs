@@ -15,7 +15,7 @@ use crate::game_core::view_resources::view_snapshots::sphere_snapshot::SphereSna
 use crate::game_core::view_systems::line_view_system::line_view_system;
 use crate::game_core::view_systems::sphere_view_system::sphere_view_system;
 use crate::rollback_controller::input::Input;
-use bevy_ecs::schedule::{BoxedSystemSet, Schedule, SystemConfig, SystemSetConfig};
+use bevy_ecs::schedule::Schedule;
 use crate::game_core::resources::NetIdCounter;
 
 
@@ -217,7 +217,6 @@ mod view_interpolation_tests {
 mod system_adding_tests
 {
     use bevy_ecs::prelude::*;
-    use bevy_ecs::schedule::BoxedSystemSet;
 
     pub fn system0() {
         println!("system0");

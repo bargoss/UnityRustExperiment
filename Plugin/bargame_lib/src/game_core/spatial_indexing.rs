@@ -179,7 +179,7 @@ impl<const GridMaxElementCount:usize> SpacialPartitioning<GridMaxElementCount>{
     }
 
     pub fn get_grid(&self, position: FixedPointV2) -> (i32, i32) {
-        let div_x = (position.x() / self.grid_size);
+        let div_x = position.x() / self.grid_size;
         let x = (position.x() / self.grid_size).floor_to_i32();
         let y = (position.y() / self.grid_size).floor_to_i32();
 
@@ -192,8 +192,6 @@ impl<const GridMaxElementCount:usize> SpacialPartitioning<GridMaxElementCount>{
 #[cfg(test)]
 mod tests {
     use super::*;
-    use nalgebra::Vector2;
-
     // let mut spacial_partitioning = SpacialPartitioning::<2>::new(FixedPoint::new(10.0));
 
     // test_add
