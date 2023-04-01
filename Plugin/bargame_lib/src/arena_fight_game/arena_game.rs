@@ -11,7 +11,7 @@ use crate::arena_fight_game::systems::health_system::health_system;
 use crate::arena_fight_game::systems::unit_attack_system::unit_attack_system;
 use crate::arena_fight_game::systems::*;
 use crate::arena_fight_game::view_systems::unit_view_system;
-use crate::game_core::math::FixedPointV2;
+use crate::game_core::math::FP2;
 use crate::game_core::view_components::sphere_view::SphereView;
 use crate::game_core::common::*;
 use crate::game_core::input::Input;
@@ -19,8 +19,8 @@ use crate::game_core::math::*;
 
 #[derive(Copy, Clone, Debug, Default)]
 pub struct SelectAndSetDestinationInput {
-    pub position: FixedPointV2,
-    pub radius: FixedPoint,
+    pub position: FP2,
+    pub radius: FP,
     pub target_node_net_id: NetId,
 }
 
@@ -52,7 +52,7 @@ impl Default for ArenaFightGame {
     fn default() -> Self {
         let mut arena = ArenaFightGame {
             game_world: GameWorld::new(
-                FixedPoint::new(0.02) ,
+                FP::new(0.02),
                 (
                     player_control_system,
                     unit_movement_system,
@@ -66,15 +66,15 @@ impl Default for ArenaFightGame {
             ),
         };
 
-        arena.add_spawner_node(FixedPointV2::from_num(0.0, 6.0), Faction::Blue, NetId::from_u32(0));
-        arena.add_spawner_node(FixedPointV2::from_num(0.0, -6.0), Faction::Red, NetId::from_u32(1));
+        arena.add_spawner_node(FP2::from_num(0.0, 6.0), Faction::Blue, NetId::from_u32(0));
+        arena.add_spawner_node(FP2::from_num(0.0, -6.0), Faction::Red, NetId::from_u32(1));
 
-        arena.add_unit(FixedPointV2::from_num(0.0, 1.0), Faction::Blue, NetId::from_u32(2));
-        arena.add_unit(FixedPointV2::from_num(0.0, 2.0), Faction::Blue, NetId::from_u32(3));
-        arena.add_unit(FixedPointV2::from_num(0.0, 3.0), Faction::Blue, NetId::from_u32(4));
-        arena.add_unit(FixedPointV2::from_num(0.0, -1.0), Faction::Red, NetId::from_u32(5));
-        arena.add_unit(FixedPointV2::from_num(0.0, -2.0), Faction::Red, NetId::from_u32(6));
-        arena.add_unit(FixedPointV2::from_num(0.0, -3.0), Faction::Red, NetId::from_u32(7));
+        arena.add_unit(FP2::from_num(0.0, 1.0), Faction::Blue, NetId::from_u32(2));
+        arena.add_unit(FP2::from_num(0.0, 2.0), Faction::Blue, NetId::from_u32(3));
+        arena.add_unit(FP2::from_num(0.0, 3.0), Faction::Blue, NetId::from_u32(4));
+        arena.add_unit(FP2::from_num(0.0, -1.0), Faction::Red, NetId::from_u32(5));
+        arena.add_unit(FP2::from_num(0.0, -2.0), Faction::Red, NetId::from_u32(6));
+        arena.add_unit(FP2::from_num(0.0, -3.0), Faction::Red, NetId::from_u32(7));
 
         arena
     }
@@ -98,35 +98,35 @@ impl ArenaFightGame {
     }
     */
 
-    pub fn add_spawner_node(&mut self, position: FixedPointV2, faction: Faction, net_id: NetId){
+    pub fn add_spawner_node(&mut self, position: FP2, faction: Faction, net_id: NetId){
         let next_id = net_id.value;
         println!("node net_id is: {}", next_id);
         self.game_world.world.spawn(UnitSpawnerNodeBundle{
             node: Node {
                 capture_progress_faction: faction,
-                capture_progress: FixedPoint::one(),
+                capture_progress: FP::one(),
             },
             position: Position{ value: position, },
             unit_spawner: UnitSpawner{
-                spawn_interval: FixedPoint::new(0.5),
-                last_spawn_time: FixedPoint::new(0.0),
+                spawn_interval: FP::new(0.5),
+                last_spawn_time: FP::new(0.0),
             },
             net_id : NetId{value:next_id},
-            collider: CircleCollider { radius: FixedPoint::new(1.5), },
-            rigidbody: Rigidbody{velocity: FixedPointV2::zero(),mass: FixedPoint::new(1000.0),},
+            collider: CircleCollider { radius: FP::new(1.5), },
+            rigidbody: Rigidbody{velocity: FP2::zero(),mass: FP::new(1000.0),},
             unit_view: UnitView{view_custom_id: next_id},
             belongs_to_faction: BelongsToFaction{faction: faction},
         });
     }
-    pub fn add_unit(&mut self, position: FixedPointV2, faction: Faction, net_id: NetId){
+    pub fn add_unit(&mut self, position: FP2, faction: Faction, net_id: NetId){
         let next_id = net_id.value;
         self.game_world.world.spawn(UnitBundle {
             net_id: NetId{ value: next_id, }, //todo use proper logic to generate net id
             position: Position{ value: position, },
             rigidbody: Rigidbody::default(),
             impulse: Impulse::default(),
-            collider: CircleCollider { radius: FixedPoint::new(0.5), },
-            health: Health{health: FixedPoint::new(5.0), max_health: FixedPoint::new(5.0), health_regen_per_second: FixedPoint::new(0.0),},
+            collider: CircleCollider { radius: FP::new(0.5), },
+            health: Health{health: FP::new(5.0), max_health: FP::new(5.0), health_regen_per_second: FP::new(0.0),},
             character_movement: CharacterMovement::default(),
             unit: Unit::default(),
             belongs_to_faction: BelongsToFaction{faction: faction},
@@ -136,10 +136,10 @@ impl ArenaFightGame {
 
 
     pub fn get_tick(&self) -> u32 { self.game_world.get_tick() }
-    pub fn get_fixed_delta_time(&self) -> FixedPoint { self.game_world.get_fixed_delta_time() }
+    pub fn get_fixed_delta_time(&self) -> FP { self.game_world.get_fixed_delta_time() }
     pub fn advance_tick(&mut self, input_map: HashMap<Id, ArenaInput>){ self.game_world.advance_tick(input_map); }
     pub fn register_keyframes(&mut self){ self.game_world.register_keyframes(); }
-    pub fn sample_view_snapshots<T>(&mut self, viewing_time: FixedPoint, buffer: &mut Vec<T>) where T: ViewSnapshot + 'static { self.game_world.sample_view_snapshots(viewing_time, buffer); }
+    pub fn sample_view_snapshots<T>(&mut self, viewing_time: FP, buffer: &mut Vec<T>) where T: ViewSnapshot + 'static { self.game_world.sample_view_snapshots(viewing_time, buffer); }
 
     /*
     // returns byte vec

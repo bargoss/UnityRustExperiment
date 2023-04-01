@@ -25,7 +25,7 @@ pub fn player_control_system(
     physics_world: Res<VerletPhysicsWorld>,
     id_entity_map: Res<IdEntityMap>,
 ) {
-    let extra_control_radius = FixedPoint::new(6.0);
+    let extra_control_radius = FP::new(6.0);
 
     let mut nearby_bodies_query_buffer = Vec::new();
 

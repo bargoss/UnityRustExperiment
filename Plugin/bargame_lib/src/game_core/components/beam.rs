@@ -7,5 +7,5 @@ use crate::game_core::math::*;
 pub struct Beam {
     pub a: Id,
     pub b: Id,
-    pub length: FixedPoint,
+    pub length: FP,
 }

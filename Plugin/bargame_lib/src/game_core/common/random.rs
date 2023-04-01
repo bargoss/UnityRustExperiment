@@ -9,7 +9,7 @@ impl Random {
     pub fn seed_i64(seed: i64) -> Self {
         Self { state: seed }
     }
-    pub fn seed_fixed_point(seed: FixedPoint) -> Self {
+    pub fn seed_fixed_point(seed: FP) -> Self {
         Self {
             state: seed.to_bits(),
         }
@@ -26,23 +26,23 @@ impl Random {
         min + (random % range)
     }
 
-    pub fn next_fixed_point(&mut self) -> FixedPoint {
-        FixedPoint::from_bits(self.next_i64())
+    pub fn next_fixed_point(&mut self) -> FP {
+        FP::from_bits(self.next_i64())
     }
 
-    pub fn next_fixed_point_range(&mut self, min: FixedPoint, max: FixedPoint) -> FixedPoint {
+    pub fn next_fixed_point_range(&mut self, min: FP, max: FP) -> FP {
         let range = max - min;
         let random = self.next_fixed_point();
         min + (random % range)
     }
 
-    pub fn next_fixed_point_v2(&mut self) -> FixedPointV2 {
-        FixedPointV2::new(self.next_fixed_point(), self.next_fixed_point())
+    pub fn next_fixed_point_v2(&mut self) -> FP2 {
+        FP2::new(self.next_fixed_point(), self.next_fixed_point())
     }
 
-    pub fn next_fixed_point_on_unit_circle(&mut self) -> FixedPointV2 {
-        let angle = self.next_fixed_point_range(FixedPoint::new(0.0), FixedPoint::new(2.0) * FixedPoint::pi());
-        FixedPointV2::new(angle.cos(), angle.sin())
+    pub fn next_fixed_point_on_unit_circle(&mut self) -> FP2 {
+        let angle = self.next_fixed_point_range(FP::new(0.0), FP::new(2.0) * FP::pi());
+        FP2::new(angle.cos(), angle.sin())
     }
 
 

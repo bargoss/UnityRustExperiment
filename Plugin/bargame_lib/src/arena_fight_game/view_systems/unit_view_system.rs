@@ -3,12 +3,12 @@ use crate::arena_fight_game::components::{BelongsToFaction, Faction, Health, Uni
 use crate::game_core::components::CircleCollider;
 use crate::game_core::components::position::Position;
 use crate::game_core::resources::time::Time;
-use crate::game_core::verlet_physics::FixedPoint;
+use crate::game_core::verlet_physics::FP;
 use crate::game_core::view_components::sphere_view::SphereView;
 use crate::game_core::view_resources::view_snapshot_interpolator::BufferedViewSnapshotInterpolator;
 use crate::game_core::view_resources::view_snapshots::sphere_snapshot::SphereSnapshot;
 use crate::game_core::common::Id;
-use crate::game_core::math::FixedPointV3;
+use crate::game_core::math::FP3;
 
 fn faction_to_color(faction: &Faction) -> [f32; 4] {
     match faction {
@@ -26,15 +26,15 @@ pub fn unit_view_system(
     time: Res<Time>
 ) {
     for (unit_view, position, circle_collider, belongs_to_faction, health_opt) in unit_query.iter() {
-        let time = FixedPoint::new(time.tick as f64) * time.fixed_delta_time;
+        let time = FP::new(time.tick as f64) * time.fixed_delta_time;
         let position = position.value;
         let radius = circle_collider.radius;
 
         if let Some(health) = health_opt {
-            let health_ratio = FixedPoint::one() - health.health / health.max_health;
+            let health_ratio = FP::one() - health.health / health.max_health;
             let health_radius = radius * health_ratio;
 
-            let position_v3 : FixedPointV3 = position.into();
+            let position_v3 : FP3 = position.into();
 
             let more_smaller_prime = 100003;
             let black_circle_custom_view_id = Id::new(unit_view.view_custom_id.0*more_smaller_prime + 1);
@@ -45,7 +45,7 @@ pub fn unit_view_system(
             //});
             sphere_snapshots.push(unit_view.view_custom_id, time, SphereSnapshot{
                 position : position.into(),
-                radius : circle_collider.radius * (FixedPoint::one() - health_ratio),
+                radius : circle_collider.radius * (FP::one() - health_ratio),
                 color: faction_to_color(&belongs_to_faction.faction)
             });
         }

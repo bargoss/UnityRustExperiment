@@ -5,6 +5,6 @@ use crate::game_core::math::*;
 
 #[derive(Component, Debug, Clone, Copy, Default)]
 pub struct SphereView {
-    pub radius: FixedPoint,
+    pub radius: FP,
     pub view_custom_id: Id
 }

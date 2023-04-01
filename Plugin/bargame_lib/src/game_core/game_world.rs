@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use bevy_ecs::prelude::*;
 use bevy_ecs::world::World;
-use crate::game_core::math::FixedPoint;
+use crate::game_core::math::FP;
 use crate::game_core::resources::id_entity_map::IdEntityMap;
 use crate::game_core::resources::time::Time;
 use crate::game_core::systems::id_entity_map_sync_system::id_entity_map_sync_system;
@@ -46,7 +46,7 @@ pub struct GameWorld<TInput> where TInput: Input
 
 impl<TInput> GameWorld<TInput> where TInput: Input + 'static
 {
-    pub fn new<M>(fixed_delta_time: FixedPoint, systems: impl IntoSystemConfigs<M>, register_keyframe_systems: impl IntoSystemConfigs<M>) -> GameWorld<TInput>{
+    pub fn new<M>(fixed_delta_time: FP, systems: impl IntoSystemConfigs<M>, register_keyframe_systems: impl IntoSystemConfigs<M>) -> GameWorld<TInput>{
         let mut world = World::new();
         let mut advance_tick_schedule = Schedule::default();
         let mut register_keyframes_schedule = Schedule::default();
@@ -89,7 +89,7 @@ impl<TInput> GameWorld<TInput> where TInput: Input + 'static
     }
 
     pub fn get_tick(&self) -> u32 { self.world.get_resource::<Time>().unwrap().tick }
-    pub fn get_fixed_delta_time(&self) -> FixedPoint { self.world.get_resource::<Time>().unwrap().fixed_delta_time }
+    pub fn get_fixed_delta_time(&self) -> FP { self.world.get_resource::<Time>().unwrap().fixed_delta_time }
 
     pub fn advance_tick(&mut self, input_map: HashMap<Id, TInput>){
         let mut input_map_res = self.world.get_resource_mut::<PlayerInputMap<TInput>>().unwrap();
@@ -102,7 +102,7 @@ impl<TInput> GameWorld<TInput> where TInput: Input + 'static
         self.register_keyframes_schedule.run(&mut self.world);
     }
     // where T: ViewSnapshot
-    pub fn sample_view_snapshots<T>(&mut self, viewing_time: FixedPoint, buffer: &mut Vec<T>) where T: ViewSnapshot + 'static
+    pub fn sample_view_snapshots<T>(&mut self, viewing_time: FP, buffer: &mut Vec<T>) where T: ViewSnapshot + 'static
     {
         buffer.clear();
 
@@ -151,7 +151,7 @@ mod view_interpolation_tests {
     use super::*;
     use crate::game_core::components::position::Position;
     use crate::game_core::components::rigidbody::Rigidbody;
-    use crate::game_core::math::FixedPointV2;
+    use crate::game_core::math::FP2;
     use crate::game_core::view_components::sphere_view::SphereView;
     use crate::game_core::view_resources::view_snapshots::sphere_snapshot::SphereSnapshot;
 
@@ -171,23 +171,23 @@ mod view_interpolation_tests {
     #[test]
     fn test_view_interpolation_logic() {
         // Initialize the GameWorld
-        let mut game_world = GameWorld::<DummyInput>::new(FixedPoint::new(1.000),
-    (dummy_system, ).chain(),
-    (dummy_system, ).chain()
+        let mut game_world = GameWorld::<DummyInput>::new(FP::new(1.000),
+                                                          (dummy_system, ).chain(),
+                                                          (dummy_system, ).chain()
         );
 
         // Spawn some entities with Position and Rigidbody components
         for i in 0..10 {
             game_world.world.spawn_empty().insert(Position {
-                value: FixedPointV2::from_num(i as f64, 0.0),
+                value: FP2::from_num(i as f64, 0.0),
             }).insert(Rigidbody {
-                velocity: FixedPointV2::from_num(1.0, 0.0),
-                mass: FixedPoint::new(1.0),
+                velocity: FP2::from_num(1.0, 0.0),
+                mass: FP::new(1.0),
             }).insert(SphereView{
-                radius: FixedPoint::new(0.5),
+                radius: FP::new(0.5),
                 view_custom_id: Id::new(i),
             }).insert(CircleCollider{
-                radius: FixedPoint::new(0.5),
+                radius: FP::new(0.5),
             }).insert(NetId{
                 value: Id::new(i),
             });
@@ -200,7 +200,7 @@ mod view_interpolation_tests {
 
         // Test the view interpolation logic by sampling view snapshots
         let mut buffer: Vec<SphereSnapshot> = Vec::new();
-        game_world.sample_view_snapshots(FixedPoint::new(0.5), &mut buffer);
+        game_world.sample_view_snapshots(FP::new(0.5), &mut buffer);
 
         // sort the buffer
         // compare position.x
@@ -209,7 +209,7 @@ mod view_interpolation_tests {
         // print the buffer
         for (i, snapshot) in buffer.iter().enumerate() {
             println!("snapshot: {:?}", snapshot);
-            assert_eq!(snapshot.position.x(), FixedPoint::new(i as f64 + 0.5));
+            assert_eq!(snapshot.position.x(), FP::new(i as f64 + 0.5));
         }
     }
 }

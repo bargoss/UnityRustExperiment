@@ -78,7 +78,7 @@ mod tests {
 
         // spawn bundle
         world.spawn(ParticleBundle{
-            position: Position{value: FixedPointV2::from_num(0.0, 0.0)},
+            position: Position{value: FP2::from_num(0.0, 0.0)},
             velocity: Default::default(),
             collider: Default::default(),
         });
@@ -86,7 +86,7 @@ mod tests {
         // access the entity, add one more component
         let entity = world.spawn_empty().id();
         let mut position = world.get_mut::<Position>(entity).unwrap();
-        (*position).value = FixedPointV2::from_num(1.0, 1.0);
+        (*position).value = FP2::from_num(1.0, 1.0);
         println!("position: {:?}", *position);
 
     }

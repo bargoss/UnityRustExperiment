@@ -13,14 +13,14 @@ pub fn unit_attack_system(
     id_entity_map: Res<IdEntityMap>,
     time: Res<Time>,
 ) {
-    let unit_attack_dps = FixedPoint::new(0.1); // 5
+    let unit_attack_dps = FP::new(0.1); // 5
     let unit_damage = time.fixed_delta_time * unit_attack_dps;
-    let unit_attack_range = FixedPoint::new(0.5);
+    let unit_attack_range = FP::new(0.5);
     let mut nearby_bodies_query_buffer = Vec::new();
     let mut actions = Vec::new();
 
     for (_attacking_unit, attacking_unit_position, _attacking_unit_impulse, _attacking_unit_health, attacking_unit_faction, attacking_unit_net_id) in unit_query.iter() {
-        physics_world.overlap_circle(attacking_unit_position.value, FixedPoint::new(0.5), &mut nearby_bodies_query_buffer);
+        physics_world.overlap_circle(attacking_unit_position.value, FP::new(0.5), &mut nearby_bodies_query_buffer);
 
         // exclude self
         for body_id in nearby_bodies_query_buffer.iter() {
@@ -32,7 +32,7 @@ pub fn unit_attack_system(
                 if attacking_unit_faction.faction != target_unit_faction.faction {
                     let distance = (attacking_unit_position.value - target_unit_position.value).magnitude_squared();
                     if distance < unit_attack_range * unit_attack_range {
-                        let push = (target_unit_position.value - attacking_unit_position.value).normalize() * FixedPoint::new(0.1);
+                        let push = (target_unit_position.value - attacking_unit_position.value).normalize() * FP::new(0.1);
                         actions.push((target_unit_net_id.value.0, push, unit_damage));
                     }
                 }

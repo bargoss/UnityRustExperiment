@@ -3,10 +3,10 @@ use super::*;
 
 #[derive(Debug, Clone, Copy)]
 pub struct VerletObject {
-    pub position: FixedPointV2,
-    pub position_last: FixedPointV2,
-    pub acceleration: FixedPointV2,
-    pub radius: FixedPoint,
-    pub mass: FixedPoint,
+    pub position: FP2,
+    pub position_last: FP2,
+    pub acceleration: FP2,
+    pub radius: FP,
+    pub mass: FP,
     pub is_static: bool,
 }

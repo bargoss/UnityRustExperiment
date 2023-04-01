@@ -7,7 +7,7 @@ use crate::game_core::components::impulse::Impulse;
 use crate::game_core::components::net_id::NetId;
 use crate::game_core::components::position::Position;
 use crate::game_core::components::rigidbody::Rigidbody;
-use crate::game_core::math::FixedPointV2;
+use crate::game_core::math::FP2;
 use crate::game_core::resources::time::Time;
 use crate::game_core::verlet_physics::verlet_beam::VerletBeam;
 use crate::game_core::verlet_physics::verlet_object::VerletObject;
@@ -21,7 +21,7 @@ pub fn process_impulses(
         let mass = rigidbody.mass;
         rigidbody.velocity += impulse.value / mass;
         //println!("velocity: {:?}", rigidbody.velocity);
-        impulse.value = FixedPointV2::zero();
+        impulse.value = FP2::zero();
     }
 }
 
@@ -36,7 +36,7 @@ pub fn push_all_bodies(
     for (position, collider, rigidbody, net_id) in body_query.iter() {
         // add the body to the physics world
         physics_world.add_or_set_object(VerletObject{
-            acceleration: FixedPointV2::zero(),
+            acceleration: FP2::zero(),
             position: position.value,
             position_last: position.value - rigidbody.velocity*time.fixed_delta_time,
             radius: collider.radius,

@@ -60,7 +60,7 @@ fn execute_unit_creation_command(
 
 fn create_unit_creation_command(
     creators_net_id : NetId,
-    position: FixedPointV2,
+    position: FP2,
     faction: Faction
 ) -> UnitCreationCommand
 {
@@ -72,17 +72,17 @@ fn create_unit_creation_command(
         character_movement: CharacterMovement::default(),
         position: Position{value: position},
         rigidbody: Rigidbody {
-            velocity: FixedPointV2::default(),
-            mass: FixedPoint::new(1.0),
+            velocity: FP2::default(),
+            mass: FP::new(1.0),
         },
         impulse: Impulse::default(),
         collider: CircleCollider {
-            radius: FixedPoint::new(0.25),
+            radius: FP::new(0.25),
         },
         health: Health {
-            health: FixedPoint::new(1.0),
-            max_health: FixedPoint::new(1.0),
-            health_regen_per_second: FixedPoint::new(-0.05),
+            health: FP::new(1.0),
+            max_health: FP::new(1.0),
+            health_regen_per_second: FP::new(-0.05),
         },
         unit_view: UnitView {
             view_custom_id: Id::new(0),

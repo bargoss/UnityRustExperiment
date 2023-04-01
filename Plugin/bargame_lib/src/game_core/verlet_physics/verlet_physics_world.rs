@@ -28,7 +28,7 @@ impl VerletPhysicsWorld {
         VerletPhysicsWorld {
             objects: BTreeMap::new(),
             beams: BTreeMap::new(),
-            spatial_partitioning: SpacialPartitioning::<20>::new(FixedPoint::new(5.0)),
+            spatial_partitioning: SpacialPartitioning::<20>::new(FP::new(5.0)),
         }
     }
 
@@ -41,14 +41,14 @@ impl VerletPhysicsWorld {
         }
     }
 
-    pub fn solve_verlet_collision(object1: &mut VerletObject, object2: &mut VerletObject, min_dist: FixedPoint, response_coef: FixedPoint) {
+    pub fn solve_verlet_collision(object1: &mut VerletObject, object2: &mut VerletObject, min_dist: FP, response_coef: FP) {
         let v = object1.position - object2.position;
         let dist = v.magnitude();
 
-        let n = if dist == FixedPoint::zero() { FixedPointV2::zero() } else { v / dist };
+        let n = if dist == FP::zero() { FP2::zero() } else { v / dist };
         let mass_ratio_1 = object1.mass / (object1.mass + object2.mass);
         let mass_ratio_2 = object2.mass / (object1.mass + object2.mass);
-        let delta = FixedPoint::new(0.5) * response_coef * (dist - min_dist);
+        let delta = FP::new(0.5) * response_coef * (dist - min_dist);
         let obj1_translation = -n * (mass_ratio_2 * delta);
         let obj2_translation = n * (mass_ratio_1 * delta);
 
@@ -56,7 +56,7 @@ impl VerletPhysicsWorld {
         object2.position += obj2_translation;
     }
 
-    pub fn overlap_circle(&self, position: FixedPointV2, radius: FixedPoint, overlap_circle_buffer: &mut Vec<u32>) {
+    pub fn overlap_circle(&self, position: FP2, radius: FP, overlap_circle_buffer: &mut Vec<u32>) {
         self.spatial_partitioning.overlap_circle(position, radius, overlap_circle_buffer);
 
         // sqr mag check and remove
@@ -90,7 +90,7 @@ impl VerletPhysicsWorld {
                 let mut obj1 = self.objects.get(&Id(*other_id)).unwrap().val;
 
                 let min_dist = obj0.radius + obj1.radius;
-                VerletPhysicsWorld::solve_verlet_collision(&mut obj0, &mut obj1, min_dist, FixedPoint::new(0.75));
+                VerletPhysicsWorld::solve_verlet_collision(&mut obj0, &mut obj1, min_dist, FP::new(0.75));
 
                 if !obj1.is_static {
                     self.add_or_set_object(obj1, Id(*other_id));
@@ -114,7 +114,7 @@ impl VerletPhysicsWorld {
                     let mut obj1 = entry_b.val.clone();
 
                     let min_dist = beam.length;
-                    VerletPhysicsWorld::solve_verlet_collision(&mut obj0, &mut obj1, min_dist, FixedPoint::new(0.75));
+                    VerletPhysicsWorld::solve_verlet_collision(&mut obj0, &mut obj1, min_dist, FP::new(0.75));
 
                     if !obj0.is_static {
                         self.add_or_set_object(obj0, id_a);
@@ -127,7 +127,7 @@ impl VerletPhysicsWorld {
         }
     }
 
-    fn update_objects(&mut self, dt: FixedPoint) {
+    fn update_objects(&mut self, dt: FP) {
         /*
             for (var i = 0; i < m_Objects.Count; i++)
             {
@@ -153,7 +153,7 @@ impl VerletPhysicsWorld {
             let displacement = obj.position - obj.position_last;
             obj.position_last = obj.position;
             obj.position += displacement + obj.acceleration * (dt * dt);
-            obj.acceleration = FixedPointV2::zero();
+            obj.acceleration = FP2::zero();
 
             self.add_or_set_object(obj, Id(*id));
         }
@@ -163,9 +163,9 @@ impl VerletPhysicsWorld {
 
     }
 
-    pub fn update(&mut self, dt: FixedPoint, iteration_id_buffer: &mut Vec<u32>, overlap_circle_buffer: &mut Vec<u32>) {
+    pub fn update(&mut self, dt: FP, iteration_id_buffer: &mut Vec<u32>, overlap_circle_buffer: &mut Vec<u32>) {
         let steps = 2;
-        let _step_dt = dt / FixedPoint::new(steps as f64);
+        let _step_dt = dt / FP::new(steps as f64);
 
 
         self.sync_objects_and_beams();

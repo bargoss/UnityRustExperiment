@@ -18,11 +18,11 @@ pub fn unit_capture_node_system(
     id_entity_map: Res<IdEntityMap>,
     time: Res<Time>,
 ) {
-    let capture_per_second = FixedPoint::new(0.05);
+    let capture_per_second = FP::new(0.05);
     let capture_per_frame = time.fixed_delta_time * capture_per_second;
-    let capture_range = FixedPoint::new(1.0);
+    let capture_range = FP::new(1.0);
 
-    let unit_health_loss_per_second = FixedPoint::new(0.5);
+    let unit_health_loss_per_second = FP::new(0.5);
     let unit_health_loss_per_frame = time.fixed_delta_time * unit_health_loss_per_second;
 
     let mut nearby_bodies_query_buffer = Vec::new();
@@ -43,7 +43,7 @@ pub fn unit_capture_node_system(
                         if
                             node_belongs_to_faction.faction == capturing_unit_belongs_to_faction.faction &&
                             node.capture_progress_faction == capturing_unit_belongs_to_faction.faction &&
-                            node.capture_progress > FixedPoint::one() - capture_per_frame * 2
+                            node.capture_progress > FP::one() - capture_per_frame * 2
                         {
                             continue;
                         }
@@ -70,23 +70,23 @@ pub fn unit_capture_node_system(
 
 }
 
-fn progress_node_capture_progress(capture_amount: FixedPoint, capturing_faction: Faction, target_node: &Node, belongs_to_faction: &BelongsToFaction) -> (BelongsToFaction, Node)
+fn progress_node_capture_progress(capture_amount: FP, capturing_faction: Faction, target_node: &Node, belongs_to_faction: &BelongsToFaction) -> (BelongsToFaction, Node)
 {
     let mut updated_node = target_node.clone();
     let mut updated_belongs_to_faction = belongs_to_faction.clone();
 
     if updated_node.capture_progress_faction != capturing_faction {
         updated_node.capture_progress -= capture_amount;
-        if updated_node.capture_progress < FixedPoint::zero() {
-            updated_node.capture_progress = FixedPoint::zero();
+        if updated_node.capture_progress < FP::zero() {
+            updated_node.capture_progress = FP::zero();
             updated_node.capture_progress_faction = capturing_faction;
         }
     }
     else{
         // increase progress
         updated_node.capture_progress += capture_amount;
-        if updated_node.capture_progress > FixedPoint::one() {
-            updated_node.capture_progress = FixedPoint::one();
+        if updated_node.capture_progress > FP::one() {
+            updated_node.capture_progress = FP::one();
             updated_node.capture_progress_faction = capturing_faction;
             updated_belongs_to_faction.faction = capturing_faction;
         }

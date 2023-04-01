@@ -8,7 +8,7 @@ use crate::game_core::math::*;
 
 pub struct InterpolationKeyFrame<T> where T: ViewSnapshot{
     pub value: T,
-    pub time: FixedPoint,
+    pub time: FP,
 }
 const MAX_KEYFRAMES: usize = 8;
 
@@ -19,7 +19,7 @@ struct BufferedViewSnapshotInterpolatorItem<T> where T: ViewSnapshot {
 
 
 impl <T> BufferedViewSnapshotInterpolatorItem<T> where T: ViewSnapshot {
-    pub fn try_interpolate(&self, target_time: FixedPoint) -> Option<T> {
+    pub fn try_interpolate(&self, target_time: FP) -> Option<T> {
         let interpolated_value;
 
         // assert that keyframes times are sorted
@@ -51,19 +51,19 @@ impl <T> BufferedViewSnapshotInterpolatorItem<T> where T: ViewSnapshot {
         None
     }
 
-    pub fn interpolate(&self, target_time: FixedPoint) -> T {
+    pub fn interpolate(&self, target_time: FP) -> T {
         self.try_interpolate(target_time).unwrap_or_else(|| T::default())
     }
 
-    pub fn push(&mut self, value: T, time: FixedPoint) {
+    pub fn push(&mut self, value: T, time: FP) {
         self.key_frames.push_back(InterpolationKeyFrame { value, time });
         if self.key_frames.len() > MAX_KEYFRAMES {
             self.key_frames.pop_front();
         }
     }
 
-    pub fn clear_before(&mut self, time: FixedPoint) {
-        if self.key_frames.iter().any(|frame| frame.time < FixedPoint::zero()) {
+    pub fn clear_before(&mut self, time: FP) {
+        if self.key_frames.iter().any(|frame| frame.time < FP::zero()) {
             eprintln!("Keyframe time is negative");
         }
         self.key_frames.retain(|frame| frame.time >= time);
@@ -76,19 +76,19 @@ pub struct BufferedViewSnapshotInterpolator<T> where T: ViewSnapshot {
 }
 
 impl <T> BufferedViewSnapshotInterpolator<T> where T: ViewSnapshot {
-    pub fn try_interpolate(&self, id: Id, target_time: FixedPoint) -> Option<T> {
+    pub fn try_interpolate(&self, id: Id, target_time: FP) -> Option<T> {
         self.items.get(&id).and_then(|item| item.try_interpolate(target_time))
     }
 
-    pub fn interpolate(&self, id: Id, target_time: FixedPoint) -> T {
+    pub fn interpolate(&self, id: Id, target_time: FP) -> T {
         self.try_interpolate(id, target_time).unwrap_or_else(|| T::default())
     }
 
-    pub fn push(&mut self, view_custom_id: Id, time: FixedPoint, value: T) {
+    pub fn push(&mut self, view_custom_id: Id, time: FP, value: T) {
         self.items.entry(view_custom_id).or_insert_with(BufferedViewSnapshotInterpolatorItem::default).push(value, time);
     }
 
-    pub fn clear_before(&mut self, time: FixedPoint) {
+    pub fn clear_before(&mut self, time: FP) {
         for item in self.items.values_mut() {
             item.clear_before(time);
         }
@@ -100,7 +100,7 @@ impl <T> BufferedViewSnapshotInterpolator<T> where T: ViewSnapshot {
 
     pub fn interpolated_keyframes(
         &self,
-        view_time: FixedPoint,
+        view_time: FP,
     ) -> impl Iterator<Item = (Id, T)> + '_ {
         self.items.iter().map(move |(id, item)| {
             //println!("interpolating {} at {}", id.0, view_time);
@@ -117,52 +117,52 @@ mod tests {
     
     use super::*;
 
-    impl ViewSnapshot for FixedPointV3 {
+    impl ViewSnapshot for FP3 {
     }
 
     #[test]
     fn test_interpolation() {
-        let mut buffer = BufferedViewSnapshotInterpolatorItem::<FixedPointV3>::default();
+        let mut buffer = BufferedViewSnapshotInterpolatorItem::<FP3>::default();
 
-        buffer.push(FixedPointV3::from_num(0.0, 0.0, 0.0), FixedPoint::new(0.0));
-        buffer.push(FixedPointV3::from_num(1.0, 0.0, 0.0), FixedPoint::new(1.0));
-        buffer.push(FixedPointV3::from_num(1.0, 1.0, 0.0), FixedPoint::new(2.0));
-        buffer.push(FixedPointV3::from_num(0.0, 1.0, 0.0), FixedPoint::new(3.0));
+        buffer.push(FP3::from_num(0.0, 0.0, 0.0), FP::new(0.0));
+        buffer.push(FP3::from_num(1.0, 0.0, 0.0), FP::new(1.0));
+        buffer.push(FP3::from_num(1.0, 1.0, 0.0), FP::new(2.0));
+        buffer.push(FP3::from_num(0.0, 1.0, 0.0), FP::new(3.0));
 
-        assert_eq!(buffer.interpolate(FixedPoint::new(0.0)), FixedPointV3::from_num(0.0, 0.0, 0.0));
-        assert_eq!(buffer.interpolate(FixedPoint::new(0.5)), FixedPointV3::from_num(0.5, 0.0, 0.0));
-        assert_eq!(buffer.interpolate(FixedPoint::new(1.0)), FixedPointV3::from_num(1.0, 0.0, 0.0));
-        assert_eq!(buffer.interpolate(FixedPoint::new(1.5)), FixedPointV3::from_num(1.0, 0.5, 0.0));
-        assert_eq!(buffer.interpolate(FixedPoint::new(2.0)), FixedPointV3::from_num(1.0, 1.0, 0.0));
-        assert_eq!(buffer.interpolate(FixedPoint::new(2.5)), FixedPointV3::from_num(0.5, 1.0, 0.0));
-        assert_eq!(buffer.interpolate(FixedPoint::new(3.0)), FixedPointV3::from_num(0.0, 1.0, 0.0));
-        assert_eq!(buffer.interpolate(FixedPoint::new(3.5)), FixedPointV3::from_num(0.0, 0.0, 0.0));
+        assert_eq!(buffer.interpolate(FP::new(0.0)), FP3::from_num(0.0, 0.0, 0.0));
+        assert_eq!(buffer.interpolate(FP::new(0.5)), FP3::from_num(0.5, 0.0, 0.0));
+        assert_eq!(buffer.interpolate(FP::new(1.0)), FP3::from_num(1.0, 0.0, 0.0));
+        assert_eq!(buffer.interpolate(FP::new(1.5)), FP3::from_num(1.0, 0.5, 0.0));
+        assert_eq!(buffer.interpolate(FP::new(2.0)), FP3::from_num(1.0, 1.0, 0.0));
+        assert_eq!(buffer.interpolate(FP::new(2.5)), FP3::from_num(0.5, 1.0, 0.0));
+        assert_eq!(buffer.interpolate(FP::new(3.0)), FP3::from_num(0.0, 1.0, 0.0));
+        assert_eq!(buffer.interpolate(FP::new(3.5)), FP3::from_num(0.0, 0.0, 0.0));
     }
 
     #[test]
     fn test_clear_before() {
-        let mut buffer = BufferedViewSnapshotInterpolatorItem::<FixedPointV3>::default();
+        let mut buffer = BufferedViewSnapshotInterpolatorItem::<FP3>::default();
 
-        buffer.push(FixedPointV3::from_num(0.0, 0.0, 0.0), FixedPoint::new(0.0));
-        buffer.push(FixedPointV3::from_num(1.0, 0.0, 0.0), FixedPoint::new(1.0));
-        buffer.push(FixedPointV3::from_num(1.0, 1.0, 0.0), FixedPoint::new(2.0));
-        buffer.push(FixedPointV3::from_num(0.0, 1.0, 0.0), FixedPoint::new(3.0));
+        buffer.push(FP3::from_num(0.0, 0.0, 0.0), FP::new(0.0));
+        buffer.push(FP3::from_num(1.0, 0.0, 0.0), FP::new(1.0));
+        buffer.push(FP3::from_num(1.0, 1.0, 0.0), FP::new(2.0));
+        buffer.push(FP3::from_num(0.0, 1.0, 0.0), FP::new(3.0));
 
-        buffer.clear_before(FixedPoint::new(1.5));
+        buffer.clear_before(FP::new(1.5));
 
-        assert_eq!(buffer.interpolate(FixedPoint::new(0.0)), FixedPointV3::from_num(0.0, 0.0, 0.0));
-        assert_eq!(buffer.interpolate(FixedPoint::new(1.0)), FixedPointV3::from_num(0.0, 0.0, 0.0));
-        assert_eq!(buffer.interpolate(FixedPoint::new(1.5)), FixedPointV3::from_num(0.0, 0.0, 0.0));
-        assert_eq!(buffer.interpolate(FixedPoint::new(2.0)), FixedPointV3::from_num(1.0, 1.0, 0.0));
-        assert_eq!(buffer.interpolate(FixedPoint::new(3.0)), FixedPointV3::from_num(0.0, 1.0, 0.0));
-        assert_eq!(buffer.interpolate(FixedPoint::new(4.0)), FixedPointV3::from_num(0.0, 0.0, 0.0));
+        assert_eq!(buffer.interpolate(FP::new(0.0)), FP3::from_num(0.0, 0.0, 0.0));
+        assert_eq!(buffer.interpolate(FP::new(1.0)), FP3::from_num(0.0, 0.0, 0.0));
+        assert_eq!(buffer.interpolate(FP::new(1.5)), FP3::from_num(0.0, 0.0, 0.0));
+        assert_eq!(buffer.interpolate(FP::new(2.0)), FP3::from_num(1.0, 1.0, 0.0));
+        assert_eq!(buffer.interpolate(FP::new(3.0)), FP3::from_num(0.0, 1.0, 0.0));
+        assert_eq!(buffer.interpolate(FP::new(4.0)), FP3::from_num(0.0, 0.0, 0.0));
     }
 
     #[test]
     fn debug(){
-        let a = FixedPointV3::from_num(0.0, 0.0, 0.0);
+        let a = FP3::from_num(0.0, 0.0, 0.0);
         println!("a: {:?}", a);
-        let b = FixedPointV3::from_num(1.0, 0.0, 0.0);
+        let b = FP3::from_num(1.0, 0.0, 0.0);
         println!("b: {:?}", b);
     }
 }

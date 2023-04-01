@@ -6,7 +6,7 @@ use crate::game_core::math::*;
 
 #[derive(Component, Clone, Copy, Serialize, Deserialize, Default)]
 pub struct CharacterMovement {
-    pub movement_direction: FixedPointV2,
+    pub movement_direction: FP2,
 }
 
 #[derive(Component, Clone, Copy, Serialize, Deserialize)]
@@ -16,9 +16,9 @@ pub struct PlayerCharacterControl {
 
 #[derive(Component, Clone, Copy, Serialize, Deserialize)]
 pub struct Health{
-    pub health: FixedPoint,
-    pub max_health: FixedPoint,
-    pub health_regen_per_second: FixedPoint,
+    pub health: FP,
+    pub max_health: FP,
+    pub health_regen_per_second: FP,
 }
 
 #[derive(Clone, Copy, Serialize, Deserialize, PartialEq, Eq, Default)]
@@ -50,20 +50,20 @@ pub struct BelongsToBuilding {
 }
 #[derive(Component, Clone, Copy, Serialize, Deserialize)]
 pub struct Node {
-    pub capture_progress: FixedPoint,
+    pub capture_progress: FP,
     pub capture_progress_faction: Faction,
 }
 #[derive(Component, Clone, Copy, Serialize, Deserialize)]
 pub struct UnitSpawner {
-    pub last_spawn_time: FixedPoint,
-    pub spawn_interval: FixedPoint,
+    pub last_spawn_time: FP,
+    pub spawn_interval: FP,
 }
 #[derive(Component, Clone, Copy, Serialize, Deserialize)]
 pub struct Shield {
-    pub last_shield_up_time: FixedPoint,
-    pub shield_up_interval: FixedPoint,
-    pub shield_capacity: FixedPoint,
-    pub shield_radius: FixedPoint,
+    pub last_shield_up_time: FP,
+    pub shield_up_interval: FP,
+    pub shield_capacity: FP,
+    pub shield_radius: FP,
 }
 
 #[derive(Component, Clone, Copy)]

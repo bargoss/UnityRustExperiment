@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 use crate::game_core::game_world::GameWorld;
-use crate::game_core::math::{FixedPoint, FixedPointV2};
+use crate::game_core::math::{FP, FP2};
 
 
 use crate::game_core::common::*;
@@ -16,8 +16,8 @@ mod components;
 
 #[derive(Copy, Clone, Debug, Default)]
 pub struct BubbleTanksInput{
-    pub movement_dir : FixedPointV2,
-    pub steer : FixedPoint,
+    pub movement_dir : FP2,
+    pub steer : FP,
     pub fire : bool,
 }
 
@@ -33,7 +33,7 @@ pub fn dummy_system() {
 }
 
 impl BubbleTanksGame {
-    pub fn new(fixed_delta_time: FixedPoint) -> Self {
+    pub fn new(fixed_delta_time: FP) -> Self {
         let game_core = GameWorld::new(fixed_delta_time, (dummy_system,).chain(), (dummy_system,).chain());
 
         //game_core.add_stage_to_advance_tick_schedule("update", SystemStage::single_threaded()
@@ -45,7 +45,7 @@ impl BubbleTanksGame {
 
     pub fn advance_tick(&mut self, input_map: HashMap<Id, BubbleTanksInput>){ self.game_core.advance_tick(input_map); }
     pub fn register_keyframes(&mut self){ self.game_core.register_keyframes(); }
-    pub fn sample_view_snapshots<T>(&mut self, viewing_time: FixedPoint, buffer: &mut Vec<T>)
+    pub fn sample_view_snapshots<T>(&mut self, viewing_time: FP, buffer: &mut Vec<T>)
         where T: ViewSnapshot + 'static
     {
         self.game_core.sample_view_snapshots(viewing_time, buffer);

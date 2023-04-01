@@ -5,5 +5,5 @@ use super::*;
 pub struct VerletBeam {
     pub verlet_object_id_a: Id,
     pub verlet_object_id_b: Id,
-    pub length: FixedPoint,
+    pub length: FP,
 }

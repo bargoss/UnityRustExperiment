@@ -4,16 +4,16 @@ use crate::game_core::math::*;
 
 #[derive(Component, Debug, Clone, Copy)]
 pub struct Rigidbody {
-    pub velocity: FixedPointV2,
-    pub mass: FixedPoint,
+    pub velocity: FP2,
+    pub mass: FP,
 }
 
 // implement default
 impl Default for Rigidbody {
     fn default() -> Self {
         Rigidbody {
-            velocity: FixedPointV2::default(),
-            mass: FixedPoint::new(1.0),
+            velocity: FP2::default(),
+            mass: FP::new(1.0),
         }
     }
 }

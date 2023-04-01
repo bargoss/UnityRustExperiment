@@ -65,19 +65,19 @@ impl IdGeneratorBuilder {
     }
 
     // Hash a FixedPoint value
-    pub fn hash_fp(mut self, value: FixedPoint) -> Self {
+    pub fn hash_fp(mut self, value: FP) -> Self {
         FIXED_POINT_HASH_KEY.hash(&mut self.hasher);
         value.hash(&mut self.hasher);
         self
     }
 
-    pub fn hash_fp2(mut self, value: FixedPointV2) -> Self {
+    pub fn hash_fp2(mut self, value: FP2) -> Self {
         FIXED_POINT_V2_HASH_KEY.hash(&mut self.hasher);
         value.hash(&mut self.hasher);
         self
     }
 
-    pub fn hash_fp3(mut self, value: FixedPointV3) -> Self {
+    pub fn hash_fp3(mut self, value: FP3) -> Self {
         FIXED_POINT_V3_HASH_KEY.hash(&mut self.hasher);
         value.hash(&mut self.hasher);
         self
@@ -113,21 +113,21 @@ mod tests {
 
     #[test]
     fn test_hash_fp() {
-        let fp = FixedPoint::from_num(3.14);
+        let fp = FP::from_num(3.14);
         let id_gen = IdGeneratorBuilder::start().hash_fp(fp).finish();
         println!("Hash of FixedPoint (3.14): {:?}", id_gen);
     }
 
     #[test]
     fn test_hash_fp2() {
-        let fp2 = FixedPointV2::from_num(1.23, 4.56);
+        let fp2 = FP2::from_num(1.23, 4.56);
         let id_gen = IdGeneratorBuilder::start().hash_fp2(fp2).finish();
         println!("Hash of FixedPointV2 (1.23, 4.56): {:?}", id_gen);
     }
 
     #[test]
     fn test_hash_fp3() {
-        let fp3 = FixedPointV3::from_num(7.89, 0.12, 3.45);
+        let fp3 = FP3::from_num(7.89, 0.12, 3.45);
         let id_gen = IdGeneratorBuilder::start().hash_fp3(fp3).finish();
         println!("Hash of FixedPointV3 (7.89, 0.12, 3.45): {:?}", id_gen);
     }

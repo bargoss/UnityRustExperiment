@@ -4,5 +4,5 @@ use crate::game_core::math::*;
 
 #[derive(Component, Debug, Clone, Copy, Default)]
 pub struct Position {
-    pub value: FixedPointV2
+    pub value: FP2
 }

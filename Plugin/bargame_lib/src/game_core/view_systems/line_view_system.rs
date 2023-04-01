@@ -1,6 +1,6 @@
 use bevy_ecs::prelude::*;
 use crate::game_core::components::position::Position;
-use crate::game_core::math::FixedPoint;
+use crate::game_core::math::FP;
 use crate::game_core::resources::id_entity_map::IdEntityMap;
 use crate::game_core::resources::time::Time;
 use crate::game_core::view_components::beam_view::LineView;
@@ -25,7 +25,7 @@ pub fn line_view_system(
             None => continue,
         };
 
-        let time = FixedPoint::new(time.tick as f64) * time.fixed_delta_time;
+        let time = FP::new(time.tick as f64) * time.fixed_delta_time;
         // pub fn push(&mut self, view_custom_id: Id, time: f32, value: T) {
         line_snapshots.push(
             line_view.view_custom_id, time, LineSnapshot {
