@@ -141,6 +141,29 @@ impl ArenaFightGame {
     pub fn advance_tick(&mut self, input_map: HashMap<Id, ArenaInput>){ self.game_world.advance_tick(input_map); }
     pub fn register_keyframes(&mut self){ self.game_world.register_keyframes(); }
     pub fn sample_view_snapshots<T>(&mut self, viewing_time: FixedPoint, buffer: &mut Vec<T>) where T: ViewSnapshot + 'static { self.game_world.sample_view_snapshots(viewing_time, buffer); }
+
+    // returns byte vec
+    pub fn serialize_state (&self) -> Vec<u8> {
+        let mut buffer = Vec::new();
+
+        self.game_world.world.query::<(&NetId, &Position, &Health, &Unit, &UnitView, &BelongsToFaction)>()
+            .iter()
+            .for_each(|(net_id, position, rigidbody, collider, health, unit, unit_view, belongs_to_faction)| {
+                let mut unit_state = UnitState::default();
+                unit_state.net_id = net_id.value;
+                unit_state.position = position.value;
+                unit_state.velocity = rigidbody.velocity;
+                unit_state.radius = collider.radius;
+                unit_state.health = health.health;
+                unit_state.max_health = health.max_health;
+                unit_state.health_regen_per_second = health.health_regen_per_second;
+                unit_state.unit_type = unit.unit_type;
+                unit_state.view_custom_id = unit_view.view_custom_id;
+                unit_state.faction = belongs_to_faction.faction;
+
+                buffer.extend_from_slice(&unit_state.to_bytes());
+            });
+    }
 }
 
 #[cfg(test)]
