@@ -15,8 +15,6 @@ pub struct VerletPhysicsWorld {
     objects: BTreeMap<Id, Entry<VerletObject>>,
     beams: BTreeMap<Id, Entry<VerletBeam>>,
     spatial_partitioning: SpacialPartitioning<20>,
-    overlap_circle_buffer: Vec<u32>,
-    iteration_id_buffer: Vec<u32>,
 }
 
 impl Default for VerletPhysicsWorld {
@@ -31,8 +29,6 @@ impl VerletPhysicsWorld {
             objects: BTreeMap::new(),
             beams: BTreeMap::new(),
             spatial_partitioning: SpacialPartitioning::<20>::new(FixedPoint::new(5.0)),
-            overlap_circle_buffer: Vec::new(),
-            iteration_id_buffer: Vec::new(),
         }
     }
 
