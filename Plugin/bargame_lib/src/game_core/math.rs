@@ -110,6 +110,10 @@ impl FixedPoint {
         FixedPoint(BaseType::from_num(p0))
     }
 
+    pub fn from_num(p0: f64) -> Self {
+        FixedPoint(BaseType::from_num(p0))
+    }
+
     // one
     pub fn one() -> Self {
         FixedPoint(BaseType::from_num(1.0))

@@ -83,3 +83,52 @@ impl IdGeneratorBuilder {
         self
     }
 }
+
+
+
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_hash_u32() {
+        let id_gen = IdGeneratorBuilder::start().hash_u32(42).finish();
+        println!("Hash of u32 (42): {:?}", id_gen);
+    }
+
+    #[test]
+    fn test_hash_id() {
+        let id = Id::new(123);
+        let id_gen = IdGeneratorBuilder::start().hash_id(id).finish();
+        println!("Hash of Id (123): {:?}", id_gen);
+    }
+
+    #[test]
+    fn test_hash_net_id() {
+        let net_id = NetId::from_u32(456);
+        let id_gen = IdGeneratorBuilder::start().hash_net_id(net_id).finish();
+        println!("Hash of NetId (456): {:?}", id_gen);
+    }
+
+    #[test]
+    fn test_hash_fp() {
+        let fp = FixedPoint::from_num(3.14);
+        let id_gen = IdGeneratorBuilder::start().hash_fp(fp).finish();
+        println!("Hash of FixedPoint (3.14): {:?}", id_gen);
+    }
+
+    #[test]
+    fn test_hash_fp2() {
+        let fp2 = FixedPointV2::from_num(1.23, 4.56);
+        let id_gen = IdGeneratorBuilder::start().hash_fp2(fp2).finish();
+        println!("Hash of FixedPointV2 (1.23, 4.56): {:?}", id_gen);
+    }
+
+    #[test]
+    fn test_hash_fp3() {
+        let fp3 = FixedPointV3::from_num(7.89, 0.12, 3.45);
+        let id_gen = IdGeneratorBuilder::start().hash_fp3(fp3).finish();
+        println!("Hash of FixedPointV3 (7.89, 0.12, 3.45): {:?}", id_gen);
+    }
+}
