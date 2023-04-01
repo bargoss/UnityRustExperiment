@@ -4,38 +4,6 @@ use crate::game2::components::position::WorldPosition;
 use crate::game2::components::unit::Unit;
 use super::super::data_types::*;
 use super::super::terrain::*;
-/*
-pub fn handle_unit_collision_forces(
-    //mut read_query: Query<(&Bubble, &Position)>,
-    //mut write_query : Query<(&Bubble, &Position, &mut Velocity)>,
-    //lookup_grids: Res<LookUpGrids<u32>>,
-    //mut buffer: ResMut<Vec<(u32, u32)>>, // for neighbor pair ids
-    mut query: Query<(&mut WorldPosition, &mut Unit)>
-) {
-    lookup_grids.get_all_neighbours(&mut buffer);
-
-    for (id_a, id_b) in buffer.iter(){
-        let entity_a = Entity::from_raw(id_a.clone());
-        let entity_b = Entity::from_raw(id_b.clone());
-
-        let (bubble_a, position_a) = read_query.get(entity_a).unwrap();
-        let (bubble_b, position_b) = read_query.get(entity_b).unwrap();
-
-        let force = calculate_neighbour_force(
-            position_a.value,
-            position_b.value,
-            bubble_a,
-            bubble_b,
-        );
-
-
-        let mut velocity_a = write_query.get_mut(entity_a).unwrap().2;
-        velocity_a.value += force;
-        let mut velocity_b = write_query.get_mut(entity_b).unwrap().2;
-        velocity_b.value -= force;
-    }
-}
-*/
 
 pub fn handle_unit_movement_by_velocity(mut query: Query<(&mut WorldPosition, &mut Unit)>, tile_world: Res<TileWorld>){
     for (mut position, mut unit) in query.iter_mut() {
