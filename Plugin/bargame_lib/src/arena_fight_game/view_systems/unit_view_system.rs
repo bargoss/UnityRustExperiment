@@ -36,8 +36,8 @@ pub fn unit_view_system(
 
             let position_v3 : FP3 = position.into();
 
-            let more_smaller_prime = 100003;
-            let black_circle_custom_view_id = Id::new(unit_view.view_custom_id.0*more_smaller_prime + 1);
+            //let more_smaller_prime = 100003;
+            //let black_circle_custom_view_id = Id::new(unit_view.view_custom_id.0*more_smaller_prime + 1);
             //sphere_snapshots.push(black_circle_custom_view_id, time, SphereSnapshot{
             //    position : position_v3 + FixedPointV3::from_num(0.0,0.0,-1.0),
             //    radius : health_radius,

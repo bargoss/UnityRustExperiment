@@ -18,12 +18,12 @@ impl UserBehaviour for ArenaDemo {
     fn start(&mut self) {}
 
     fn update(&mut self, time: f32, delta_time: f32, drawer: &mut dyn DrawHandlers, pressed_keys: &HashSet<KeyCode>) {
-        let mut my_input_movement_direction = FixedPointV2::from_num(0.0, 0.0);
+        let mut my_input_movement_direction = FP2::from_num(0.0, 0.0);
 
-        if pressed_keys.contains(&VirtualKeyCode::W) { my_input_movement_direction.set_y(FixedPoint::one()) }
-        if pressed_keys.contains(&VirtualKeyCode::S) { my_input_movement_direction.set_y(-FixedPoint::one()) }
-        if pressed_keys.contains(&VirtualKeyCode::A) { my_input_movement_direction.set_x(-FixedPoint::one()) }
-        if pressed_keys.contains(&VirtualKeyCode::D) { my_input_movement_direction.set_x(FixedPoint::one()) }
+        if pressed_keys.contains(&VirtualKeyCode::W) { my_input_movement_direction.set_y(FP::one()) }
+        if pressed_keys.contains(&VirtualKeyCode::S) { my_input_movement_direction.set_y(-FP::one()) }
+        if pressed_keys.contains(&VirtualKeyCode::A) { my_input_movement_direction.set_x(-FP::one()) }
+        if pressed_keys.contains(&VirtualKeyCode::D) { my_input_movement_direction.set_x(FP::one()) }
 
         let mut input_map = HashMap::new();
         //let my_input = ArenaInput {
@@ -33,15 +33,15 @@ impl UserBehaviour for ArenaDemo {
 
         input_map.insert(Id::new(0), ArenaInput{
             select_and_set_destination: Some(SelectAndSetDestinationInput {
-                position: FixedPointV2::from_num(0.0, 6.0),
-                radius: FixedPoint::new(10.0),
+                position: FP2::from_num(0.0, 6.0),
+                radius: FP::new(10.0),
                 target_node_net_id: NetId { value: Id::new(0) },
         })});
 
         self.game.advance_tick(input_map);
         self.game.register_keyframes();
 
-        let game_time = FixedPoint::new(self.game.get_tick() as f64) * self.game.get_fixed_delta_time();
+        let game_time = FP::new(self.game.get_tick() as f64) * self.game.get_fixed_delta_time();
 
         //let mut buffer = vec![];
         // define the vec with SphereSnapshot
@@ -60,6 +60,6 @@ impl UserBehaviour for ArenaDemo {
 
 pub fn create_arena_demo() -> Box<dyn UserBehaviour>{
     let mut game = ArenaFightGame::default();
-    //game.add_player_character(Id::new(0), FixedPointV2::from_num(1.5, 1.6));
+    //game.add_player_character(Id::new(0), FP2::from_num(1.5, 1.6));
     Box::new(ArenaDemo{game})
 }

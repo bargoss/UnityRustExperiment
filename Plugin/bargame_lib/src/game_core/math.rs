@@ -444,10 +444,10 @@ impl Default for FP3 {
 }
 
 // make that an extension trait
-pub trait FixedPointExt {
+pub trait FPExt {
     fn floor_to_i32(&self) -> i32;
 }
-impl FixedPointExt for BaseType {
+impl FPExt for BaseType {
     fn floor_to_i32(&self) -> i32 {
         let integer_bits = self.to_bits() >> 24;
         let integer_bits = integer_bits as i32;
@@ -455,7 +455,7 @@ impl FixedPointExt for BaseType {
     }
 }
 
-impl FixedPointExt for FP {
+impl FPExt for FP {
     fn floor_to_i32(&self) -> i32 {
         self.0.floor_to_i32()
     }

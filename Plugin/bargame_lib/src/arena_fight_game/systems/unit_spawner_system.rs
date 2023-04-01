@@ -31,7 +31,7 @@ pub fn unit_spawner_system(
     // sort by creator net_id and execute
     new_units.sort_by(|a, b| a.creators_net_id.value.cmp(&b.creators_net_id.value));
     for unit_creation_command in new_units {
-        let net_id = NetId::from_id(IdGeneratorBuilder::start().hash_u32(562313).hash_net_id(unit_creation_command.creators_net_id).finish());
+        let net_id = NetId::from_id(IdGeneratorBuilder::start().hash_u32(time.tick).hash_u32(562313).hash_net_id(unit_creation_command.creators_net_id).finish());
         execute_unit_creation_command(
             unit_creation_command,
             net_id,

@@ -1,6 +1,6 @@
 use bargame_lib::{
     game_core::verlet_physics::verlet_object::VerletObject,
-    game_core::math::{FixedPoint, FixedPointV2},
+    game_core::math::{FP, FP2},
     game_core::verlet_physics::verlet_beam::VerletBeam,
     game_core::verlet_physics::verlet_physics_world,
     game_core::verlet_physics::verlet_physics_world::VerletPhysicsWorld,
@@ -41,7 +41,7 @@ impl UserBehaviour for BubbleTests {
         let mut buffer_b = vec![];
 
         if (time > self.last_shoot + 1.0) {
-            shoot_new_object(&mut self.physics_world, self.next_id, FixedPointV2::from_num(1.0, self.shoot_dir_y));
+            shoot_new_object(&mut self.physics_world, self.next_id, FP2::from_num(1.0, self.shoot_dir_y));
             self.next_id += Id::new(1);
             if self.next_id.0 > 500 {
                 self.next_id = Id::new(250);
@@ -51,10 +51,10 @@ impl UserBehaviour for BubbleTests {
 
 
 
-        central_gravity(&mut self.physics_world, FixedPoint::new(0.5));
+        central_gravity(&mut self.physics_world, FP::new(0.5));
 
 
-        self.physics_world.update(FixedPoint::new(0.02), &mut buffer_a, &mut buffer_b);
+        self.physics_world.update(FP::new(0.02), &mut buffer_a, &mut buffer_b);
 
         let count = self.physics_world.get_obj_iter().count();
         //println!("count: {}", count);
@@ -76,10 +76,10 @@ impl UserBehaviour for BubbleTests {
     }
 }
 
-//fn central_gravity(physics_world : verlet_physics_world::VerletPhysicsWorld, gravity : FixedPoint){
+//fn central_gravity(physics_world : verlet_physics_world::VerletPhysicsWorld, gravity : FP){
 // physics world is mut
-fn central_gravity(physics_world: &mut verlet_physics_world::VerletPhysicsWorld, gravity: FixedPoint) {
-    let gravity_center = FixedPointV2::from_num(0.0, 0.0);
+fn central_gravity(physics_world: &mut verlet_physics_world::VerletPhysicsWorld, gravity: FP) {
+    let gravity_center = FP2::from_num(0.0, 0.0);
     for obj in physics_world.get_obj_iter_mut() {
         let gravity_direction = (gravity_center - obj.position).safe_normalize();
         let acceleration = gravity_direction * gravity;
@@ -99,18 +99,18 @@ fn create_beam(physics_world: &mut verlet_physics_world::VerletPhysicsWorld, id_
     physics_world.add_or_set_beam(beam, id_beam);
 }
 
-fn shoot_new_object(physics_world: &mut verlet_physics_world::VerletPhysicsWorld, id: Id, shoot_direction: FixedPointV2) {
+fn shoot_new_object(physics_world: &mut verlet_physics_world::VerletPhysicsWorld, id: Id, shoot_direction: FP2) {
     //physics_world.remove_object(id);
 
     let id_as_f64 = id.0 as f64;
     let id_mapped = (id_as_f64 % 5.0 - 2.0);
-    let radius = FixedPoint::new(0.1 + 0.25 * ((id_as_f64 % 10.0) / 10.0));
+    let radius = FP::new(0.1 + 0.25 * ((id_as_f64 % 10.0) / 10.0));
 
     let obj = VerletObject {
-        position: FixedPointV2::from_num(-20.0, 0.01 * id_as_f64),
-        position_last: FixedPointV2::from_num(-20.0, 0.01 * id_as_f64),
-        //acceleration: FixedPointV2::from_num(700.0, id_mapped * 15.0),
-        acceleration: shoot_direction * FixedPoint::new(700.0),
+        position: FP2::from_num(-20.0, 0.01 * id_as_f64),
+        position_last: FP2::from_num(-20.0, 0.01 * id_as_f64),
+        //acceleration: FP2::from_num(700.0, id_mapped * 15.0),
+        acceleration: shoot_direction * FP::new(700.0),
         radius: radius,
         mass: radius * radius,
         is_static: false,
@@ -124,11 +124,11 @@ pub fn create_bubble_tests_demo() -> Box<dyn UserBehaviour> {
     let mut physics_world = verlet_physics_world::VerletPhysicsWorld::new();
 
     let obj0 = VerletObject {
-        position: FixedPointV2::from_num(-10.0, 0.5),
-        position_last: FixedPointV2::from_num(-10.0, 0.5),
-        acceleration: FixedPointV2::from_num(775.1, 0.1),
-        radius: FixedPoint::new(0.5),
-        mass: FixedPoint::new(1.0),
+        position: FP2::from_num(-10.0, 0.5),
+        position_last: FP2::from_num(-10.0, 0.5),
+        acceleration: FP2::from_num(775.1, 0.1),
+        radius: FP::new(0.5),
+        mass: FP::new(1.0),
         is_static: false,
     };
     physics_world.add_or_set_object(obj0, Id::new(0));
@@ -139,11 +139,11 @@ pub fn create_bubble_tests_demo() -> Box<dyn UserBehaviour> {
     for x in -2..3 {
         for y in -2..3 {
             let obj = VerletObject {
-                position: FixedPointV2::from_num(x as f64 * seperation, y as f64 * seperation),
-                position_last: FixedPointV2::from_num(x as f64 * seperation, y as f64 * seperation),
-                acceleration: FixedPointV2::from_num(0.0, 0.0),
-                radius: FixedPoint::new(0.599),
-                mass: FixedPoint::new(1.5),
+                position: FP2::from_num(x as f64 * seperation, y as f64 * seperation),
+                position_last: FP2::from_num(x as f64 * seperation, y as f64 * seperation),
+                acceleration: FP2::from_num(0.0, 0.0),
+                radius: FP::new(0.599),
+                mass: FP::new(1.5),
                 is_static: false,
             };
             physics_world.add_or_set_object(obj, Id::new(last_id));
