@@ -102,10 +102,13 @@ impl ArenaFightGame {
         self.game_world.world.spawn(UnitSpawnerNodeBundle{
             node: Default::default(),
             position: Position{ value: position, },
-            unit_spawner: Default::default(),
+            unit_spawner: UnitSpawner{
+                spawn_interval: FixedPoint::new(5.0),
+                last_spawn_time: FixedPoint::new(0.0),
+            },
             net_id : NetId{value:next_id},
             collider: CircleCollider { radius: FixedPoint::new(1.5), },
-            rigidbody: Rigidbody::default(),
+            rigidbody: Rigidbody{velocity: FixedPointV2::zero(),mass: FixedPoint::new(1000.0),},
             sphere_view: SphereView{view_custom_id: next_id, radius: FixedPoint::new(1.5),},
             belongs_to_faction: BelongsToFaction{faction: faction},
         });

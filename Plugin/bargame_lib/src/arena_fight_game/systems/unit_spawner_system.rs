@@ -2,19 +2,19 @@ use bevy_ecs::prelude::*;
 use crate::arena_fight_game::bundles::*;
 use crate::game_core::components::*;
 use crate::arena_fight_game::components::*;
-use crate::game_core::common::Id;
+use crate::game_core::common::{Id, Random};
 use crate::game_core::math::*;
 use crate::game_core::resources::*;
 use crate::game_core::view_components::SphereView;
 pub fn unit_spawner_system(
     mut commands: Commands,
     time: Res<Time>,
-    mut query: Query<(&mut UnitSpawner, &Position, &BelongsToFaction, &NetId)>,
+    mut query: Query<(&mut UnitSpawner, &Position, &BelongsToFaction, &NetId, &CircleCollider)>,
     mut net_id_counter: ResMut<NetIdCounter>,
 ) {
     let mut new_units = Vec::new();
 
-    for (mut unit_spawner, position, belongs_to_faction, net_id) in query.iter_mut() {
+    for (mut unit_spawner, position, belongs_to_faction, net_id, circle_collider) in query.iter_mut() {
         let time_fixed_point = time.fixed_delta_time * time.tick;
         let time_since_last_spawn = time_fixed_point - unit_spawner.last_spawn_time;
 
@@ -22,7 +22,10 @@ pub fn unit_spawner_system(
             // Update last_spawn_time to the current time
             unit_spawner.last_spawn_time = time_fixed_point;
 
-            let unit_spawn_position = position.value + FixedPointV2::new(FixedPoint::new(0.1), FixedPoint::new(0.0));
+            let spawn_offset = Random::seed_fixed_point(time.fixed_delta_time +  position.value.y() + position.value.x())
+                .next_fixed_point_on_unit_circle() * circle_collider.radius;
+
+            let unit_spawn_position = position.value + spawn_offset;
             new_units.push(create_unit_creation_command(*net_id, unit_spawn_position, belongs_to_faction.faction));
         }
     }

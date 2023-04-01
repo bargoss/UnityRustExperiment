@@ -11,6 +11,15 @@ type BaseType = simba::scalar::FixedI40F24;
 #[derive(Debug, Clone, Copy, Add, Sub, Div, AddAssign, SubAssign, MulAssign, DivAssign, Neg)]
 pub struct FixedPoint(BaseType);
 
+// implement Rem between FixedPoint and FixedPoint
+impl std::ops::Rem for FixedPoint {
+    type Output = FixedPoint;
+    fn rem(self, rhs: FixedPoint) -> Self::Output {
+        FixedPoint(self.0 % rhs.0)
+    }
+}
+
+
 // impl Multiplication with u32
 impl Mul<u32> for FixedPoint {
     type Output = FixedPoint;
@@ -86,11 +95,7 @@ impl Mul<FixedPoint> for FixedPoint {
 }
 
 
-impl FixedPoint {
-    fn floor_to_i32(&self) -> i32 {
-        self.0.floor().0.to_num() // sus
-    }
-}
+
 
 impl FixedPoint {
     pub fn new(p0: f64) -> Self {
@@ -100,6 +105,33 @@ impl FixedPoint {
     // one
     pub fn one() -> Self {
         FixedPoint(BaseType::from_num(1.0))
+    }
+
+    // to bits
+    pub fn to_bits(&self) -> i64 {
+        self.0.to_bits()
+    }
+
+    //impl .cos(), .sin()
+    pub fn cos(&self) -> Self {
+        FixedPoint(self.0.cos())
+    }
+    pub fn sin(&self) -> Self {
+        FixedPoint(self.0.sin())
+    }
+
+    // impl PI
+    pub fn PI() -> Self {
+        FixedPoint(BaseType::from_num(std::f64::consts::PI))
+    }
+
+    // from bits
+    pub fn from_bits(bits: i64) -> Self {
+        FixedPoint(BaseType::from_bits(bits))
+    }
+
+    pub fn floor_to_i32(&self) -> i32 {
+        self.0.floor().0.to_num() // sus
     }
 
     // to_f32

@@ -12,7 +12,7 @@ use crate::game_core::math::FixedPoint;
 pub fn character_movement_system(
     mut character_query: Query<(&CharacterMovement, &Rigidbody, &mut Impulse)>,
 ) {
-    let damping: FixedPoint = FixedPoint::new(0.05);
+    let damping: FixedPoint = FixedPoint::new(0.95);
     for (character, rigidbody, mut impulse) in character_query.iter_mut() {
         let movement_dir = character.movement_direction;
         let movement_impulse = movement_dir * rigidbody.mass;

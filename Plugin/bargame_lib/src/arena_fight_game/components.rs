@@ -53,7 +53,7 @@ pub struct Node {
     pub capture_progress: FixedPoint,
     pub capture_progress_faction: Faction,
 }
-#[derive(Component, Clone, Copy, Serialize, Deserialize, Default)]
+#[derive(Component, Clone, Copy, Serialize, Deserialize)]
 pub struct UnitSpawner {
     pub last_spawn_time: FixedPoint,
     pub spawn_interval: FixedPoint,

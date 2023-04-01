@@ -50,7 +50,7 @@ impl UserBehaviour for ArenaDemo {
 
 
 pub fn create_arena_demo() -> Box<dyn UserBehaviour>{
-    let mut game = ArenaFightGame::new();
-    game.add_player_character(Id::new(0), FixedPointV2::from_num(1.5, 1.6));
+    let mut game = ArenaFightGame::default();
+    //game.add_player_character(Id::new(0), FixedPointV2::from_num(1.5, 1.6));
     Box::new(ArenaDemo{game})
 }
