@@ -32,9 +32,10 @@ impl UserBehaviour for ArenaDemo {
         //input_map.insert(Id::new(0), my_input);
 
         input_map.insert(Id::new(0), ArenaInput{
-            node_drag_drop: Some(NodeDragDropInput {
-                source_node_net_id: NetId { value: Id::new(0) },
-                target_node_net_id: NetId { value: Id::new(1) },
+            select_and_set_destination: Some(SelectAndSetDestinationInput {
+                position: FixedPointV2::from_num(0.0, 6.0),
+                radius: FixedPoint::new(10.0),
+                target_node_net_id: NetId { value: Id::new(0) },
         })});
 
         self.game.advance_tick(input_map);

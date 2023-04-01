@@ -30,25 +30,16 @@ pub fn player_control_system(
     let mut nearby_bodies_query_buffer = Vec::new();
 
     for (player_id, input) in player_input_map.iter() {
-        if let Some(node_drag_drop_input) = input.node_drag_drop {
+        if let Some(node_drag_drop_input) = input.select_and_set_destination {
             let faction = player_to_faction(*player_id);
-
-            let (source_node_position, source_node_radius) = match id_entity_map.get_from_query(&node_query, node_drag_drop_input.source_node_net_id.value) {
-                Some((_, position, collider)) => (position.value, collider.radius),
-                None => return,
-            };
 
             if id_entity_map.get_from_query(&node_query, node_drag_drop_input.target_node_net_id.value).is_none() {
                 return;
             }
 
-            physics_world.overlap_circle(source_node_position, source_node_radius + extra_control_radius, &mut nearby_bodies_query_buffer);
+            physics_world.overlap_circle(node_drag_drop_input.position, node_drag_drop_input.radius, &mut nearby_bodies_query_buffer);
 
             for body_id in nearby_bodies_query_buffer.iter() {
-                if *body_id == node_drag_drop_input.source_node_net_id.value.0 {
-                    continue;
-                }
-
                 let (mut unit, unit_faction) = match id_entity_map.get_mut_from_query(&mut unit_query, Id::new(*body_id)) {
                     Some((unit, faction)) => (unit, faction.faction),
                     None => continue,

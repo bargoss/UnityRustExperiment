@@ -18,14 +18,15 @@ use crate::game_core::math::*;
 use crate::game_core::resources::NetIdCounter;
 
 #[derive(Copy, Clone, Debug, Default)]
-pub struct NodeDragDropInput {
-    pub source_node_net_id: NetId,
+pub struct SelectAndSetDestinationInput {
+    pub position: FixedPointV2,
+    pub radius: FixedPoint,
     pub target_node_net_id: NetId,
 }
 
 #[derive(Copy, Clone, Debug, Default)]
 pub struct ArenaInput {
-    pub node_drag_drop: Option<NodeDragDropInput>,
+    pub select_and_set_destination: Option<SelectAndSetDestinationInput>,
 }
 unsafe impl Sync for ArenaInput {}
 unsafe impl Send for ArenaInput {}
