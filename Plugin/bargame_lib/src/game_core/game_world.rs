@@ -47,7 +47,7 @@ pub struct GameWorld<TInput> where TInput: Input
 
 impl<TInput> GameWorld<TInput> where TInput: Input + 'static
 {
-    pub fn new<M>(fixed_delta_time: FixedPoint, systems: impl IntoSystemConfigs<M>) -> GameWorld<TInput>{
+    pub fn new<M>(fixed_delta_time: FixedPoint, systems: impl IntoSystemConfigs<M>, register_keyframe_systems: impl IntoSystemConfigs<M>) -> GameWorld<TInput>{
         let mut world = World::new();
         let mut advance_tick_schedule = Schedule::default();
         let mut register_keyframes_schedule = Schedule::default();
@@ -77,6 +77,7 @@ impl<TInput> GameWorld<TInput> where TInput: Input + 'static
         );
 
         register_keyframes_schedule.add_systems(register_keyframes_systems_internal);
+        register_keyframes_schedule.add_systems(register_keyframe_systems.chain());
 
 
         let game_world = GameWorld{

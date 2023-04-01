@@ -65,3 +65,13 @@ pub struct Shield {
     pub shield_capacity: FixedPoint,
     pub shield_radius: FixedPoint,
 }
+
+#[derive(Component, Clone, Copy)]
+pub struct UnitView{
+    pub view_custom_id: Id,
+}
+
+#[derive(Component, Clone, Copy)]
+pub struct NodeView{
+    pub view_custom_id: Id,
+}

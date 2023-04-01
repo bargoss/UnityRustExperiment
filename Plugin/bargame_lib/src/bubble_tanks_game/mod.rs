@@ -34,7 +34,7 @@ pub fn dummy_system() {
 
 impl BubbleTanksGame {
     pub fn new(fixed_delta_time: FixedPoint) -> Self {
-        let game_core = GameWorld::new(fixed_delta_time, (dummy_system,).chain());
+        let game_core = GameWorld::new(fixed_delta_time, (dummy_system,).chain(), (dummy_system,).chain());
 
         //game_core.add_stage_to_advance_tick_schedule("update", SystemStage::single_threaded()
             //.with_system(systems::bubble_tank_system::bubble_tank_system));

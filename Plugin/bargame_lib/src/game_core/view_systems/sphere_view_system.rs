@@ -21,7 +21,8 @@ pub fn sphere_view_system(
 
         sphere_snapshots.push(sphere_view.view_custom_id, time, SphereSnapshot{
             position : position.into(),
-            radius : sphere_view.radius.into()
+            radius : sphere_view.radius.into(),
+            color: [1.0, 1.0, 1.0, 1.0]
         });
     }
 }

@@ -51,7 +51,8 @@ impl UserBehaviour for ArenaDemo {
         for snapshot in buffer {
             let position = Vec2::new(snapshot.position.x().to_f32(), snapshot.position.y().to_f32());
             let radius = snapshot.radius.to_f32();
-            drawer.draw_circle(position, radius, Color::RED);
+            let color = Color::new(snapshot.color[0], snapshot.color[1], snapshot.color[2], snapshot.color[3]);
+            drawer.draw_circle(position, radius, color);
         }
     }
 }

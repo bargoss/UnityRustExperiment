@@ -10,6 +10,7 @@ use crate::arena_fight_game::systems::health_system::health_system;
 
 use crate::arena_fight_game::systems::unit_attack_system::unit_attack_system;
 use crate::arena_fight_game::systems::*;
+use crate::arena_fight_game::view_systems::unit_view_system;
 use crate::game_core::math::FixedPointV2;
 use crate::game_core::view_components::sphere_view::SphereView;
 use crate::game_core::common::*;
@@ -61,7 +62,8 @@ impl Default for ArenaFightGame {
                     unit_spawner_system,
                     unit_attack_system,
                     health_system,
-                ).chain()
+                ).chain(),
+                (unit_view_system,).chain(),
             ),
         };
 

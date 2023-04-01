@@ -6,6 +6,7 @@ use crate::game_core::view_resources::view_snapshot::ViewSnapshot;
 pub struct SphereSnapshot {
     pub position: FixedPointV3,
     pub radius: FixedPoint,
+    pub color: [f32; 4],
 }
 impl Add for SphereSnapshot{
     type Output = SphereSnapshot;
@@ -14,6 +15,12 @@ impl Add for SphereSnapshot{
         SphereSnapshot{
             position: self.position + other.position,
             radius: self.radius + other.radius,
+            color: [
+                self.color[0] + other.color[0],
+                self.color[1] + other.color[1],
+                self.color[2] + other.color[2],
+                self.color[3] + other.color[3],
+            ]
         }
     }
 }
@@ -24,6 +31,12 @@ impl Mul<FixedPoint> for SphereSnapshot{
         SphereSnapshot{
             position: self.position * other,
             radius: self.radius * other,
+            color: [
+                self.color[0] * other.to_f32(),
+                self.color[1] * other.to_f32(),
+                self.color[2] * other.to_f32(),
+                self.color[3] * other.to_f32(),
+            ]
         }
     }
 }
