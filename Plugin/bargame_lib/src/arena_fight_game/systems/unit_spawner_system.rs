@@ -85,10 +85,6 @@ fn create_unit_creation_command(
             max_health: FixedPoint::new(1.0),
             health_regen_per_second: FixedPoint::new(-0.05),
         },
-        //sphere_view: SphereView {
-        //    radius: FixedPoint::new(0.25),
-        //    view_custom_id: Id::new(0),
-        //},
         unit_view: UnitView {
             view_custom_id: Id::new(0),
         },

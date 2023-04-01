@@ -127,7 +127,7 @@ impl ArenaFightGame {
             rigidbody: Rigidbody::default(),
             impulse: Impulse::default(),
             collider: CircleCollider { radius: FixedPoint::new(0.5), },
-            health: Health{health: FixedPoint::new(100.0), max_health: FixedPoint::new(100.0), health_regen_per_second: FixedPoint::new(10.0),},
+            health: Health{health: FixedPoint::new(5.0), max_health: FixedPoint::new(5.0), health_regen_per_second: FixedPoint::new(0.0),},
             character_movement: CharacterMovement::default(),
             unit: Unit::default(),
             belongs_to_faction: BelongsToFaction{faction: faction},

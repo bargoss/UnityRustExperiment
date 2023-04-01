@@ -13,7 +13,7 @@ pub fn unit_attack_system(
     id_entity_map: Res<IdEntityMap>,
     time: Res<Time>,
 ) {
-    let unit_attack_dps = 5;
+    let unit_attack_dps = FixedPoint::new(0.1); // 5
     let unit_damage = time.fixed_delta_time * unit_attack_dps;
     let unit_attack_range = FixedPoint::new(0.5);
     let mut nearby_bodies_query_buffer = Vec::new();
