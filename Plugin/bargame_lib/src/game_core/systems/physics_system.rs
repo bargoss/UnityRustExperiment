@@ -20,7 +20,7 @@ pub fn process_impulses(
     for (mut rigidbody, mut impulse) in body_query.iter_mut() {
         let mass = rigidbody.mass;
         rigidbody.velocity += impulse.value / mass;
-        println!("velocity: {:?}", rigidbody.velocity);
+        //println!("velocity: {:?}", rigidbody.velocity);
         impulse.value = FixedPointV2::zero();
     }
 }

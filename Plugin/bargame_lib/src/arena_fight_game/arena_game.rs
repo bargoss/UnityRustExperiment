@@ -54,13 +54,12 @@ impl Default for ArenaFightGame {
                 FixedPoint::new(0.02) ,
                 (
                     player_input_system,
-                    character_movement_system,
                     unit_movement_system,
+                    character_movement_system,
                     unit_capture_node_system,
                     unit_spawner_system,
                     unit_attack_system,
                     health_system,
-                    dummy_system,
                 ).chain()
             ),
         };
