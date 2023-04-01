@@ -142,9 +142,11 @@ impl ArenaFightGame {
     pub fn register_keyframes(&mut self){ self.game_world.register_keyframes(); }
     pub fn sample_view_snapshots<T>(&mut self, viewing_time: FixedPoint, buffer: &mut Vec<T>) where T: ViewSnapshot + 'static { self.game_world.sample_view_snapshots(viewing_time, buffer); }
 
+    /*
     // returns byte vec
     pub fn serialize_state (&self) -> Vec<u8> {
-        let mut buffer = Vec::new();
+        //let mut buffer = Vec::new();
+        todo!();
 
         self.game_world.world.query::<(&NetId, &Position, &Health, &Unit, &UnitView, &BelongsToFaction)>()
             .iter()
@@ -160,10 +162,10 @@ impl ArenaFightGame {
                 unit_state.unit_type = unit.unit_type;
                 unit_state.view_custom_id = unit_view.view_custom_id;
                 unit_state.faction = belongs_to_faction.faction;
-
                 buffer.extend_from_slice(&unit_state.to_bytes());
             });
     }
+    */
 }
 
 #[cfg(test)]
