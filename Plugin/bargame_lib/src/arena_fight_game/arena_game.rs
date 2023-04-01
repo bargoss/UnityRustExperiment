@@ -115,7 +115,7 @@ impl ArenaFightGame {
             net_id : NetId{value:next_id},
             collider: CircleCollider { radius: FixedPoint::new(1.5), },
             rigidbody: Rigidbody{velocity: FixedPointV2::zero(),mass: FixedPoint::new(1000.0),},
-            sphere_view: SphereView{view_custom_id: next_id, radius: FixedPoint::new(1.5),},
+            unit_view: UnitView{view_custom_id: next_id},
             belongs_to_faction: BelongsToFaction{faction: faction},
         });
     }
@@ -131,8 +131,7 @@ impl ArenaFightGame {
             character_movement: CharacterMovement::default(),
             unit: Unit::default(),
             belongs_to_faction: BelongsToFaction{faction: faction},
-
-            sphere_view: SphereView{view_custom_id: next_id, radius: FixedPoint::new(0.5),},
+            unit_view: UnitView{view_custom_id: next_id},
         });
     }
 

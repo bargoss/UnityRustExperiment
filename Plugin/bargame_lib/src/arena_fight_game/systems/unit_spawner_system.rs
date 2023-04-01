@@ -53,7 +53,7 @@ fn execute_unit_creation_command(
     let mut bundle = unit_creation_command.unit_bundle;
 
     bundle.net_id = net_id;
-    bundle.sphere_view.view_custom_id = net_id.value;
+    bundle.unit_view.view_custom_id = net_id.value;
     bundle.unit.following_entity = Some(unit_creation_command.creators_net_id);
 
     commands.spawn(bundle);
@@ -85,8 +85,11 @@ fn create_unit_creation_command(
             max_health: FixedPoint::new(1.0),
             health_regen_per_second: FixedPoint::new(-0.05),
         },
-        sphere_view: SphereView {
-            radius: FixedPoint::new(0.25),
+        //sphere_view: SphereView {
+        //    radius: FixedPoint::new(0.25),
+        //    view_custom_id: Id::new(0),
+        //},
+        unit_view: UnitView {
             view_custom_id: Id::new(0),
         },
         belongs_to_faction: BelongsToFaction{faction},

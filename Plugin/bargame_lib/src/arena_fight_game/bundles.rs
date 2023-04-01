@@ -13,7 +13,7 @@ pub struct UnitBundle{
     pub impulse: Impulse,
     pub collider: CircleCollider,
     pub health: Health,
-    pub sphere_view: SphereView,
+    pub unit_view: UnitView,
 
     pub belongs_to_faction: BelongsToFaction,
 }
@@ -24,7 +24,7 @@ pub struct UnitSpawnerNodeBundle{
     pub position: Position,
     pub rigidbody: Rigidbody,
     pub collider: CircleCollider,
-    pub sphere_view: SphereView,
+    pub unit_view: UnitView,
 
     pub belongs_to_faction: BelongsToFaction,
     pub node: Node,
@@ -38,7 +38,7 @@ pub struct ShieldNodeBundle{
     pub rigidbody: Rigidbody,
     pub collider: CircleCollider,
     pub health: Health,
-    pub sphere_view: SphereView,
+    pub unit_view: UnitView,
 
     pub belongs_to_faction: BelongsToFaction,
     pub node: Node,
