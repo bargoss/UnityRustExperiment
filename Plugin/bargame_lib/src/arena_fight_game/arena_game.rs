@@ -9,7 +9,7 @@ use bevy_ecs::prelude::*;
 use crate::arena_fight_game::bundles::{UnitBundle, UnitSpawnerNodeBundle};
 use crate::arena_fight_game::systems::character_movement_system::character_movement_system;
 use crate::arena_fight_game::systems::health_system::health_system;
-use crate::arena_fight_game::systems::player_input_system::player_input_system;
+use crate::arena_fight_game::systems::player_character_input_system::player_character_input_system;
 use crate::arena_fight_game::systems::unit_attack_system::unit_attack_system;
 use crate::arena_fight_game::systems::unit_capture_node_system::unit_capture_node_system;
 use crate::arena_fight_game::systems::unit_movement_system::unit_movement_system;
@@ -53,7 +53,6 @@ impl Default for ArenaFightGame {
             game_world: GameWorld::new(
                 FixedPoint::new(0.02) ,
                 (
-                    player_input_system,
                     unit_movement_system,
                     character_movement_system,
                     unit_capture_node_system,
