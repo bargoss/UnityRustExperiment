@@ -2,6 +2,7 @@ use std::collections::{HashMap, HashSet};
 use bargame_lib::arena_fight_game::arena_game::*;
 use bargame_lib::game_core::math::*;
 use bargame_lib::game_core::common::*;
+use bargame_lib::game_core::components::NetId;
 use bargame_lib::game_core::view_resources::view_snapshots::*;
 use ggez::glam::Vec3;
 use ggez::graphics::Color;
@@ -25,10 +26,26 @@ impl UserBehaviour for ArenaDemo {
         if pressed_keys.contains(&VirtualKeyCode::D) { my_input_movement_direction.set_x(FixedPoint::one()) }
 
         let mut input_map = HashMap::new();
-        let my_input = ArenaInput {
-            movement_direction: my_input_movement_direction,
-        };
-        input_map.insert(Id::new(0), my_input);
+        //let my_input = ArenaInput {
+        //    movement_direction: my_input_movement_direction,
+        //};
+        //input_map.insert(Id::new(0), my_input);
+
+        input_map.insert(Id::new(0), ArenaInput{
+            node_drag_drop: Some(NodeDragDropInput {
+                source_node_net_id: NetId { value: Id::new(0) },
+                target_node_net_id: NetId { value: Id::new(1) },
+        })});
+        input_map.insert(Id::new(1), ArenaInput{
+            node_drag_drop: Some(NodeDragDropInput {
+                source_node_net_id: NetId { value: Id::new(0) },
+                target_node_net_id: NetId { value: Id::new(1) },
+            })});
+        input_map.insert(Id::new(0), ArenaInput{
+            node_drag_drop: Some(NodeDragDropInput {
+                source_node_net_id: NetId { value: Id::new(1) },
+                target_node_net_id: NetId { value: Id::new(2) },
+            })});
 
         self.game.advance_tick(input_map);
         self.game.register_keyframes();

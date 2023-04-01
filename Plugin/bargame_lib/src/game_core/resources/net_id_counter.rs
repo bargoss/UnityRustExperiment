@@ -10,8 +10,8 @@ impl NetIdCounter {
     }
 
     pub fn next(&mut self) -> Id {
-        let id = self.0;
-        self.0 = self.0.wrapping_add(1);
-        Id(id)
+        let id = Id::new(self.0);
+        self.0 += 1;
+        id
     }
 }

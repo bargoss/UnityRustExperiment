@@ -17,7 +17,7 @@ pub fn sphere_view_system(
         let radius = sphere_view.radius;
 
         // put them in one line
-        println!("view_time: {}, view_position: {}, radius: {}", time, position, radius);
+        //println!("view_time: {}, view_position: {}, radius: {}", time, position, radius);
 
         sphere_snapshots.push(sphere_view.view_custom_id, time, SphereSnapshot{
             position : position.into(),

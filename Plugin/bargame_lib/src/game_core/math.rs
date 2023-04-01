@@ -112,6 +112,30 @@ impl FixedPoint {
         self.0.to_bits()
     }
 
+    // lerp
+    pub fn lerp(a: FixedPoint, b: FixedPoint, t: FixedPoint) -> FixedPoint {
+        // dont use BaseType::lerp
+        FixedPoint(a.0 + (b.0 - a.0) * t.0)
+    }
+
+    // inverse lerp
+    pub fn inverse_lerp(a: FixedPoint, b: FixedPoint, t: FixedPoint) -> FixedPoint {
+        // dont use BaseType::inverse_lerp
+        FixedPoint((t.0 - a.0) / (b.0 - a.0))
+    }
+
+    // remap from0, from1, to0, to1
+    pub fn remap(from0: FixedPoint, from1: FixedPoint, to0: FixedPoint, to1: FixedPoint, value: FixedPoint) -> FixedPoint {
+        let t = FixedPoint::inverse_lerp(from0, from1, value);
+        FixedPoint::lerp(to0, to1, t)
+    }
+
+    // clamp01
+    pub fn clamp01(&self) -> FixedPoint {
+        FixedPoint::clamp(*self, FixedPoint::zero(), FixedPoint::one())
+    }
+
+
     //impl .cos(), .sin()
     pub fn cos(&self) -> Self {
         FixedPoint(self.0.cos())
@@ -283,6 +307,11 @@ impl FixedPointV2 {
         } else {
             FixedPointV2::zero()
         }
+    }
+
+    // perpendicular
+    pub fn perp(&self) -> FixedPointV2 {
+        FixedPointV2(Vector2::new(-self.0.y, self.0.x))
     }
 }
 

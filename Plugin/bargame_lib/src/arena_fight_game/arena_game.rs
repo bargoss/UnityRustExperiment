@@ -12,9 +12,6 @@ use crate::arena_fight_game::systems::unit_attack_system::unit_attack_system;
 use crate::arena_fight_game::systems::unit_capture_node_system::unit_capture_node_system;
 use crate::arena_fight_game::systems::unit_movement_system::unit_movement_system;
 use crate::arena_fight_game::systems::unit_spawner_system::{unit_spawner_system};
-
-//use crate::game_core::common::Id;
-
 use crate::game_core::math::FixedPointV2;
 use crate::game_core::view_components::sphere_view::SphereView;
 use crate::game_core::common::*;
@@ -23,8 +20,14 @@ use crate::game_core::math::*;
 use crate::game_core::resources::NetIdCounter;
 
 #[derive(Copy, Clone, Debug, Default)]
+pub struct NodeDragDropInput {
+    pub source_node_net_id: NetId,
+    pub target_node_net_id: NetId,
+}
+
+#[derive(Copy, Clone, Debug, Default)]
 pub struct ArenaInput {
-    pub movement_direction: FixedPointV2,
+    pub node_drag_drop: Option<NodeDragDropInput>,
 }
 unsafe impl Sync for ArenaInput {}
 unsafe impl Send for ArenaInput {}
@@ -62,16 +65,15 @@ impl Default for ArenaFightGame {
             ),
         };
 
+        arena.add_spawner_node(FixedPointV2::from_num(0.0, 6.0), Faction::Blue);
+        arena.add_spawner_node(FixedPointV2::from_num(0.0, -6.0), Faction::Red);
+
         arena.add_unit(FixedPointV2::from_num(0.0, 1.0), Faction::Blue);
         arena.add_unit(FixedPointV2::from_num(0.0, 2.0), Faction::Blue);
         arena.add_unit(FixedPointV2::from_num(0.0, 3.0), Faction::Blue);
         arena.add_unit(FixedPointV2::from_num(0.0, -1.0), Faction::Red);
         arena.add_unit(FixedPointV2::from_num(0.0, -2.0), Faction::Red);
         arena.add_unit(FixedPointV2::from_num(0.0, -3.0), Faction::Red);
-
-
-        arena.add_spawner_node(FixedPointV2::from_num(0.0, 6.0), Faction::Blue);
-        arena.add_spawner_node(FixedPointV2::from_num(0.0, -6.0), Faction::Red);
 
         arena
     }
@@ -97,11 +99,15 @@ impl ArenaFightGame {
 
     pub fn add_spawner_node(&mut self, position: FixedPointV2, faction: Faction){
         let next_id = self.game_world.world.get_resource_mut::<NetIdCounter>().unwrap().next();
+        println!("node net_id is: {}", next_id);
         self.game_world.world.spawn(UnitSpawnerNodeBundle{
-            node: Default::default(),
+            node: Node {
+                capture_progress_faction: faction,
+                capture_progress: FixedPoint::one(),
+            },
             position: Position{ value: position, },
             unit_spawner: UnitSpawner{
-                spawn_interval: FixedPoint::new(5.0),
+                spawn_interval: FixedPoint::new(0.5),
                 last_spawn_time: FixedPoint::new(0.0),
             },
             net_id : NetId{value:next_id},

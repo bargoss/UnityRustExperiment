@@ -29,6 +29,7 @@ impl<TInput> PlayerInputMap<TInput> where TInput: Input
     pub fn get(&self, id: &Id) -> Option<TInput> { self.map.get(id).copied() }
     pub fn insert(&mut self, id: Id, input: TInput) { self.map.insert(id, input); }
     pub fn remove(&mut self, id: &Id) { self.map.remove(id); }
+    pub fn iter(&self) -> std::collections::hash_map::Iter<Id, TInput> { self.map.iter() }
 }
 
 pub fn core_systems_executed(){

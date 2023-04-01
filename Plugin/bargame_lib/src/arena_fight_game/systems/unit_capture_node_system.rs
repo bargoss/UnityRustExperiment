@@ -39,6 +39,15 @@ pub fn unit_capture_node_system(
                         // unit is capturing node
                         let node_belongs_to_faction = belongs_to_faction_query.get(node_entity).unwrap().1;
                         let capturing_unit_belongs_to_faction = belongs_to_faction_query.get(unit_entity).unwrap().1;
+
+                        if
+                            node_belongs_to_faction.faction == capturing_unit_belongs_to_faction.faction &&
+                            node.capture_progress_faction == capturing_unit_belongs_to_faction.faction &&
+                            node.capture_progress > FixedPoint::one() - capture_per_frame * 2
+                        {
+                            continue;
+                        }
+
                         let node_clone = node.clone();
                         let (updated_node_belongs_to_faction, updated_node) = progress_node_capture_progress(capture_per_frame, capturing_unit_belongs_to_faction.faction, &node_clone, node_belongs_to_faction);
                         *node = updated_node;

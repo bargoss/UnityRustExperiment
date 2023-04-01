@@ -48,7 +48,7 @@ pub struct BelongsToFaction {
 pub struct BelongsToBuilding {
     pub building_id: NetId,
 }
-#[derive(Component, Clone, Copy, Serialize, Deserialize, Default)]
+#[derive(Component, Clone, Copy, Serialize, Deserialize)]
 pub struct Node {
     pub capture_progress: FixedPoint,
     pub capture_progress_faction: Faction,
