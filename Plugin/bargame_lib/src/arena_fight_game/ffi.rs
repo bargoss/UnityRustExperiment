@@ -33,7 +33,7 @@ pub struct NativeListFloat{
 
 #[ffi_function]
 #[no_mangle]
-pub extern "C" fn add(left: i64, right: i64) -> i64 {
+pub extern "C" fn add_extern(left: i32, right: i32) -> i32 {
     left + right
 }
 
@@ -68,17 +68,25 @@ pub struct NativeArray<T: 'static> {
 }
 
 
+use std::alloc::{alloc_zeroed, dealloc, Layout};
+use std::os::raw::c_void;
+
+#[ffi_function]
 #[no_mangle]
-pub fn allocate_native_array<T>(size: u32) -> *mut T {
-    let layout = std::alloc::Layout::array::<T>(size as usize).unwrap();
-    unsafe { std::alloc::alloc_zeroed(layout) as *mut T }
+pub unsafe extern "C" fn allocate_native_array(size: u32, elem_size: u32) -> *mut c_void {
+    let total_size = (size * elem_size) as usize;
+    let array_layout = Layout::from_size_align(total_size, std::mem::align_of::<u8>()).unwrap();
+    alloc_zeroed(array_layout) as *mut c_void
 }
 
+#[ffi_function]
 #[no_mangle]
-pub fn deallocate_native_array<T>(data: *mut T, size: u32) {
-    let layout = std::alloc::Layout::array::<T>(size as usize).unwrap();
-    unsafe { std::alloc::dealloc(data as *mut u8, layout) };
+pub unsafe extern "C" fn deallocate_native_array(data: *mut c_void, size: u32, elem_size: u32) {
+    let total_size = (size * elem_size) as usize;
+    let array_layout = Layout::from_size_align(total_size, std::mem::align_of::<u8>()).unwrap();
+    dealloc(data as *mut u8, array_layout);
 }
+
 
 
 #[cfg(test)]
@@ -97,9 +105,11 @@ mod tests {
         let dll_name = format!("game_{}", postfix);
 
         let my_inventory = InventoryBuilder::new()
-            .register(function!(add))
+            .register(function!(add_extern))
             .register(function!(get_example_array))
             .register(function!(get_example_list))
+            .register(function!(allocate_native_array))
+            .register(function!(deallocate_native_array))
             .inventory();
         let config = Config {
             // add postfix
@@ -172,4 +182,29 @@ mod tests {
 
 
     }
+}
+
+pub struct SphereSnapshot{
+    pub center: [f32; 3],
+    pub radius: f32,
+    pub color: [f32; 3],
+}
+pub struct LineSnapshot{
+    pub start: [f32; 3],
+    pub end: [f32; 3],
+    pub color: [f32; 3],
+    pub thickness: f32,
+}
+pub struct CharacterSnapshot{
+    pub position: [f32; 3],
+    pub rotation: [f32; 3],
+    pub health: f32,
+    pub velocity: [f32; 3],
+    pub is_on_ground: bool,
+    pub shooting: bool,
+}
+pub struct GameSnapshot{
+    pub spheres: Vec<SphereSnapshot>,
+    pub lines: Vec<LineSnapshot>,
+    pub characters: Vec<CharacterSnapshot>,
 }

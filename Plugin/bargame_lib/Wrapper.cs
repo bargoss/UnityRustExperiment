@@ -17,7 +17,7 @@ namespace Bubbles
     public static partial class Interop
     {
         #if UNITY_EDITOR
-public const string NativeLib = "game_1373633085";
+public const string NativeLib = "game_3802778259";
 #else
 public const string NativeLib = "game";
 #endif
@@ -27,14 +27,20 @@ public const string NativeLib = "game";
         }
 
 
-        [DllImport(NativeLib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "add")]
-        public static extern long add(long left, long right);
+        [DllImport(NativeLib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "add_extern")]
+        public static extern int add_extern(int left, int right);
 
         [DllImport(NativeLib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "get_example_array")]
         public static extern NativeArrayFloat get_example_array();
 
         [DllImport(NativeLib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "get_example_list")]
         public static extern NativeListFloat get_example_list();
+
+        [DllImport(NativeLib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "allocate_native_array")]
+        public static extern IntPtr allocate_native_array(uint size, uint elem_size);
+
+        [DllImport(NativeLib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "deallocate_native_array")]
+        public static extern void deallocate_native_array(IntPtr data, uint size, uint elem_size);
 
     }
 
