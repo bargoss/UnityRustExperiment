@@ -1,8 +1,8 @@
 pub mod id;
 pub use id::*;
 
-pub mod id_generator;
-pub use id_generator::*;
+pub mod random_gen;
+pub use random_gen::*;
 
 pub mod index;
 pub use index::*;

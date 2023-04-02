@@ -2,7 +2,7 @@ use bevy_ecs::prelude::*;
 use crate::arena_fight_game::bundles::*;
 use crate::game_core::components::*;
 use crate::arena_fight_game::components::*;
-use crate::game_core::common::{Id, IdGenerator, IdGeneratorBuilder, Random};
+use crate::game_core::common::{Id, IdGenerator, RandomGen, Random};
 use crate::game_core::math::*;
 use crate::game_core::resources::*;
 pub fn unit_spawner_system(
@@ -20,8 +20,9 @@ pub fn unit_spawner_system(
             // Update last_spawn_time to the current time
             unit_spawner.last_spawn_time = time_fixed_point;
 
-            let spawn_offset = Random::seed_fixed_point(time.fixed_delta_time +  position.value.y())
-                .next_fixed_point_on_unit_circle() * (circle_collider.radius + FP::from_num(1.5));
+            //let spawn_offset = Random::seed_fixed_point(time.fixed_delta_time +  position.value.y())
+            //    .next_fixed_point_on_unit_circle() * (circle_collider.radius + FP::from_num(1.5));
+            let spawn_offset = RandomGen::start().hash_fp2(position.value).hash_u32(time.tick).finish_get_point_on_unit_circle() * (circle_collider.radius + FP::from_num(1.5));
 
             let unit_spawn_position = position.value + spawn_offset;
             new_units.push(create_unit_creation_command(*net_id, unit_spawn_position, belongs_to_faction.faction));
@@ -31,7 +32,7 @@ pub fn unit_spawner_system(
     // sort by creator net_id and execute
     new_units.sort_by(|a, b| a.creators_net_id.value.cmp(&b.creators_net_id.value));
     for unit_creation_command in new_units {
-        let net_id = NetId::from_id(IdGeneratorBuilder::start().hash_u32(time.tick).hash_u32(562313).hash_net_id(unit_creation_command.creators_net_id).finish());
+        let net_id = NetId::from_id(RandomGen::start().hash_u32(time.tick).hash_u32(562313).hash_net_id(unit_creation_command.creators_net_id).finish_get_id());
         execute_unit_creation_command(
             unit_creation_command,
             net_id,
