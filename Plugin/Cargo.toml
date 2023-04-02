@@ -2,7 +2,6 @@
 name = "bargame"
 version = "0.1.0"
 edition = "2021"
-build = "build.rs"
 
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -19,14 +18,3 @@ rand = "0.8.5"
 fixed = "1.22.1"
 nalgebra = "0.32.2"
 simba = { version = "0.8.0", features = ["partial_fixed_point_support"] }
-
-[build-dependencies]
-#bargame_lib = { path = "bargame_lib" }
-interoptopus = "0.14.15"
-interoptopus_backend_csharp = "0.14.15"
-rand = "0.8.5"
-fs = "0.0.5"
-
-
-
-

@@ -16,8 +16,5 @@ nalgebra = "0.32.2"
 simba = { version = "0.8.0", features = ["partial_fixed_point_support"] }
 derive_more = "0.99.17"
 blake3 = "1.3.3"
-
-
-
 serde = { version = "1.0.155", features = ["derive"] }
 bincode ="1.3.3"
