@@ -1,9 +1,83 @@
 use interoptopus::*;
 
+
+#[ffi_type]
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct GameExt {
+    pub ptr: *const u8
+}
+
+//#[ffi_function]
+//#[no_mangle]
+//pub extern "C" fn create_game() -> GameExt {
+//    let game = Box::new(Game::new(WorldParams{}));
+//    let ptr = Box::into_raw(game);
+//    GameExt{ptr: ptr as *const u8}
+//}
+
+#[ffi_type]
+#[repr(C)]
+pub struct NativeArrayFloat{
+    pub size: u32,
+    //pub value: [f32; 16]
+    pub value: [f32; 16]
+}
+
+#[ffi_type]
+#[repr(C)]
+pub struct NativeListFloat{
+    pub size: u32,
+    pub data: *const f32,
+}
+
 #[ffi_function]
 #[no_mangle]
 pub extern "C" fn add(left: i64, right: i64) -> i64 {
     left + right
+}
+
+#[ffi_function]
+#[no_mangle]
+pub extern "C" fn get_example_array() -> NativeArrayFloat {
+    let mut array = NativeArrayFloat{
+        size: 1500,
+        value: [0.0; 16]
+    };
+    for i in 0..16 {
+        array.value[i] = i as f32;
+    }
+    array
+}
+
+#[ffi_function]
+#[no_mangle]
+pub extern "C" fn get_example_list() -> NativeListFloat {
+    let mut array = NativeListFloat{
+        size: 10,
+        data: std::ptr::null()
+    };
+    array
+}
+
+#[ffi_type]
+#[repr(C)]
+pub struct NativeArray<T: 'static> {
+    pub size: u32,
+    pub data: *const T,
+}
+
+
+#[no_mangle]
+pub fn allocate_native_array<T>(size: u32) -> *mut T {
+    let layout = std::alloc::Layout::array::<T>(size as usize).unwrap();
+    unsafe { std::alloc::alloc_zeroed(layout) as *mut T }
+}
+
+#[no_mangle]
+pub fn deallocate_native_array<T>(data: *mut T, size: u32) {
+    let layout = std::alloc::Layout::array::<T>(size as usize).unwrap();
+    unsafe { std::alloc::dealloc(data as *mut u8, layout) };
 }
 
 
@@ -24,6 +98,8 @@ mod tests {
 
         let my_inventory = InventoryBuilder::new()
             .register(function!(add))
+            .register(function!(get_example_array))
+            .register(function!(get_example_list))
             .inventory();
         let config = Config {
             // add postfix

@@ -17,9 +17,9 @@ namespace Bubbles
     public static partial class Interop
     {
         #if UNITY_EDITOR
-public const string NativeLib = "game_3539803980";
+public const string NativeLib = "game_1373633085";
 #else
-public const string NativeLib = "mandelbrot";
+public const string NativeLib = "game";
 #endif
 
         static Interop()
@@ -27,31 +27,49 @@ public const string NativeLib = "mandelbrot";
         }
 
 
-        [DllImport(NativeLib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "create_game")]
-        public static extern GameExt create_game(int bubble_count);
+        [DllImport(NativeLib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "add")]
+        public static extern long add(long left, long right);
 
-        [DllImport(NativeLib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "update_game")]
-        public static extern void update_game(GameExt game);
+        [DllImport(NativeLib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "get_example_array")]
+        public static extern NativeArrayFloat get_example_array();
 
-        [DllImport(NativeLib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "get_bubble_positions")]
-        public static extern IntPtr get_bubble_positions(GameExt game);
-
-        [DllImport(NativeLib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "apply_bubble_push")]
-        public static extern void apply_bubble_push(GameExt game, float x, float y, float z);
-
-        [DllImport(NativeLib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "set_push_position")]
-        public static extern void set_push_position(GameExt game, float x, float y, float z);
+        [DllImport(NativeLib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "get_example_list")]
+        public static extern NativeListFloat get_example_list();
 
     }
 
     [Serializable]
     [StructLayout(LayoutKind.Sequential)]
-    public partial struct GameExt
+    public partial struct NativeArrayFloat
     {
+        public uint size;
+        public float value0;
+        public float value1;
+        public float value2;
+        public float value3;
+        public float value4;
+        public float value5;
+        public float value6;
+        public float value7;
+        public float value8;
+        public float value9;
+        public float value10;
+        public float value11;
+        public float value12;
+        public float value13;
+        public float value14;
+        public float value15;
+    }
+
+    [Serializable]
+    [StructLayout(LayoutKind.Sequential)]
+    public partial struct NativeListFloat
+    {
+        public uint size;
         #if UNITY_2018_1_OR_NEWER
         [NativeDisableUnsafePtrRestriction]
         #endif
-        public IntPtr ptr;
+        public IntPtr data;
     }
 
 

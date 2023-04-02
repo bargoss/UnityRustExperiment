@@ -32,19 +32,6 @@ unsafe impl Sync for ArenaInput {}
 unsafe impl Send for ArenaInput {}
 impl Input for ArenaInput {}
 
-#[derive(Bundle)]
-pub struct PlayerCharacterBundle {
-    pub net_id: NetId,
-    pub position: Position,
-    pub rigidbody: Rigidbody,
-    pub impulse: Impulse,
-    pub collider: CircleCollider,
-    pub health: Health,
-    pub player_control: PlayerCharacterControl,
-    pub character: CharacterMovement,
-    pub sphere_view: SphereView,
-}
-
 pub struct ArenaFightGame {
     pub game_world: GameWorld<ArenaInput>,
 }
@@ -81,23 +68,6 @@ impl Default for ArenaFightGame {
 }
 
 impl ArenaFightGame {
-    /*
-    pub fn add_player_character(&mut self, id: Id, position: FixedPointV2) {
-        // default bundle
-        self.game_world.world.spawn(PlayerCharacterBundle {
-            net_id: NetId{ value: id, }, //todo use proper logic to generate net id
-            position: Position{ value: position, },
-            rigidbody: Rigidbody::default(),
-            impulse: Impulse::default(),
-            collider: CircleCollider { radius: FixedPoint::new(0.5), },
-            health: Health{health: FixedPoint::new(100.0), max_health: FixedPoint::new(100.0), health_regen_per_second: FixedPoint::new(10.0),},
-            player_control: PlayerCharacterControl{controlling_player_id: id},
-            character: CharacterMovement::default(),
-            sphere_view: SphereView{view_custom_id: Id::new(0), radius: FixedPoint::new(0.5),},
-        });
-    }
-    */
-
     pub fn add_spawner_node(&mut self, position: FP2, faction: Faction, net_id: NetId){
         let next_id = net_id.value;
         println!("node net_id is: {}", next_id);
@@ -140,40 +110,21 @@ impl ArenaFightGame {
     pub fn advance_tick(&mut self, input_map: HashMap<Id, ArenaInput>){ self.game_world.advance_tick(input_map); }
     pub fn register_keyframes(&mut self){ self.game_world.register_keyframes(); }
     pub fn sample_view_snapshots<T>(&mut self, viewing_time: FP, buffer: &mut Vec<T>) where T: ViewSnapshot + 'static { self.game_world.sample_view_snapshots(viewing_time, buffer); }
-
-    /*
-    // returns byte vec
-    pub fn serialize_state (&self) -> Vec<u8> {
-        //let mut buffer = Vec::new();
-        todo!();
-
-        self.game_world.world.query::<(&NetId, &Position, &Health, &Unit, &UnitView, &BelongsToFaction)>()
-            .iter()
-            .for_each(|(net_id, position, rigidbody, collider, health, unit, unit_view, belongs_to_faction)| {
-                let mut unit_state = UnitState::default();
-                unit_state.net_id = net_id.value;
-                unit_state.position = position.value;
-                unit_state.velocity = rigidbody.velocity;
-                unit_state.radius = collider.radius;
-                unit_state.health = health.health;
-                unit_state.max_health = health.max_health;
-                unit_state.health_regen_per_second = health.health_regen_per_second;
-                unit_state.unit_type = unit.unit_type;
-                unit_state.view_custom_id = unit_view.view_custom_id;
-                unit_state.faction = belongs_to_faction.faction;
-                buffer.extend_from_slice(&unit_state.to_bytes());
-            });
-    }
-    */
 }
 
 #[cfg(test)]
 mod tests {
+    use crate::game_core::view_resources::SphereSnapshot;
     use super::*;
 
     #[test]
     fn game_test_0() {
         let mut arena_game = ArenaFightGame::default();
+        arena_game.register_keyframes();
         arena_game.advance_tick(HashMap::new());
+        arena_game.register_keyframes();
+
+        let mut buffer: Vec<SphereSnapshot> = Vec::new();
+        arena_game.sample_view_snapshots(FP::new(0.05), &mut buffer);
     }
 }
