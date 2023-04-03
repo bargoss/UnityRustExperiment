@@ -1,20 +1,6 @@
-[package]
-name = "bargame"
-version = "0.1.0"
-edition = "2021"
-
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
-[dependencies]
-bargame_lib = { path = "bargame_lib" }
-ggez = "0.9.0-rc0"
-
-interoptopus = "0.14.15"
-interoptopus_backend_csharp = "0.14.15"
-bevy_ecs = "0.8.1"
-bevy_math = "0.8.1"
-rand = "0.8.5"
-fixed = "1.22.1"
-nalgebra = "0.32.2"
-simba = { version = "0.8.0", features = ["partial_fixed_point_support"] }
+[workspace]
+members = [
+    "bargame_lib",
+    "bargame_demos",
+    "bargame_builder",
+]

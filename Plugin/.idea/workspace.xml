@@ -1,0 +1,419 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="BookmarksViewState">
+    <option name="rewriteBookmarkType" value="true" />
+  </component>
+  <component name="CMakePresetLoader">{
+  &quot;useNewFormat&quot;: true
+}</component>
+  <component name="CMakeSettings">
+    <configurations />
+  </component>
+  <component name="CargoProjects">
+    <cargoProject FILE="$PROJECT_DIR$/Cargo.toml" />
+    <cargoProject FILE="$PROJECT_DIR$/bargame_lib_builder/Cargo.toml" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="520ea574-26d8-4fdc-a570-226bdde19f28" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/../Assets/Plugins/x86_64/Wrapper.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../Assets/Plugins/x86_64/Wrapper.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Assets/Plugins/x86_64/Wrapper.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Assets/Plugins/x86_64/game_2694777571.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Assets/Plugins/x86_64/game_2694777571.dll.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/Plugin.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/aws.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.vscode/launch.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Cargo.toml" beforeDir="false" afterPath="$PROJECT_DIR$/Cargo.toml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bargame_lib/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bargame_lib/.idea/aws.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bargame_lib/.idea/bargame_lib.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bargame_lib/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bargame_lib/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bargame_lib/Wrapper.cs" beforeDir="false" afterPath="$PROJECT_DIR$/bargame_lib/Wrapper.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build_for_debug.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build_for_debug.sh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build_for_release.sh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build_for_webgl_deploy.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rust-toolchain.toml" beforeDir="false" afterPath="$PROJECT_DIR$/bargame_demos/rust-toolchain.toml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/arena_demo.rs" beforeDir="false" afterPath="$PROJECT_DIR$/bargame_demos/src/arena_demo.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/barans special 0.code-profile" beforeDir="false" afterPath="$PROJECT_DIR$/bargame_demos/src/barans special 0.code-profile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/bubble_tests_demo.rs" beforeDir="false" afterPath="$PROJECT_DIR$/bargame_demos/src/bubble_tests_demo.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/bubbles.rs" beforeDir="false" afterPath="$PROJECT_DIR$/bargame_demos/src/bubbles.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/bubbles/neighbourship_tracking.rs" beforeDir="false" afterPath="$PROJECT_DIR$/bargame_demos/src/bubbles/neighbourship_tracking.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/bubbles/spatial_ds.rs" beforeDir="false" afterPath="$PROJECT_DIR$/bargame_demos/src/bubbles/spatial_ds.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/draw_utils.rs" beforeDir="false" afterPath="$PROJECT_DIR$/bargame_demos/src/draw_utils.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/experiments/deterministic_physics.rs" beforeDir="false" afterPath="$PROJECT_DIR$/bargame_demos/src/experiments/deterministic_physics.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/experiments/fixed_point_nalgebra_experiments.rs" beforeDir="false" afterPath="$PROJECT_DIR$/bargame_demos/src/experiments/fixed_point_nalgebra_experiments.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/experiments/mod.rs" beforeDir="false" afterPath="$PROJECT_DIR$/bargame_demos/src/experiments/mod.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/experiments/nalgebra_experiments.rs" beforeDir="false" afterPath="$PROJECT_DIR$/bargame_demos/src/experiments/nalgebra_experiments.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/fixed_point_to_glm.rs" beforeDir="false" afterPath="$PROJECT_DIR$/bargame_demos/src/fixed_point_to_glm.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/game2/components/collider.rs" beforeDir="false" afterPath="$PROJECT_DIR$/bargame_demos/src/game2/components/collider.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/game2/components/entity_id.rs" beforeDir="false" afterPath="$PROJECT_DIR$/bargame_demos/src/game2/components/entity_id.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/game2/components/mod.rs" beforeDir="false" afterPath="$PROJECT_DIR$/bargame_demos/src/game2/components/mod.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/game2/components/position.rs" beforeDir="false" afterPath="$PROJECT_DIR$/bargame_demos/src/game2/components/position.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/game2/components/terrain_collider.rs" beforeDir="false" afterPath="$PROJECT_DIR$/bargame_demos/src/game2/components/terrain_collider.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/game2/components/unit.rs" beforeDir="false" afterPath="$PROJECT_DIR$/bargame_demos/src/game2/components/unit.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/game2/components/world_collider.rs" beforeDir="false" afterPath="$PROJECT_DIR$/bargame_demos/src/game2/components/world_collider.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/game2/data_types.rs" beforeDir="false" afterPath="$PROJECT_DIR$/bargame_demos/src/game2/data_types.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/game2/how to do the c# interface.txt" beforeDir="false" afterPath="$PROJECT_DIR$/bargame_demos/src/game2/how to do the c# interface.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/game2/look_up_grids.rs" beforeDir="false" afterPath="$PROJECT_DIR$/bargame_demos/src/game2/look_up_grids.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/game2/mod.rs" beforeDir="false" afterPath="$PROJECT_DIR$/bargame_demos/src/game2/mod.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/game2/systems/character_systems.rs" beforeDir="false" afterPath="$PROJECT_DIR$/bargame_demos/src/game2/systems/character_systems.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/game2/systems/mod.rs" beforeDir="false" afterPath="$PROJECT_DIR$/bargame_demos/src/game2/systems/mod.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/game2/terrain.rs" beforeDir="false" afterPath="$PROJECT_DIR$/bargame_demos/src/game2/terrain.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/game2/test_utils.rs" beforeDir="false" afterPath="$PROJECT_DIR$/bargame_demos/src/game2/test_utils.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib.rs" beforeDir="false" afterPath="$PROJECT_DIR$/bargame_demos/src/lib.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main.rs" beforeDir="false" afterPath="$PROJECT_DIR$/bargame_demos/src/main.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/survival_game/components/mod.rs" beforeDir="false" afterPath="$PROJECT_DIR$/bargame_demos/src/survival_game/components/mod.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/survival_game/mod.rs" beforeDir="false" afterPath="$PROJECT_DIR$/bargame_demos/src/survival_game/mod.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/survival_game/static_world/mod.rs" beforeDir="false" afterPath="$PROJECT_DIR$/bargame_demos/src/survival_game/static_world/mod.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/survival_game/static_world/tilemap.rs" beforeDir="false" afterPath="$PROJECT_DIR$/bargame_demos/src/survival_game/static_world/tilemap.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/survival_game/structs/mod.rs" beforeDir="false" afterPath="$PROJECT_DIR$/bargame_demos/src/survival_game/structs/mod.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/survival_game/systems/mod.rs" beforeDir="false" afterPath="$PROJECT_DIR$/bargame_demos/src/survival_game/systems/mod.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/survival_game/systems/movement_system.rs" beforeDir="false" afterPath="$PROJECT_DIR$/bargame_demos/src/survival_game/systems/movement_system.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../RustExperiment.sln" beforeDir="false" afterPath="$PROJECT_DIR$/../RustExperiment.sln" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Rust File" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="MacroExpansionManager">
+    <option name="directoryName" value="22muwxxm" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectId" id="2HTBOmkgaO5XRPAIqLET5pByox4" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/githubprojects/RustExperiment/Plugin/src&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;org.rust.cargo.project.model.PROJECT_DISCOVERY&quot;: &quot;true&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;Debugger.Rust.DataView&quot;,
+    &quot;structure.view.defaults.are.configured&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\user\Downloads\RustExperiment\Plugin" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\githubprojects\RustExperiment\Plugin\bargame_demos" />
+      <recent name="D:\githubprojects\RustExperiment\Plugin\bargame_demos\src" />
+      <recent name="C:\Users\user\Downloads\RustExperiment\Plugin\bargame_lib\src" />
+      <recent name="C:\Users\user\Downloads\RustExperiment\Plugin\bargame_lib" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Cargo.Run bargame_demos">
+    <configuration name="Build bargame_demos" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
+      <option name="command" value="build --package bargame_demos --lib" />
+      <option name="workingDirectory" value="file://$PROJECT_DIR$" />
+      <option name="channel" value="DEFAULT" />
+      <option name="requiredFeatures" value="true" />
+      <option name="allFeatures" value="false" />
+      <option name="emulateTerminal" value="false" />
+      <option name="withSudo" value="false" />
+      <option name="buildTarget" value="REMOTE" />
+      <option name="backtrace" value="SHORT" />
+      <envs />
+      <option name="isRedirectInput" value="false" />
+      <option name="redirectInputPath" value="" />
+      <method v="2">
+        <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Build" type="CargoCommandRunConfiguration" factoryName="Cargo Command">
+      <option name="command" value="build" />
+      <option name="workingDirectory" value="file://$PROJECT_DIR$" />
+      <option name="channel" value="DEFAULT" />
+      <option name="requiredFeatures" value="true" />
+      <option name="allFeatures" value="false" />
+      <option name="emulateTerminal" value="false" />
+      <option name="withSudo" value="false" />
+      <option name="buildTarget" value="REMOTE" />
+      <option name="backtrace" value="SHORT" />
+      <envs />
+      <option name="isRedirectInput" value="false" />
+      <option name="redirectInputPath" value="" />
+      <method v="2">
+        <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Run bargame_builder" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
+      <option name="command" value="run --package bargame_builder --bin bargame_builder" />
+      <option name="workingDirectory" value="file://$PROJECT_DIR$" />
+      <option name="channel" value="DEFAULT" />
+      <option name="requiredFeatures" value="true" />
+      <option name="allFeatures" value="false" />
+      <option name="emulateTerminal" value="false" />
+      <option name="withSudo" value="false" />
+      <option name="buildTarget" value="REMOTE" />
+      <option name="backtrace" value="SHORT" />
+      <envs />
+      <option name="isRedirectInput" value="false" />
+      <option name="redirectInputPath" value="" />
+      <method v="2">
+        <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Run bargame_demos" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
+      <option name="command" value="run --package bargame_demos --bin bargame_demos" />
+      <option name="workingDirectory" value="file://$PROJECT_DIR$" />
+      <option name="channel" value="DEFAULT" />
+      <option name="requiredFeatures" value="true" />
+      <option name="allFeatures" value="false" />
+      <option name="emulateTerminal" value="false" />
+      <option name="withSudo" value="false" />
+      <option name="buildTarget" value="REMOTE" />
+      <option name="backtrace" value="SHORT" />
+      <envs />
+      <option name="isRedirectInput" value="false" />
+      <option name="redirectInputPath" value="" />
+      <method v="2">
+        <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Test lib::tests (1)" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
+      <option name="command" value="test --package bargame_lib --lib tests" />
+      <option name="workingDirectory" value="file://$PROJECT_DIR$" />
+      <option name="channel" value="DEFAULT" />
+      <option name="requiredFeatures" value="true" />
+      <option name="allFeatures" value="false" />
+      <option name="emulateTerminal" value="false" />
+      <option name="withSudo" value="false" />
+      <option name="buildTarget" value="REMOTE" />
+      <option name="backtrace" value="SHORT" />
+      <envs />
+      <option name="isRedirectInput" value="false" />
+      <option name="redirectInputPath" value="" />
+      <method v="2">
+        <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Test lib::tests" type="CargoCommandRunConfiguration" factoryName="Cargo Command">
+      <option name="command" value="test --package untitled7 --lib tests" />
+      <option name="workingDirectory" value="file://$PROJECT_DIR$" />
+      <option name="channel" value="DEFAULT" />
+      <option name="requiredFeatures" value="true" />
+      <option name="allFeatures" value="true" />
+      <option name="emulateTerminal" value="false" />
+      <option name="withSudo" value="false" />
+      <option name="buildTarget" value="REMOTE" />
+      <option name="backtrace" value="SHORT" />
+      <envs />
+      <option name="isRedirectInput" value="false" />
+      <option name="redirectInputPath" value="" />
+      <method v="2">
+        <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Test spatial_tests" type="CargoCommandRunConfiguration" factoryName="Cargo Command">
+      <option name="command" value="test --package untitled7 --lib bubbles::spatial_ds::spatial_tests" />
+      <option name="workingDirectory" value="file://$PROJECT_DIR$" />
+      <option name="channel" value="NIGHTLY" />
+      <option name="requiredFeatures" value="true" />
+      <option name="allFeatures" value="false" />
+      <option name="emulateTerminal" value="false" />
+      <option name="withSudo" value="false" />
+      <option name="buildTarget" value="REMOTE" />
+      <option name="backtrace" value="SHORT" />
+      <envs />
+      <option name="isRedirectInput" value="false" />
+      <option name="redirectInputPath" value="" />
+      <method v="2">
+        <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Test tests::collisions_test" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
+      <option name="command" value="test --package bargame_demos --lib tests::collisions_test -- --exact" />
+      <option name="workingDirectory" value="file://$PROJECT_DIR$" />
+      <option name="channel" value="DEFAULT" />
+      <option name="requiredFeatures" value="true" />
+      <option name="allFeatures" value="false" />
+      <option name="emulateTerminal" value="false" />
+      <option name="withSudo" value="false" />
+      <option name="buildTarget" value="REMOTE" />
+      <option name="backtrace" value="SHORT" />
+      <envs />
+      <option name="isRedirectInput" value="false" />
+      <option name="redirectInputPath" value="" />
+      <method v="2">
+        <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="Cargo.Test lib::tests" />
+      <item itemvalue="Cargo.Build" />
+      <item itemvalue="Cargo.Test spatial_tests" />
+      <item itemvalue="Cargo.Build bargame_demos" />
+      <item itemvalue="Cargo.Run bargame_builder" />
+      <item itemvalue="Cargo.Run bargame_demos" />
+      <item itemvalue="Cargo.Test lib::tests (1)" />
+      <item itemvalue="Cargo.Test tests::collisions_test" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Cargo.Run bargame_demos" />
+        <item itemvalue="Cargo.Run bargame_demos" />
+        <item itemvalue="Cargo.Build bargame_demos" />
+        <item itemvalue="Cargo.Run bargame_demos" />
+        <item itemvalue="Cargo.Build bargame_demos" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="RustProjectSettings">
+    <option name="externalLinter" value="Clippy" />
+    <option name="toolchainHomeDirectory" value="$USER_HOME$/.cargo/bin" />
+    <option name="version" value="2" />
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="520ea574-26d8-4fdc-a570-226bdde19f28" name="Changes" comment="" />
+      <created>1667762207877</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1667762207877</updated>
+      <workItem from="1667762209291" duration="6691000" />
+      <workItem from="1667842950620" duration="3277000" />
+      <workItem from="1667846288083" duration="4309000" />
+      <workItem from="1667850863477" duration="366000" />
+      <workItem from="1667851249798" duration="1786000" />
+      <workItem from="1667929808085" duration="757000" />
+      <workItem from="1667932129803" duration="74000" />
+      <workItem from="1667932224548" duration="642000" />
+      <workItem from="1668104458292" duration="8272000" />
+      <workItem from="1668193837588" duration="7009000" />
+      <workItem from="1668205511551" duration="2000" />
+      <workItem from="1668205923881" duration="4579000" />
+      <workItem from="1668210841303" duration="683000" />
+      <workItem from="1668265059470" duration="264000" />
+      <workItem from="1668265427336" duration="4751000" />
+      <workItem from="1668281480298" duration="15864000" />
+      <workItem from="1668299177060" duration="4355000" />
+      <workItem from="1668341321154" duration="2330000" />
+      <workItem from="1668343688483" duration="15297000" />
+      <workItem from="1668534895238" duration="2451000" />
+      <workItem from="1668631520349" duration="1065000" />
+      <workItem from="1668632618692" duration="3272000" />
+      <workItem from="1668944623161" duration="25608000" />
+      <workItem from="1668982108656" duration="690000" />
+      <workItem from="1669052611155" duration="308000" />
+      <workItem from="1669053051793" duration="4952000" />
+      <workItem from="1669141555000" duration="3335000" />
+      <workItem from="1669227296725" duration="4646000" />
+      <workItem from="1669318025576" duration="4687000" />
+      <workItem from="1669417068375" duration="3632000" />
+      <workItem from="1669656137638" duration="1199000" />
+      <workItem from="1670064421860" duration="142000" />
+      <workItem from="1670152776060" duration="160000" />
+      <workItem from="1670155003770" duration="3780000" />
+      <workItem from="1670270490566" duration="2752000" />
+      <workItem from="1670519600263" duration="4674000" />
+      <workItem from="1670612212403" duration="785000" />
+      <workItem from="1670669358728" duration="9806000" />
+      <workItem from="1670760165790" duration="9090000" />
+      <workItem from="1670770945078" duration="12924000" />
+      <workItem from="1670796763335" duration="312000" />
+      <workItem from="1670866304254" duration="11469000" />
+      <workItem from="1675149476791" duration="1366000" />
+      <workItem from="1675191682693" duration="599000" />
+      <workItem from="1675500902801" duration="299000" />
+      <workItem from="1675501232639" duration="2175000" />
+      <workItem from="1675597425877" duration="517000" />
+      <workItem from="1675610076034" duration="2924000" />
+      <workItem from="1675877113881" duration="1349000" />
+      <workItem from="1675964673839" duration="596000" />
+      <workItem from="1676109026572" duration="10193000" />
+      <workItem from="1676211527318" duration="7682000" />
+      <workItem from="1676304413964" duration="7051000" />
+      <workItem from="1676319283232" duration="950000" />
+      <workItem from="1676320803293" duration="1101000" />
+      <workItem from="1678219679819" duration="51000" />
+      <workItem from="1678221012447" duration="1023000" />
+      <workItem from="1678274464632" duration="25000" />
+      <workItem from="1678302337434" duration="6102000" />
+      <workItem from="1678382694491" duration="8631000" />
+      <workItem from="1678392103290" duration="3000" />
+      <workItem from="1678465766246" duration="485000" />
+      <workItem from="1678466271986" duration="3395000" />
+      <workItem from="1678471577426" duration="7419000" />
+      <workItem from="1678517065711" duration="7185000" />
+      <workItem from="1678563853913" duration="4588000" />
+      <workItem from="1678608760884" duration="18606000" />
+      <workItem from="1678650238899" duration="3194000" />
+      <workItem from="1678653479543" duration="306000" />
+      <workItem from="1678654111504" duration="1909000" />
+      <workItem from="1679079015007" duration="1492000" />
+      <workItem from="1679132729766" duration="1216000" />
+      <workItem from="1680288302846" duration="1700000" />
+      <workItem from="1680348070033" duration="4805000" />
+      <workItem from="1680362149692" duration="3600000" />
+      <workItem from="1680365957185" duration="10190000" />
+      <workItem from="1680390838741" duration="1142000" />
+      <workItem from="1680392504122" duration="1694000" />
+      <workItem from="1680429834270" duration="7000000" />
+      <workItem from="1680441481117" duration="4180000" />
+      <workItem from="1680465988411" duration="1296000" />
+      <workItem from="1680545182923" duration="1930000" />
+      <workItem from="1680547160675" duration="1176000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="XDebuggerManager">
+    <watches-manager>
+      <configuration name="CargoCommandRunConfiguration">
+        <watch expression="print!(&quot;sds&quot;)" language="Rust" />
+        <watch expression="list_sadasd" />
+      </configuration>
+    </watches-manager>
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+</project>
