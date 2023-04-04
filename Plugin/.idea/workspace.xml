@@ -17,19 +17,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="520ea574-26d8-4fdc-a570-226bdde19f28" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/aws.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/bargame_lib/build.rs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/bargame_lib/src/schema/generated/mod.rs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/bargame_lib/src/schema/generated/schema_generated.rs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/bargame_lib/src/schema/mod.rs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/bargame_lib/src/schema/schema.fbs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/flatc/Windows.flatc.binary/flatc.exe" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Cargo.toml" beforeDir="false" afterPath="$PROJECT_DIR$/Cargo.toml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bargame_builder/target/.rustc_info.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/bargame_builder/target/CACHEDIR.TAG" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/bargame_builder/target/debug/.cargo-lock" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/bargame_builder/target/debug/.fingerprint/bargame_builder-0ef16f61ac9fb357/bin-bargame_builder" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/bargame_builder/target/debug/.fingerprint/bargame_builder-0ef16f61ac9fb357/bin-bargame_builder.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/bargame_builder/target/debug/.fingerprint/bargame_builder-0ef16f61ac9fb357/invoked.timestamp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/bargame_builder/target/debug/.fingerprint/bargame_builder-7ac9677b8075dd12/invoked.timestamp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/bargame_builder/target/debug/.fingerprint/bargame_builder-7ac9677b8075dd12/test-bin-bargame_builder" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/bargame_builder/target/debug/.fingerprint/bargame_builder-7ac9677b8075dd12/test-bin-bargame_builder.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/bargame_demos/Cargo.toml" beforeDir="false" afterPath="$PROJECT_DIR$/bargame_demos/Cargo.toml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bargame_lib/Cargo.toml" beforeDir="false" afterPath="$PROJECT_DIR$/bargame_lib/Cargo.toml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bargame_lib/src/lib.rs" beforeDir="false" afterPath="$PROJECT_DIR$/bargame_lib/src/lib.rs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -81,13 +78,14 @@
       <recent name="C:\Users\user\Downloads\RustExperiment\Plugin" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\githubprojects\RustExperiment\Plugin\flatc" />
+      <recent name="D:\githubprojects\RustExperiment\Plugin\bargame_lib\src\schema" />
       <recent name="D:\githubprojects\RustExperiment\Plugin\bargame_demos" />
       <recent name="D:\githubprojects\RustExperiment\Plugin\bargame_demos\src" />
       <recent name="C:\Users\user\Downloads\RustExperiment\Plugin\bargame_lib\src" />
-      <recent name="C:\Users\user\Downloads\RustExperiment\Plugin\bargame_lib" />
     </key>
   </component>
-  <component name="RunManager" selected="Cargo.Run bargame_demos">
+  <component name="RunManager" selected="Cargo.Build bargame_lib">
     <configuration name="Build bargame_demos" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
       <option name="command" value="build --package bargame_demos --lib" />
       <option name="workingDirectory" value="file://$PROJECT_DIR$" />
@@ -236,11 +234,11 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Cargo.Run bargame_demos" />
-        <item itemvalue="Cargo.Run bargame_demos" />
-        <item itemvalue="Cargo.Run bargame_demos" />
-        <item itemvalue="Cargo.Run bargame_demos" />
-        <item itemvalue="Cargo.Build bargame_demos" />
+        <item itemvalue="Cargo.Build bargame_lib" />
+        <item itemvalue="Cargo.Build bargame_lib" />
+        <item itemvalue="Cargo.Build bargame_lib" />
+        <item itemvalue="Cargo.Build bargame_lib" />
+        <item itemvalue="Cargo.Build bargame_lib" />
       </list>
     </recent_temporary>
   </component>
@@ -340,7 +338,8 @@
       <workItem from="1680465988411" duration="1296000" />
       <workItem from="1680545182923" duration="1930000" />
       <workItem from="1680547160675" duration="2700000" />
-      <workItem from="1680614480927" duration="1121000" />
+      <workItem from="1680627745606" duration="1690000" />
+      <workItem from="1680630153082" duration="3461000" />
     </task>
     <servers />
   </component>

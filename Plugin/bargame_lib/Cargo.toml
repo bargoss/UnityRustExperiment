@@ -2,6 +2,7 @@
 name = "bargame_lib"
 version = "0.1.0"
 edition = "2021"
+build = "build.rs"
 resolver ="2"
 
 [lib]
@@ -22,3 +23,7 @@ derive_more = "0.99.17"
 blake3 = "1.3.3"
 serde = { version = "1.0.155", features = ["derive"] }
 bincode ="1.3.3"
+flatbuffers = "23.1.21"
+
+[build-dependencies]
+flatc-rust = "0.2.0"

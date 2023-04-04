@@ -1,0 +1,23 @@
+// schema.fbs
+
+namespace Example;
+
+table Author {
+    id: uint64;
+    name: string;
+    birth_year: uint16;
+}
+
+table Book {
+    id: uint64;
+    title: string;
+    publication_year: uint16;
+    author_id: uint64;
+}
+
+table Library {
+    authors: [Author];
+    books: [Book];
+}
+
+root_type Library;

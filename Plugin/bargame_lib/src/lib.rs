@@ -1,15 +1,17 @@
 pub mod game_core;
+pub mod schema;
+use schema::*;
 //pub mod rollback_controller;
 pub mod bubble_tanks_game;
 pub mod arena_fight_game;
 
-pub fn add(left: usize, right: usize) -> usize {
-    left + right
-}
+pub fn add(left: usize, right: usize) -> usize { left + right }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+
+
 
     #[test]
     fn it_works() {
