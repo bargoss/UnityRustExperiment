@@ -4,3 +4,4 @@ members = [
     "bargame_demos",
     "bargame_builder",
 ]
+resolver = "2"
