@@ -3,6 +3,10 @@ pub mod game_core;
 pub mod bubble_tanks_game;
 pub mod arena_fight_game;
 
+pub mod example {
+    //include!(concat!(env!("OUT_DIR"), "/example.rs"));
+}
+
 pub fn add(left: usize, right: usize) -> usize {
     left + right
 }

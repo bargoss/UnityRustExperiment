@@ -1,0 +1,4 @@
+Hello, world!manifest_dir: D:\githubprojects\RustExperiment\Plugin\bargame_lib
+protoc_executable: D:\githubprojects\RustExperiment\Plugin\bargame_lib\protoc.exe
+proto_dir: D:\githubprojects\RustExperiment\Plugin\bargame_lib\proto
+csharp_out_dir: D:\githubprojects\RustExperiment\Plugin\bargame_lib\csharp/Generated
