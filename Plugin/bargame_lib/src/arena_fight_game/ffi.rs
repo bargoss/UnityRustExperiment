@@ -88,13 +88,22 @@ pub unsafe extern "C" fn deallocate_native_array(data: *mut c_void, size: u32, e
 }
 
 
+// Define a callback function type
+pub type MyCallback = extern "C" fn(i32);
+
+// Function that accepts the callback function as a parameter
+#[ffi_function]
+pub extern "C" fn rust_function_with_callback(callback: MyCallback) {
+    let result = 42; // Some result value
+    callback(result); // Call the callback function
+}
 
 #[cfg(test)]
 mod tests {
     use super::*;
     use std::fs;
     use std::io::Read;
-    use interoptopus::{function, Interop, InventoryBuilder};
+    use interoptopus::{function, Interop, InventoryBuilder, callback};
     use interoptopus::util::NamespaceMappings;
     use interoptopus_backend_csharp::{Config, Generator, Unsafe};
     use interoptopus_backend_csharp::overloads::Unity;
@@ -110,6 +119,7 @@ mod tests {
             .register(function!(get_example_list))
             .register(function!(allocate_native_array))
             .register(function!(deallocate_native_array))
+            .register(function!(rust_function_with_callback))
             .inventory();
         let config = Config {
             // add postfix
@@ -174,38 +184,5 @@ mod tests {
 
         // copy the wrapper to the unity plugin folder
         fs::copy(path_to_wrapper, format!("{}\\Wrapper.cs", path_to_unity_plugin_folder)).unwrap();
-
-
-
-
-
-
-
-
     }
-}
-
-pub struct SphereSnapshot{
-    pub center: [f32; 3],
-    pub radius: f32,
-    pub color: [f32; 3],
-}
-pub struct LineSnapshot{
-    pub start: [f32; 3],
-    pub end: [f32; 3],
-    pub color: [f32; 3],
-    pub thickness: f32,
-}
-pub struct CharacterSnapshot{
-    pub position: [f32; 3],
-    pub rotation: [f32; 3],
-    pub health: f32,
-    pub velocity: [f32; 3],
-    pub is_on_ground: bool,
-    pub shooting: bool,
-}
-pub struct GameSnapshot{
-    pub spheres: Vec<SphereSnapshot>,
-    pub lines: Vec<LineSnapshot>,
-    pub characters: Vec<CharacterSnapshot>,
 }
