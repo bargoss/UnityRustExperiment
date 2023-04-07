@@ -17,9 +17,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="520ea574-26d8-4fdc-a570-226bdde19f28" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bargame_lib/build.rs" beforeDir="false" afterPath="$PROJECT_DIR$/bargame_lib/build.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bargame_lib/example_txt_in_project_folder.txt" beforeDir="false" afterPath="$PROJECT_DIR$/bargame_lib/example_txt_in_project_folder.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -333,7 +331,7 @@
       <workItem from="1680547160675" duration="2700000" />
       <workItem from="1680627745606" duration="1690000" />
       <workItem from="1680630153082" duration="3461000" />
-      <workItem from="1680854449026" duration="2094000" />
+      <workItem from="1680854449026" duration="2401000" />
     </task>
     <servers />
   </component>
