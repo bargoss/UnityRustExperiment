@@ -152,8 +152,9 @@ mod tests {
         let path = std::env::current_dir().unwrap();
         let path = path.to_str().unwrap();
         // print path
+        println!("path: {}", path);
 
-        let path_to_built_dll = format!("{}\\target\\debug\\bargame_lib.dll", path);
+        let path_to_built_dll = format!("{}\\..\\target\\debug\\bargame_lib.dll", path);
         println!("path_to_built_dll: {}", path_to_built_dll);
         let path_to_unity_plugin_folder = format!("{}\\..\\..\\Assets\\Plugins\\x86_64", path);
         println!("path_to_unity_plugin_folder: {}", path_to_unity_plugin_folder);
