@@ -1,4 +1,30 @@
-Hello, world!manifest_dir: D:\githubprojects\RustExperiment\Plugin\bargame_lib
-protoc_executable: D:\githubprojects\RustExperiment\Plugin\bargame_lib\protoc.exe
-proto_dir: D:\githubprojects\RustExperiment\Plugin\bargame_lib\proto
-csharp_out_dir: D:\githubprojects\RustExperiment\Plugin\bargame_lib\csharp/Generated
+manifest_dir: C:\Users\byesiltepe\UnityRustExperiment\Plugin\bargame_lib
+protoc_executable: C:\Users\byesiltepe\UnityRustExperiment\Plugin\bargame_lib\protoc.exe
+proto_dir: C:\Users\byesiltepe\UnityRustExperiment\Plugin\bargame_lib\proto
+csharp_out_dir: C:\Users\byesiltepe\UnityRustExperiment\Plugin\bargame_lib\csharp\Generated
+status: "C:\\Users\\byesiltepe\\UnityRustExperiment\\Plugin\\bargame_lib\\protoc.exe" "--proto_path=C:\\Users\\byesiltepe\\UnityRustExperiment\\Plugin\\bargame_lib\\proto" "--csharp_out=C:\\Users\\byesiltepe\\UnityRustExperiment\\Plugin\\bargame_lib\\csharp\\Generated" "C:\\Users\\byesiltepe\\UnityRustExperiment\\Plugin\\bargame_lib\\proto\\example.proto"
+manifest_dir: C:\Users\byesiltepe\UnityRustExperiment\Plugin\bargame_lib
+protoc_executable: C:\Users\byesiltepe\UnityRustExperiment\Plugin\bargame_lib\protoc.exe
+proto_dir: C:\Users\byesiltepe\UnityRustExperiment\Plugin\bargame_lib\proto
+csharp_out_dir: C:\Users\byesiltepe\UnityRustExperiment\Plugin\bargame_lib\csharp\Generated
+status: "C:\\Users\\byesiltepe\\UnityRustExperiment\\Plugin\\bargame_lib\\protoc.exe" "--proto_path=C:\\Users\\byesiltepe\\UnityRustExperiment\\Plugin\\bargame_lib\\proto" "--csharp_out=C:\\Users\\byesiltepe\\UnityRustExperiment\\Plugin\\bargame_lib\\csharp\\Generated" "C:\\Users\\byesiltepe\\UnityRustExperiment\\Plugin\\bargame_lib\\proto\\example.proto"
+manifest_dir: C:\Users\byesiltepe\UnityRustExperiment\Plugin\bargame_lib
+protoc_executable: C:\Users\byesiltepe\UnityRustExperiment\Plugin\bargame_lib\protoc.exe
+proto_dir: C:\Users\byesiltepe\UnityRustExperiment\Plugin\bargame_lib\proto
+csharp_out_dir: C:\Users\byesiltepe\UnityRustExperiment\Plugin\bargame_lib\csharp\Generated
+status: "C:\\Users\\byesiltepe\\UnityRustExperiment\\Plugin\\bargame_lib\\protoc.exe" "--proto_path=C:\\Users\\byesiltepe\\UnityRustExperiment\\Plugin\\bargame_lib\\proto" "--csharp_out=C:\\Users\\byesiltepe\\UnityRustExperiment\\Plugin\\bargame_lib\\csharp\\Generated" "C:\\Users\\byesiltepe\\UnityRustExperiment\\Plugin\\bargame_lib\\proto\\example.proto"
+manifest_dir: C:\Users\byesiltepe\UnityRustExperiment\Plugin\bargame_lib
+protoc_executable: C:\Users\byesiltepe\UnityRustExperiment\Plugin\bargame_lib\protoc.exe
+proto_dir: C:\Users\byesiltepe\UnityRustExperiment\Plugin\bargame_lib\proto
+csharp_out_dir: C:\Users\byesiltepe\UnityRustExperiment\Plugin\bargame_lib\csharp\Generated
+status: "C:\\Users\\byesiltepe\\UnityRustExperiment\\Plugin\\bargame_lib\\protoc.exe" "--proto_path=C:\\Users\\byesiltepe\\UnityRustExperiment\\Plugin\\bargame_lib\\proto" "--csharp_out=C:\\Users\\byesiltepe\\UnityRustExperiment\\Plugin\\bargame_lib\\csharp\\Generated" "C:\\Users\\byesiltepe\\UnityRustExperiment\\Plugin\\bargame_lib\\proto\\example.proto"
+manifest_dir: C:\Users\byesiltepe\UnityRustExperiment\Plugin\bargame_lib
+protoc_executable: C:\Users\byesiltepe\UnityRustExperiment\Plugin\bargame_lib\protoc.exe
+proto_dir: C:\Users\byesiltepe\UnityRustExperiment\Plugin\bargame_lib\proto
+csharp_out_dir: C:\Users\byesiltepe\UnityRustExperiment\Plugin\bargame_lib\csharp\Generated
+status: "C:\\Users\\byesiltepe\\UnityRustExperiment\\Plugin\\bargame_lib\\protoc.exe" "--proto_path=C:\\Users\\byesiltepe\\UnityRustExperiment\\Plugin\\bargame_lib\\proto" "--csharp_out=C:\\Users\\byesiltepe\\UnityRustExperiment\\Plugin\\bargame_lib\\csharp\\Generated" "C:\\Users\\byesiltepe\\UnityRustExperiment\\Plugin\\bargame_lib\\proto\\example.proto"
+status: "C:\\Users\\byesiltepe\\UnityRustExperiment\\Plugin\\bargame_lib\\protoc.exe" "--proto_path=C:\\Users\\byesiltepe\\UnityRustExperiment\\Plugin\\bargame_lib\\proto" "--csharp_out=C:\\Users\\byesiltepe\\UnityRustExperiment\\Plugin\\bargame_lib\\csharp\\Generated" "C:\\Users\\byesiltepe\\UnityRustExperiment\\Plugin\\bargame_lib\\proto\\example.proto"
+status: "C:\\Users\\byesiltepe\\UnityRustExperiment\\Plugin\\bargame_lib\\protoc.exe" "--proto_path=C:\\Users\\byesiltepe\\UnityRustExperiment\\Plugin\\bargame_lib\\proto" "--csharp_out=C:\\Users\\byesiltepe\\UnityRustExperiment\\Plugin\\bargame_lib\\csharp\\Generated" "C:\\Users\\byesiltepe\\UnityRustExperiment\\Plugin\\bargame_lib\\proto\\example.proto"
+status: "C:\\Users\\byesiltepe\\UnityRustExperiment\\Plugin\\bargame_lib\\protoc.exe" "--proto_path=C:\\Users\\byesiltepe\\UnityRustExperiment\\Plugin\\bargame_lib\\proto" "--csharp_out=C:\\Users\\byesiltepe\\UnityRustExperiment\\Plugin\\bargame_lib\\csharp\\Generated" "C:\\Users\\byesiltepe\\UnityRustExperiment\\Plugin\\bargame_lib\\proto\\example.proto"
+status: "C:\\Users\\byesiltepe\\UnityRustExperiment\\Plugin\\bargame_lib\\protoc.exe" "--proto_path=C:\\Users\\byesiltepe\\UnityRustExperiment\\Plugin\\bargame_lib\\proto" "--csharp_out=C:\\Users\\byesiltepe\\UnityRustExperiment\\Plugin\\bargame_lib\\csharp\\Generated" "C:\\Users\\byesiltepe\\UnityRustExperiment\\Plugin\\bargame_lib\\proto\\example.proto"
+status: "C:\\Users\\byesiltepe\\UnityRustExperiment\\Plugin\\bargame_lib\\protoc.exe" "--proto_path=C:\\Users\\byesiltepe\\UnityRustExperiment\\Plugin\\bargame_lib\\proto" "--csharp_out=C:\\Users\\byesiltepe\\UnityRustExperiment\\Plugin\\bargame_lib\\csharp\\Generated" "C:\\Users\\byesiltepe\\UnityRustExperiment\\Plugin\\bargame_lib\\proto\\example.proto"

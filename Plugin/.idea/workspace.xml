@@ -17,16 +17,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="520ea574-26d8-4fdc-a570-226bdde19f28" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/bargame_lib/build.rs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/bargame_lib/proto/example.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/protoc.exe" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Assets/Plugins/x86_64/Wrapper.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../Assets/Plugins/x86_64/Wrapper.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Assets/Plugins/x86_64/game_464711558.dll" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bargame_lib/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/bargame_lib/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bargame_lib/Cargo.toml" beforeDir="false" afterPath="$PROJECT_DIR$/bargame_lib/Cargo.toml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bargame_lib/Wrapper.cs" beforeDir="false" afterPath="$PROJECT_DIR$/bargame_lib/Wrapper.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bargame_lib/src/lib.rs" beforeDir="false" afterPath="$PROJECT_DIR$/bargame_lib/src/lib.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bargame_lib/build.rs" beforeDir="false" afterPath="$PROJECT_DIR$/bargame_lib/build.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bargame_lib/example_txt_in_project_folder.txt" beforeDir="false" afterPath="$PROJECT_DIR$/bargame_lib/example_txt_in_project_folder.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -66,7 +59,7 @@
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
     &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
     &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;D:/githubprojects/RustExperiment/Plugin&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/githubprojects/RustExperiment/Plugin/Cargo.toml&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
     &quot;org.rust.cargo.project.model.PROJECT_DISCOVERY&quot;: &quot;true&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;language.rust.build.tool.cargo&quot;,
@@ -75,12 +68,11 @@
 }</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="D:\githubprojects\RustExperiment\Plugin" />
       <recent name="C:\Users\user\Downloads\RustExperiment\Plugin" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="D:\githubprojects\RustExperiment\Plugin\bargame_lib" />
-      <recent name="D:\githubprojects\RustExperiment\Plugin" />
+      <recent name="D:\githubprojects\RustExperiment\Plugin\flatc" />
+      <recent name="D:\githubprojects\RustExperiment\Plugin\bargame_lib\src\schema" />
       <recent name="D:\githubprojects\RustExperiment\Plugin\bargame_demos" />
       <recent name="D:\githubprojects\RustExperiment\Plugin\bargame_demos\src" />
       <recent name="C:\Users\user\Downloads\RustExperiment\Plugin\bargame_lib\src" />
@@ -121,42 +113,8 @@
         <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
       </method>
     </configuration>
-    <configuration name="Run bargame_builder" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
-      <option name="command" value="run --package bargame_builder --bin bargame_builder" />
-      <option name="workingDirectory" value="file://$PROJECT_DIR$" />
-      <option name="channel" value="DEFAULT" />
-      <option name="requiredFeatures" value="true" />
-      <option name="allFeatures" value="false" />
-      <option name="emulateTerminal" value="false" />
-      <option name="withSudo" value="false" />
-      <option name="buildTarget" value="REMOTE" />
-      <option name="backtrace" value="SHORT" />
-      <envs />
-      <option name="isRedirectInput" value="false" />
-      <option name="redirectInputPath" value="" />
-      <method v="2">
-        <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="Run bargame_demos" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
-      <option name="command" value="run --package bargame_demos --bin bargame_demos" />
-      <option name="workingDirectory" value="file://$PROJECT_DIR$" />
-      <option name="channel" value="DEFAULT" />
-      <option name="requiredFeatures" value="true" />
-      <option name="allFeatures" value="false" />
-      <option name="emulateTerminal" value="false" />
-      <option name="withSudo" value="false" />
-      <option name="buildTarget" value="REMOTE" />
-      <option name="backtrace" value="SHORT" />
-      <envs />
-      <option name="isRedirectInput" value="false" />
-      <option name="redirectInputPath" value="" />
-      <method v="2">
-        <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="Test lib::tests (1)" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
-      <option name="command" value="test --package bargame_lib --lib tests" />
+    <configuration name="Test experiments::test_main" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
+      <option name="command" value="test --package bargame_lib --lib experiments::test_main -- --exact" />
       <option name="workingDirectory" value="file://$PROJECT_DIR$" />
       <option name="channel" value="DEFAULT" />
       <option name="requiredFeatures" value="true" />
@@ -189,6 +147,57 @@
         <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
       </method>
     </configuration>
+    <configuration name="Test schema::tests::test0" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
+      <option name="command" value="test --package bargame_lib --lib schema::tests::test0 -- --exact" />
+      <option name="workingDirectory" value="file://$PROJECT_DIR$" />
+      <option name="channel" value="DEFAULT" />
+      <option name="requiredFeatures" value="true" />
+      <option name="allFeatures" value="false" />
+      <option name="emulateTerminal" value="false" />
+      <option name="withSudo" value="false" />
+      <option name="buildTarget" value="REMOTE" />
+      <option name="backtrace" value="SHORT" />
+      <envs />
+      <option name="isRedirectInput" value="false" />
+      <option name="redirectInputPath" value="" />
+      <method v="2">
+        <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Test schema::tests::test_book_serialization_deserialization" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
+      <option name="command" value="test --package bargame_lib --lib schema::tests::test_book_serialization_deserialization -- --exact" />
+      <option name="workingDirectory" value="file://$PROJECT_DIR$" />
+      <option name="channel" value="DEFAULT" />
+      <option name="requiredFeatures" value="true" />
+      <option name="allFeatures" value="false" />
+      <option name="emulateTerminal" value="false" />
+      <option name="withSudo" value="false" />
+      <option name="buildTarget" value="REMOTE" />
+      <option name="backtrace" value="SHORT" />
+      <envs />
+      <option name="isRedirectInput" value="false" />
+      <option name="redirectInputPath" value="" />
+      <method v="2">
+        <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Test schema::tests::test_serialize_deserialize_book" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
+      <option name="command" value="test --package bargame_lib --lib schema::tests::test_serialize_deserialize_book -- --exact" />
+      <option name="workingDirectory" value="file://$PROJECT_DIR$" />
+      <option name="channel" value="DEFAULT" />
+      <option name="requiredFeatures" value="true" />
+      <option name="allFeatures" value="false" />
+      <option name="emulateTerminal" value="false" />
+      <option name="withSudo" value="false" />
+      <option name="buildTarget" value="REMOTE" />
+      <option name="backtrace" value="SHORT" />
+      <envs />
+      <option name="isRedirectInput" value="false" />
+      <option name="redirectInputPath" value="" />
+      <method v="2">
+        <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="Test spatial_tests" type="CargoCommandRunConfiguration" factoryName="Cargo Command">
       <option name="command" value="test --package untitled7 --lib bubbles::spatial_ds::spatial_tests" />
       <option name="workingDirectory" value="file://$PROJECT_DIR$" />
@@ -206,40 +215,23 @@
         <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
       </method>
     </configuration>
-    <configuration name="Test tests::collisions_test" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
-      <option name="command" value="test --package bargame_demos --lib tests::collisions_test -- --exact" />
-      <option name="workingDirectory" value="file://$PROJECT_DIR$" />
-      <option name="channel" value="DEFAULT" />
-      <option name="requiredFeatures" value="true" />
-      <option name="allFeatures" value="false" />
-      <option name="emulateTerminal" value="false" />
-      <option name="withSudo" value="false" />
-      <option name="buildTarget" value="REMOTE" />
-      <option name="backtrace" value="SHORT" />
-      <envs />
-      <option name="isRedirectInput" value="false" />
-      <option name="redirectInputPath" value="" />
-      <method v="2">
-        <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
-      </method>
-    </configuration>
     <list>
       <item itemvalue="Cargo.Test lib::tests" />
       <item itemvalue="Cargo.Build" />
       <item itemvalue="Cargo.Test spatial_tests" />
-      <item itemvalue="Cargo.Test lib::tests (1)" />
       <item itemvalue="Cargo.Build bargame_lib" />
-      <item itemvalue="Cargo.Run bargame_builder" />
-      <item itemvalue="Cargo.Run bargame_demos" />
-      <item itemvalue="Cargo.Test tests::collisions_test" />
+      <item itemvalue="Cargo.Test experiments::test_main" />
+      <item itemvalue="Cargo.Test schema::tests::test0" />
+      <item itemvalue="Cargo.Test schema::tests::test_book_serialization_deserialization" />
+      <item itemvalue="Cargo.Test schema::tests::test_serialize_deserialize_book" />
     </list>
     <recent_temporary>
       <list>
         <item itemvalue="Cargo.Build bargame_lib" />
-        <item itemvalue="Cargo.Test lib::tests (1)" />
-        <item itemvalue="Cargo.Build bargame_lib" />
-        <item itemvalue="Cargo.Build bargame_lib" />
-        <item itemvalue="Cargo.Build bargame_lib" />
+        <item itemvalue="Cargo.Test experiments::test_main" />
+        <item itemvalue="Cargo.Test schema::tests::test0" />
+        <item itemvalue="Cargo.Test schema::tests::test_serialize_deserialize_book" />
+        <item itemvalue="Cargo.Test schema::tests::test_book_serialization_deserialization" />
       </list>
     </recent_temporary>
   </component>
@@ -339,8 +331,9 @@
       <workItem from="1680465988411" duration="1296000" />
       <workItem from="1680545182923" duration="1930000" />
       <workItem from="1680547160675" duration="2700000" />
-      <workItem from="1680614480927" duration="1121000" />
-      <workItem from="1680810227757" duration="55000" />
+      <workItem from="1680627745606" duration="1690000" />
+      <workItem from="1680630153082" duration="3461000" />
+      <workItem from="1680854449026" duration="2094000" />
     </task>
     <servers />
   </component>
