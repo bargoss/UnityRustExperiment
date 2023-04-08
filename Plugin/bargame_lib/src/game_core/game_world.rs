@@ -29,6 +29,10 @@ impl<TInput> PlayerInputMap<TInput> where TInput: Input
     pub fn insert(&mut self, id: Id, input: TInput) { self.map.insert(id, input); }
     pub fn remove(&mut self, id: &Id) { self.map.remove(id); }
     pub fn iter(&self) -> std::collections::hash_map::Iter<Id, TInput> { self.map.iter() }
+    pub fn clear(&mut self) { self.map.clear(); }
+    //pub fn extend(&mut self, other: &PlayerInputMap<TInput>) { self.map.extend(other.map.iter()); }
+    // other is any iterator of (Id, TInput)
+    pub fn extend<I>(&mut self, other: I) where I: IntoIterator<Item=(Id, TInput)> { self.map.extend(other); }
 }
 
 pub fn core_systems_executed(){

@@ -39,12 +39,10 @@ impl UserBehaviour for ArenaDemo {
         })});
 
         self.game.advance_tick(input_map);
-        self.game.register_keyframes();
+        self.game.register_views();
 
         let game_time = FP::new(self.game.get_tick() as f64) * self.game.get_fixed_delta_time();
 
-        //let mut buffer = vec![];
-        // define the vec with SphereSnapshot
         let mut buffer: Vec<SphereSnapshot> = vec![];
         self.game.sample_view_snapshots(game_time, &mut buffer);
 
