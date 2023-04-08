@@ -17,7 +17,7 @@ namespace Bubbles
     public static partial class Interop
     {
         #if UNITY_EDITOR
-public const string NativeLib = "game_3676984101";
+public const string NativeLib = "game_996549290";
 #else
 public const string NativeLib = "game";
 #endif
@@ -27,56 +27,77 @@ public const string NativeLib = "game";
         }
 
 
-        [DllImport(NativeLib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "add_extern")]
-        public static extern int add_extern(int left, int right);
+        [DllImport(NativeLib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "create_game")]
+        public static extern ArenaFightGameExt create_game();
 
-        [DllImport(NativeLib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "get_example_array")]
-        public static extern NativeArrayFloat get_example_array();
+        [DllImport(NativeLib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "advance_tick")]
+        public static extern void advance_tick(ArenaFightGameExt game);
 
-        [DllImport(NativeLib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "get_example_list")]
-        public static extern NativeListFloat get_example_list();
+        [DllImport(NativeLib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "register_views")]
+        public static extern void register_views(ArenaFightGameExt game);
 
-        [DllImport(NativeLib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "allocate_native_array")]
-        public static extern IntPtr allocate_native_array(uint size, uint elem_size);
+        [DllImport(NativeLib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "render")]
+        public static extern void render(ArenaFightGameExt game, float viewing_time, InteropDelegate_fn_SphereRenderParams sphere_render_action);
 
-        [DllImport(NativeLib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "deallocate_native_array")]
-        public static extern void deallocate_native_array(IntPtr data, uint size, uint elem_size);
+        [DllImport(NativeLib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "render")]
+        public static extern void render(ArenaFightGameExt game, float viewing_time, IntPtr sphere_render_action);
+
 
     }
 
     [Serializable]
     [StructLayout(LayoutKind.Sequential)]
-    public partial struct NativeArrayFloat
+    public partial struct ArenaFightGameExt
     {
-        public uint size;
-        public float value0;
-        public float value1;
-        public float value2;
-        public float value3;
-        public float value4;
-        public float value5;
-        public float value6;
-        public float value7;
-        public float value8;
-        public float value9;
-        public float value10;
-        public float value11;
-        public float value12;
-        public float value13;
-        public float value14;
-        public float value15;
-    }
-
-    [Serializable]
-    [StructLayout(LayoutKind.Sequential)]
-    public partial struct NativeListFloat
-    {
-        public uint size;
         #if UNITY_2018_1_OR_NEWER
         [NativeDisableUnsafePtrRestriction]
         #endif
-        public IntPtr data;
+        public IntPtr ptr;
+        public ArenaGameInput inputs0;
+        public ArenaGameInput inputs1;
+        public ArenaGameInput inputs2;
+        public ArenaGameInput inputs3;
+        public ArenaGameInput inputs4;
+        public ArenaGameInput inputs5;
+        public ArenaGameInput inputs6;
+        public ArenaGameInput inputs7;
+        public ArenaGameInput inputs8;
+        public ArenaGameInput inputs9;
+        public ArenaGameInput inputs10;
+        public ArenaGameInput inputs11;
+        public ArenaGameInput inputs12;
+        public ArenaGameInput inputs13;
+        public ArenaGameInput inputs14;
+        public ArenaGameInput inputs15;
     }
+
+    [Serializable]
+    [StructLayout(LayoutKind.Sequential)]
+    public partial struct ArenaGameInput
+    {
+        public uint player_id;
+    }
+
+    [Serializable]
+    [StructLayout(LayoutKind.Sequential)]
+    public partial struct SphereRenderParams
+    {
+        public Vec3Ext position;
+        public float radius;
+        public Vec3Ext color;
+    }
+
+    [Serializable]
+    [StructLayout(LayoutKind.Sequential)]
+    public partial struct Vec3Ext
+    {
+        public float x;
+        public float y;
+        public float z;
+    }
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate void InteropDelegate_fn_SphereRenderParams(SphereRenderParams x0);
 
 
 
