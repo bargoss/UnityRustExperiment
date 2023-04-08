@@ -1,13 +1,13 @@
 use bevy_ecs::prelude::*;
 use crate::arena_fight_game::components::{BelongsToFaction, Faction, Health, UnitView};
-use crate::game_core::components::CircleCollider;
+use crate::game_core::components::{CircleCollider, NetId};
 use crate::game_core::components::position::Position;
 use crate::game_core::resources::time::Time;
 use crate::game_core::verlet_physics::FP;
 use crate::game_core::view_components::sphere_view::SphereView;
 use crate::game_core::view_resources::view_snapshot_interpolator::BufferedViewSnapshotInterpolator;
 use crate::game_core::view_resources::view_snapshots::sphere_snapshot::SphereSnapshot;
-use crate::game_core::common::Id;
+use crate::game_core::common::{Id, IdGenerator, RandomGen};
 use crate::game_core::math::FP3;
 
 fn faction_to_color(faction: &Faction) -> [f32; 4] {
@@ -21,11 +21,11 @@ fn faction_to_color(faction: &Faction) -> [f32; 4] {
 }
 
 pub fn unit_view_system(
-    unit_query: Query<(&UnitView, &Position, &CircleCollider, &BelongsToFaction, Option<&Health>)>,
+    unit_query: Query<(&UnitView, &Position, &CircleCollider, &BelongsToFaction, Option<&Health>, &NetId)>,
     mut sphere_snapshots: ResMut<BufferedViewSnapshotInterpolator<SphereSnapshot>>,
-    time: Res<Time>
+    time: Res<Time>,
 ) {
-    for (unit_view, position, circle_collider, belongs_to_faction, health_opt) in unit_query.iter() {
+    for (unit_view, position, circle_collider, belongs_to_faction, health_opt, net_id) in unit_query.iter() {
         let time = FP::new(time.tick as f64) * time.fixed_delta_time;
         let position = position.value;
         let radius = circle_collider.radius;
@@ -36,16 +36,21 @@ pub fn unit_view_system(
 
             let position_v3 : FP3 = position.into();
 
-            //let more_smaller_prime = 100003;
-            //let black_circle_custom_view_id = Id::new(unit_view.view_custom_id.0*more_smaller_prime + 1);
-            //sphere_snapshots.push(black_circle_custom_view_id, time, SphereSnapshot{
-            //    position : position_v3 + FixedPointV3::from_num(0.0,0.0,-1.0),
-            //    radius : health_radius,
-            //    color: [0.1, 0.1, 0.1, 1.0]
-            //});
-            sphere_snapshots.push(unit_view.view_custom_id, time, SphereSnapshot{
-                position : position.into(),
-                radius : circle_collider.radius * (FP::one() - health_ratio),
+            let black_circle_custom_view_id = RandomGen::start()
+                .hash_net_id(*net_id)
+                .hash_net_id(*net_id)
+                .finish_get_id();
+            let black_circle_custom_view_id = black_circle_custom_view_id;
+            sphere_snapshots.push(black_circle_custom_view_id, time, SphereSnapshot{
+                position : position_v3 + FP3::from_num(0.0,0.0,1.0),
+                radius : health_radius,
+                color: [0.1, 0.1, 0.1, 1.0]
+            });
+
+            let view_id = RandomGen::start().hash_net_id(*net_id).finish_get_id();
+            sphere_snapshots.push(view_id, time, SphereSnapshot{
+                position : position_v3,
+                radius : radius,
                 color: faction_to_color(&belongs_to_faction.faction)
             });
         }
