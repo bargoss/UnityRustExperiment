@@ -1,3 +1,4 @@
+use std::cell::RefCell;
 use std::collections::{HashMap, HashSet};
 use bargame_lib::arena_fight_game::arena_game::*;
 use bargame_lib::game_core::math::*;
@@ -43,10 +44,21 @@ impl UserBehaviour for ArenaDemo {
 
         let game_time = FP::new(self.game.get_tick() as f64) * self.game.get_fixed_delta_time();
 
-        let mut buffer: Vec<SphereSnapshot> = vec![];
-        self.game.sample_view_snapshots(game_time, &mut buffer);
+        //let mut buffer: Vec<SphereSnapshot> = vec![];
+        let buffer = RefCell::new(Vec::new());
+        //self.game.sample_view_snapshots(game_time, &mut buffer);
 
-        for snapshot in buffer {
+        self.game.render(game_time, |sphere_snapshot| {
+            //buffer.push(sphere_snapshot);
+            buffer.borrow_mut().push(sphere_snapshot);
+        }, |line_snapshot| {
+            //let start = Vec2::new(line_snapshot.start.x().to_f32(), line_snapshot.start.y().to_f32());
+            //let end = Vec2::new(line_snapshot.end.x().to_f32(), line_snapshot.end.y().to_f32());
+            //let color = Color::WHITE;
+            //drawer.draw_line(start, end, line_snapshot.width.to_f32(), color);
+        });
+
+        for snapshot in buffer.borrow().iter() {
             let position = Vec2::new(snapshot.position.x().to_f32(), snapshot.position.y().to_f32());
             let radius = snapshot.radius.to_f32();
             let color = Color::new(snapshot.color[0], snapshot.color[1], snapshot.color[2], snapshot.color[3]);

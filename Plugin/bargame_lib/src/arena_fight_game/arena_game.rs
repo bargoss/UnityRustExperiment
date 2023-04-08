@@ -86,6 +86,15 @@ impl Default for ArenaFightGame {
             render_schedule,
         };
 
+        game.add_spawner_node(FP2::from_num(0.0, 6.0), Faction::Blue, NetId::from_u32(0));
+        game.add_spawner_node(FP2::from_num(0.0, -6.0), Faction::Red, NetId::from_u32(1));
+        game.add_unit(FP2::from_num(0.0, 1.0), Faction::Blue, NetId::from_u32(2));
+        game.add_unit(FP2::from_num(0.0, 2.0), Faction::Blue, NetId::from_u32(3));
+        game.add_unit(FP2::from_num(0.0, 3.0), Faction::Blue, NetId::from_u32(4));
+        game.add_unit(FP2::from_num(0.0, -1.0), Faction::Red, NetId::from_u32(5));
+        game.add_unit(FP2::from_num(0.0, -2.0), Faction::Red, NetId::from_u32(6));
+        game.add_unit(FP2::from_num(0.0, -3.0), Faction::Red, NetId::from_u32(7));
+
         game
     }
 }
