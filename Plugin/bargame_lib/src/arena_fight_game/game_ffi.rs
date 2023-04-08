@@ -77,6 +77,15 @@ pub extern "C" fn render(game: ArenaFightGameExt, viewing_time: f32, sphere_rend
     );
 }
 
+#[ffi_function]
+#[no_mangle]
+pub extern "C" fn add_input(game: ArenaFightGameExt) {
+    let mut inputs = game.inputs;
+    let game = unsafe { &mut *(game.ptr as *mut ArenaFightGame) };
+}
+
+
+
 #[cfg(test)]
 mod tests {
     use super::*;
