@@ -40,7 +40,7 @@ pub fn player_control_system(
             physics_world.overlap_circle(node_drag_drop_input.position, node_drag_drop_input.radius, &mut nearby_bodies_query_buffer);
 
             for body_id in nearby_bodies_query_buffer.iter() {
-                let (mut unit, unit_faction) = match id_entity_map.get_mut_from_query(&mut unit_query, Id::new(*body_id)) {
+                let (mut unit, unit_faction) = match id_entity_map.get_mut_from_query(&mut unit_query, *body_id) {
                     Some((unit, faction)) => (unit, faction.faction),
                     None => continue,
                 };

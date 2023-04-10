@@ -1,30 +1,31 @@
 use super::math::FP;
 use std::collections::HashMap;
+use crate::game_core::common::Id;
 use crate::game_core::math::FP2;
 
 
 #[derive(Copy, Clone, Debug)]
 pub struct GridContent<const GRID_ELEMENT_COUNT: usize> {
-    arr: [u32; GRID_ELEMENT_COUNT],
+    arr: [Id; GRID_ELEMENT_COUNT],
     len: usize,
 }
 impl<const GRID_ELEMENT_COUNT: usize> GridContent<GRID_ELEMENT_COUNT>
 {
     fn new() -> Self {
         Self {
-            arr: [0; GRID_ELEMENT_COUNT],
+            arr: [Id(0); GRID_ELEMENT_COUNT],
             len: 0,
         }
     }
 
-    fn add(&mut self, item: u32) {
+    fn add(&mut self, item: Id) {
         if self.len < self.arr.len() {
             self.arr[self.len] = item;
             self.len += 1;
         }
     }
 
-    fn iter(&self) -> impl Iterator<Item = &u32> {
+    fn iter(&self) -> impl Iterator<Item = &Id> {
         self.arr.iter().take(self.len)
     }
 }
@@ -38,7 +39,7 @@ pub struct GridBoundingBox{
 pub struct SpacialPartitioning<const N:usize>{
     grid_size: FP,
     grids: HashMap<(i32, i32), GridContent<N>>,
-    object_grid_bounding_boxes: HashMap<u32, GridBoundingBox>,
+    object_grid_bounding_boxes: HashMap<Id, GridBoundingBox>,
 }
 impl<const GRID_ELEMENT_COUNT:usize> SpacialPartitioning<GRID_ELEMENT_COUNT>{
     pub fn new(grid_size: FP) -> SpacialPartitioning<GRID_ELEMENT_COUNT> {
@@ -49,14 +50,14 @@ impl<const GRID_ELEMENT_COUNT:usize> SpacialPartitioning<GRID_ELEMENT_COUNT>{
         }
     }
 
-    pub fn get_object(&self, item: u32) -> Option<&GridBoundingBox> {
+    pub fn get_object(&self, item: Id) -> Option<&GridBoundingBox> {
         self.object_grid_bounding_boxes.get(&item)
     }
 
-    pub fn add_point(&mut self, item: u32, position: FP2) {
+    pub fn add_point(&mut self, item: Id, position: FP2) {
         self.add_box(item, position, position);
     }
-    pub fn add_box(&mut self, item: u32, start_corner: FP2, end_corner: FP2) {
+    pub fn add_box(&mut self, item: Id, start_corner: FP2, end_corner: FP2) {
         if let Some(_grid_bounding_box) = self.object_grid_bounding_boxes.get(&item) {
             // remove item from old grids
             self.remove_with_id(item);
@@ -72,7 +73,7 @@ impl<const GRID_ELEMENT_COUNT:usize> SpacialPartitioning<GRID_ELEMENT_COUNT>{
         }
     }
 
-    pub fn remove_with_id(&mut self, item: u32) {
+    pub fn remove_with_id(&mut self, item: Id) {
         if let Some(grid_bounding_box) = self.object_grid_bounding_boxes.remove(&item) {
             for i in grid_bounding_box.start_corner.0..grid_bounding_box.end_corner.0 + 1 {
                 for j in grid_bounding_box.start_corner.1..grid_bounding_box.end_corner.1 + 1 {
@@ -91,7 +92,7 @@ impl<const GRID_ELEMENT_COUNT:usize> SpacialPartitioning<GRID_ELEMENT_COUNT>{
         }
     }
 
-    pub fn add_circle(&mut self, item: u32, center: FP2, radius: FP) {
+    pub fn add_circle(&mut self, item: Id, center: FP2, radius: FP) {
         // add_box from here
         let half_size = FP2::new(radius, radius);
         let box_start_corner = center - half_size;
@@ -101,7 +102,7 @@ impl<const GRID_ELEMENT_COUNT:usize> SpacialPartitioning<GRID_ELEMENT_COUNT>{
     }
 
     // return iterator for grid neighbours
-    pub fn get_neighbours(&self, position: FP2) -> impl Iterator<Item = u32> {
+    pub fn get_neighbours(&self, position: FP2) -> impl Iterator<Item = Id> {
         let (x, y) = self.get_grid(position);
         let mut result = Vec::new();
         for i in -1..2 {
@@ -117,7 +118,7 @@ impl<const GRID_ELEMENT_COUNT:usize> SpacialPartitioning<GRID_ELEMENT_COUNT>{
     }
 
     // collects into buffer
-    pub fn overlap_circle(&self, center: FP2, radius: FP, buffer: &mut Vec<u32>) {
+    pub fn overlap_circle(&self, center: FP2, radius: FP, buffer: &mut Vec<Id>) {
         let half_size = FP2::new(radius, radius);
         let box_start_corner = center - half_size;
         let box_end_corner = center + half_size;
@@ -126,7 +127,7 @@ impl<const GRID_ELEMENT_COUNT:usize> SpacialPartitioning<GRID_ELEMENT_COUNT>{
     }
 
     // get a list from outside, clear it, fill it with results
-    pub fn overlap_box(&self, start_corner: FP2, end_corner: FP2, buffer: &mut Vec<u32>) {
+    pub fn overlap_box(&self, start_corner: FP2, end_corner: FP2, buffer: &mut Vec<Id>) {
         let (x0, y0) = self.get_grid(start_corner);
         let (x1, y1) = self.get_grid(end_corner);
         buffer.clear();
@@ -145,7 +146,7 @@ impl<const GRID_ELEMENT_COUNT:usize> SpacialPartitioning<GRID_ELEMENT_COUNT>{
     }
 
 
-    pub fn get_all_neighbours(&self, buffer : &mut Vec::<(u32, u32)>) {
+    pub fn get_all_neighbours(&self, buffer : &mut Vec::<(Id, Id)>) {
         let neighbour_deltas = [(1,0), (1,1), (0,1), (-1,1)];
         buffer.clear();
         for my_grid_key in self.grids.keys() {
@@ -197,15 +198,15 @@ mod tests {
     #[test]
     fn test_add() {
         let mut spacial_partitioning = SpacialPartitioning::<2>::new(FP::new(10.0));
-        spacial_partitioning.add_point(1, FP2::from_num(0.0, 0.0));
-        spacial_partitioning.add_point(2, FP2::from_num(0.0, 0.0));
+        spacial_partitioning.add_point(Id(1), FP2::from_num(0.0, 0.0));
+        spacial_partitioning.add_point(Id(2), FP2::from_num(0.0, 0.0));
 
-        spacial_partitioning.add_point(2, FP2::from_num(9.9, 0.0));
+        spacial_partitioning.add_point(Id(2), FP2::from_num(9.9, 0.0));
 
         assert_eq!(spacial_partitioning.grids.len(), 1);
         assert_eq!(spacial_partitioning.grids.get(&(0, 0)).unwrap().len, 2);
 
-        spacial_partitioning.add_point(3, FP2::from_num(10.0, 0.0));
+        spacial_partitioning.add_point(Id(3), FP2::from_num(10.0, 0.0));
         assert_eq!(spacial_partitioning.grids.len(), 2);
         assert_eq!(spacial_partitioning.grids.get(&(0, 0)).unwrap().len, 2);
         assert_eq!(spacial_partitioning.grids.get(&(1, 0)).unwrap().len, 1);
@@ -215,10 +216,10 @@ mod tests {
     #[test]
     fn test_spacial_partitioning() {
         let mut partitioning: SpacialPartitioning<5> = SpacialPartitioning::new(FP::new(10.0));
-        partitioning.add_point(1, FP2::from_num(5.0, 5.0));
-        partitioning.add_point(2, FP2::from_num(25.0, 25.0));
-        partitioning.add_point(3, FP2::from_num(-5.0, -5.0));
-        partitioning.add_point(4, FP2::from_num(-25.0, -25.0));
+        partitioning.add_point(Id(1), FP2::from_num(5.0, 5.0));
+        partitioning.add_point(Id(2), FP2::from_num(25.0, 25.0));
+        partitioning.add_point(Id(3), FP2::from_num(-5.0, -5.0));
+        partitioning.add_point(Id(4), FP2::from_num(-25.0, -25.0));
 
         let mut buffer = Vec::new();
         partitioning.overlap_box(FP2::from_num(0.0, 0.0), FP2::from_num(11.0, 11.0), &mut buffer);
@@ -237,7 +238,7 @@ mod tests {
     #[test]
     fn test_add_box(){
             let mut partitioning: SpacialPartitioning<5> = SpacialPartitioning::new(FP::new(10.0));
-        partitioning.add_box(1, FP2::from_num(9.0, 23.0), FP2::from_num(21.0, 25.0));
+        partitioning.add_box(Id(1), FP2::from_num(9.0, 23.0), FP2::from_num(21.0, 25.0));
 
 
         let mut buffer = Vec::new();
@@ -254,15 +255,15 @@ mod tests {
     #[test]
     fn test_add_same_key_different_position() {
         let mut spacial_partitioning = SpacialPartitioning::<2>::new(FP::new(10.0));
-        spacial_partitioning.add_point(1, FP2::from_num(0.0, 0.0));
-        spacial_partitioning.add_point(2, FP2::from_num(0.0, 0.0));
+        spacial_partitioning.add_point(Id(1), FP2::from_num(0.0, 0.0));
+        spacial_partitioning.add_point(Id(2), FP2::from_num(0.0, 0.0));
 
-        spacial_partitioning.add_point(2, FP2::from_num(9.9, 0.0));
+        spacial_partitioning.add_point(Id(2), FP2::from_num(9.9, 0.0));
 
         assert_eq!(spacial_partitioning.grids.len(), 1);
         assert_eq!(spacial_partitioning.grids.get(&(0, 0)).unwrap().len, 2);
 
-        spacial_partitioning.add_point(3, FP2::from_num(10.0, 0.0));
+        spacial_partitioning.add_point(Id(3), FP2::from_num(10.0, 0.0));
         assert_eq!(spacial_partitioning.grids.len(), 2);
         assert_eq!(spacial_partitioning.grids.get(&(0, 0)).unwrap().len, 2);
         assert_eq!(spacial_partitioning.grids.get(&(1, 0)).unwrap().len, 1);

@@ -33,7 +33,7 @@ pub fn unit_capture_node_system(
 
         // iterate nearby_bodies_query_buffer
         for body_id in nearby_bodies_query_buffer.iter() {
-            match id_entity_map.get(Id::new(*body_id)) {
+            match id_entity_map.get(*body_id) {
                 Some(unit_entity) => {
                     if let Ok(captuing_unit) = capturing_unit_query.get_mut(unit_entity) {
                         // unit is capturing node

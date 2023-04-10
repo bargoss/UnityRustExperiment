@@ -37,7 +37,7 @@ impl VerletPhysicsWorld {
         self.spatial_partitioning.clear();
 
         for (id, entry) in self.objects.iter_mut() {
-            self.spatial_partitioning.add_circle(id.0, entry.val.position, entry.val.radius);
+            self.spatial_partitioning.add_circle(*id, entry.val.position, entry.val.radius);
         }
     }
 
@@ -56,12 +56,12 @@ impl VerletPhysicsWorld {
         object2.position += obj2_translation;
     }
 
-    pub fn overlap_circle(&self, position: FP2, radius: FP, overlap_circle_buffer: &mut Vec<u32>) {
+    pub fn overlap_circle(&self, position: FP2, radius: FP, overlap_circle_buffer: &mut Vec<Id>) {
         self.spatial_partitioning.overlap_circle(position, radius, overlap_circle_buffer);
 
         // sqr mag check and remove
         overlap_circle_buffer.retain(|id| {
-            let obj = self.objects.get(&Id(*id)).unwrap().val;
+            let obj = self.objects.get(&id).unwrap().val;
             let delta = obj.position - position;
             let sqr_dist = delta.magnitude_squared();
 
@@ -71,32 +71,34 @@ impl VerletPhysicsWorld {
         });
     }
 
-    fn solve_object_collisions(&mut self, iteration_id_buffer: &mut Vec<u32>, overlap_circle_buffer: &mut Vec<u32>) {
+    fn solve_object_collisions(&mut self, iteration_id_buffer: &mut Vec<Id>, overlap_circle_buffer: &mut Vec<Id>) {
         iteration_id_buffer.clear();
         self.objects
             .iter()
             .filter(|(_, entry)| !entry.val.is_static)
-            .for_each(|(id, _)| iteration_id_buffer.push(id.0));
+            .for_each(|(id, _)| iteration_id_buffer.push(id.clone()));
 
         // iterate non-static
         for id0 in iteration_id_buffer.iter() {
-            let mut obj0 = self.objects.get(&Id(*id0)).unwrap().val;
+            let mut obj0 = self.objects.get(&id0).unwrap().val;
 
             // get possible neighbours
             self.overlap_circle(obj0.position, obj0.radius, overlap_circle_buffer);
 
             // check for collisions
             for other_id in overlap_circle_buffer.iter().filter(|id| **id != *id0) {
-                let mut obj1 = self.objects.get(&Id(*other_id)).unwrap().val;
+                let mut obj1 = self.objects.get(other_id).unwrap().val;
+
+
 
                 let min_dist = obj0.radius + obj1.radius;
                 VerletPhysicsWorld::solve_verlet_collision(&mut obj0, &mut obj1, min_dist, FP::new(0.75));
 
                 if !obj1.is_static {
-                    self.add_or_set_object(obj1, Id(*other_id));
+                    self.add_or_set_object(obj1, *other_id);
                 }
             }
-            self.add_or_set_object(obj0, Id(*id0));
+            self.add_or_set_object(obj0, *id0);
         }
     }
 
@@ -163,7 +165,7 @@ impl VerletPhysicsWorld {
 
     }
 
-    pub fn update(&mut self, dt: FP, iteration_id_buffer: &mut Vec<u32>, overlap_circle_buffer: &mut Vec<u32>) {
+    pub fn update(&mut self, dt: FP, iteration_id_buffer: &mut Vec<Id>, overlap_circle_buffer: &mut Vec<Id>) {
         let steps = 2;
         let _step_dt = dt / FP::new(steps as f64);
 
@@ -199,7 +201,7 @@ impl VerletPhysicsWorld {
 
     pub fn remove_object(&mut self, id : Id) {
         self.objects.remove(&id);
-        self.spatial_partitioning.remove_with_id(id.0);
+        self.spatial_partitioning.remove_with_id(id);
     }
 
     pub fn add_beam(&mut self, beam : VerletBeam, id : Id) {

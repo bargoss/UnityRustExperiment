@@ -24,10 +24,10 @@ pub fn unit_attack_system(
 
         // exclude self
         for body_id in nearby_bodies_query_buffer.iter() {
-            if *body_id == attacking_unit_net_id.value.0 {
+            if *body_id == attacking_unit_net_id.value {
                 continue;
             }
-            let res = id_entity_map.get_from_query(&unit_query, Id::new(*body_id));
+            let res = id_entity_map.get_from_query(&unit_query, *body_id);
             if let Some((_target_unit, target_unit_position, _target_unit_impulse, _target_unit_health, target_unit_faction, target_unit_net_id)) = res {
                 if attacking_unit_faction.faction != target_unit_faction.faction {
                     let distance = (attacking_unit_position.value - target_unit_position.value).magnitude_squared();
