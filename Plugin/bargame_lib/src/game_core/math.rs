@@ -1,5 +1,5 @@
 use std::hash::{Hash, Hasher};
-use std::ops::{Div, Mul};
+use std::ops::{Div, DivAssign, Mul};
 use nalgebra::Vector2;
 use nalgebra::Vector3;
 use derive_more::{Add, Sub, Mul, Div, AddAssign, SubAssign, MulAssign, DivAssign, Neg};
@@ -201,6 +201,13 @@ impl Default for FP {
 #[derive(Debug, Clone, Copy, Add, Sub, Mul, Div, AddAssign, SubAssign, MulAssign, DivAssign, Neg)]
 pub struct FP2(Vector2<BaseType>);
 
+// implement DivAssign with FP
+impl DivAssign<FP> for FP2 {
+    fn div_assign(&mut self, rhs: FP) {
+        self.0 /= rhs.0;
+    }
+}
+
 impl Hash for FP2 {
     fn hash<H: Hasher>(&self, state: &mut H) {
         self.0.hash(state);
@@ -371,6 +378,15 @@ impl FP2 {
 
 #[derive(Debug, Clone, Copy, Add, Sub, Mul, Div, AddAssign, SubAssign, MulAssign, DivAssign, Neg, PartialEq)]
 pub struct FP3(Vector3<BaseType>);
+
+// implement divassign with FP
+impl DivAssign<FP> for FP3 {
+    fn div_assign(&mut self, rhs: FP) {
+        self.0.x /= rhs.0;
+        self.0.y /= rhs.0;
+        self.0.z /= rhs.0;
+    }
+}
 
 impl Hash for FP3 {
     fn hash<H: Hasher>(&self, state: &mut H) {
