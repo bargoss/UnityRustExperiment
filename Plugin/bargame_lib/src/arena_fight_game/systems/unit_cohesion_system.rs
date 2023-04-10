@@ -17,19 +17,47 @@ pub fn unit_cohesion_system(
     let mut nearby_bodies_buffer = Vec::new();
 
     for (net_id, unit, unit_position, unit_rigidbody, unit_faction, unit_entity) in unit_query.iter() {
-        physics_world.overlap_circle(unit_position.value, FP::new(0.5), &mut nearby_bodies_buffer);
-
+        physics_world.overlap_circle(unit_position.value, FP::new(2.5), &mut nearby_bodies_buffer);
         let mut force = FP2::zero();
 
-        // sort by sqr distance
-        //nearby_bodies_buffer.sort_by(|a, b| {
-        //    let a_pos = position_query.get(id_entity_map.get( a).unwrap()).unwrap().value;
-        //    let b_pos = position_query.get(id_entity_map.get( b).unwrap()).unwrap().value;
-        //    let a_dist = (a_pos - unit_position.value).sqr_length();
-        //    let b_dist = (b_pos - unit_position.value).sqr_length();
-        //    a_dist.partial_cmp(&b_dist).unwrap()
-        //});
+        nearby_bodies_buffer.sort_by(|a, b| {
+            let a_pos = match id_entity_map.get_from_query(&position_query, *a) {
+                Some(pos) => pos.value,
+                None => return std::cmp::Ordering::Equal,
+            };
+            let b_pos = match id_entity_map.get_from_query(&position_query, *b) {
+                Some(pos) => pos.value,
+                None => return std::cmp::Ordering::Equal,
+            };
+            let a_dist = (a_pos - unit_position.value).magnitude_squared();
+            let b_dist = (b_pos - unit_position.value).magnitude_squared();
+            a_dist.partial_cmp(&b_dist).unwrap()
+        });
+
+        // iterate taking first two
+        nearby_bodies_buffer.iter().take(1).for_each(|body_id| {
+            let body_pos = match id_entity_map.get_from_query(&position_query, *body_id) {
+                Some(pos) => pos.value,
+                None => return,
+            };
+            force += calculate_cohesion(unit_position.value, body_pos, FP::new(10.5), FP::new(2.5));
+        });
+
+        let mut impulse = impulse_query.get_mut(unit_entity).unwrap();
+        impulse.value += force * time.fixed_delta_time;
     }
+}
+
+pub fn calculate_cohesion(pos_a : FP2 , pos_b : FP2, multiplier : FP, max_distance : FP) -> FP2 {
+    let distance = (pos_a - pos_b).magnitude();
+    if distance == FP::zero() {
+        return FP2::zero();
+    }
+    if distance > max_distance {
+        return FP2::zero();
+    }
+    let distance_multiplier = multiplier * (max_distance - distance) / max_distance;
+    (pos_b - pos_a).normalize() * distance_multiplier
 }
 
 

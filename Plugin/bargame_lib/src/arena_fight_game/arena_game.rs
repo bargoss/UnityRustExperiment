@@ -61,6 +61,7 @@ impl Default for ArenaFightGame {
             player_control_system,
             unit_movement_system,
             character_movement_system,
+            unit_cohesion_system,
             unit_capture_node_system,
             unit_spawner_system,
             unit_attack_system,
