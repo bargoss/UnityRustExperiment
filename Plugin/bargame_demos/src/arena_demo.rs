@@ -58,12 +58,26 @@ impl UserBehaviour for ArenaDemo {
             //drawer.draw_line(start, end, line_snapshot.width.to_f32(), color);
         });
 
-        for snapshot in buffer.borrow().iter() {
+        //for snapshot in buffer.borrow().iter() {
+        //    let position = Vec2::new(snapshot.position.x().to_f32(), snapshot.position.y().to_f32());
+        //    let radius = snapshot.radius.to_f32();
+        //    let color = Color::new(snapshot.color[0], snapshot.color[1], snapshot.color[2], snapshot.color[3]);
+        //    drawer.draw_circle(position, radius, color);
+        //}
+        // like that but sort by z
+        let mut buffer = buffer.borrow_mut();
+        buffer.sort_by(|a, b| {
+            let a_z = a.position.z().to_f32();
+            let b_z = b.position.z().to_f32();
+            b_z.partial_cmp(&a_z).unwrap()
+        });
+        for snapshot in buffer.iter() {
             let position = Vec2::new(snapshot.position.x().to_f32(), snapshot.position.y().to_f32());
             let radius = snapshot.radius.to_f32();
             let color = Color::new(snapshot.color[0], snapshot.color[1], snapshot.color[2], snapshot.color[3]);
             drawer.draw_circle(position, radius, color);
         }
+
     }
 }
 

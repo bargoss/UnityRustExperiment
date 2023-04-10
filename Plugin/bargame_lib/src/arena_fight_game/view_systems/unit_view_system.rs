@@ -13,7 +13,7 @@ use crate::game_core::math::FP3;
 fn faction_to_color(faction: &Faction) -> [f32; 4] {
     match faction {
         Faction::Neutral => [1.0, 1.0, 1.0, 1.0],
-        Faction::Blue => [0.1, 0.1, 1.0, 1.0],
+        Faction::Blue => [0.3, 0.3, 1.0, 1.0],
         Faction::Red => [1.0, 0.1, 0.1, 1.0],
         Faction::Green => [0.1, 1.0, 0.1, 1.0],
         Faction::Yellow => [1.0, 1.0, 0.1, 1.0],
@@ -42,9 +42,9 @@ pub fn unit_view_system(
                 .finish_get_id();
             let black_circle_custom_view_id = black_circle_custom_view_id;
             sphere_snapshots.push(black_circle_custom_view_id, time, SphereSnapshot{
-                position : position_v3 + FP3::from_num(0.0,0.0,1.0),
+                position : position_v3 + FP3::from_num(0.0,0.0,-1.0),
                 radius : health_radius,
-                color: [0.1, 0.1, 0.1, 1.0]
+                color: [0.0, 0.0, 0.0, 1.0]
             });
 
             let view_id = RandomGen::start().hash_net_id(*net_id).finish_get_id();
