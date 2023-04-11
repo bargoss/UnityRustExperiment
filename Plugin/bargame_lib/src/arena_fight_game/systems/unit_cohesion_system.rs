@@ -35,7 +35,7 @@ pub fn unit_cohesion_system(
         });
 
         // iterate taking first two
-        nearby_bodies_buffer.iter().take(1).for_each(|body_id| {
+        nearby_bodies_buffer.iter().take(2).for_each(|body_id| {
             let body_pos = match id_entity_map.get_from_query(&position_query, *body_id) {
                 Some(pos) => pos.value,
                 None => return,
