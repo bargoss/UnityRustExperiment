@@ -224,15 +224,15 @@ mod tests {
         let mut buffer = Vec::new();
         partitioning.overlap_box(FP2::from_num(0.0, 0.0), FP2::from_num(11.0, 11.0), &mut buffer);
         assert_eq!(buffer.len(), 1);
-        assert_eq!(buffer[0], 1);
+        assert_eq!(buffer[0], Id(1));
 
         partitioning.overlap_box(FP2::from_num(-11.0, -11.0), FP2::from_num(11.0, 11.0), &mut buffer);
         assert_eq!(buffer.len(), 2);
 
         // sort the buffer
         buffer.sort();
-        assert_eq!(buffer[0], 1);
-        assert_eq!(buffer[1], 3);
+        assert_eq!(buffer[0], Id(1));
+        assert_eq!(buffer[1], Id(3));
     }
 
     #[test]
@@ -247,7 +247,7 @@ mod tests {
 
         partitioning.overlap_box(FP2::from_num(0.0, 0.0), FP2::from_num(21.0, 25.0), &mut buffer);
         assert_eq!(buffer.len(), 1);
-        assert_eq!(buffer[0], 1);
+        assert_eq!(buffer[0], Id(1));
 
     }
 

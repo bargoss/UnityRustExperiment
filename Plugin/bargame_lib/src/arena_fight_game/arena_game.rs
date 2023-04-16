@@ -39,6 +39,7 @@ pub struct ArenaFightGame {
     register_views_schedule: Schedule,
     render_schedule: Schedule,
 }
+
 impl Default for ArenaFightGame {
     fn default() -> Self {
         let mut world = World::new();

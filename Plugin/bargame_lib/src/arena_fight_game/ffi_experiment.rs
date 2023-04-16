@@ -108,21 +108,20 @@ mod tests {
     use interoptopus_backend_csharp::{Config, Generator, Unsafe};
     use interoptopus_backend_csharp::overloads::Unity;
 
-    #[test]
-    fn generate_bindings(){
+    use interoptopus::Symbol;
+
+    fn generate_bindings_with_functions(functions: Vec<Symbol>) {
         let postfix = rand::random::<u32>();
         let dll_name = format!("game_{}", postfix);
 
-        let my_inventory = InventoryBuilder::new()
-            .register(function!(add_extern))
-            .register(function!(get_example_array))
-            .register(function!(get_example_list))
-            .register(function!(allocate_native_array))
-            .register(function!(deallocate_native_array))
-            .register(function!(rust_function_with_callback))
-            .inventory();
+        let mut inventory_builder = InventoryBuilder::new();
+
+        for function in functions {
+            inventory_builder = inventory_builder.register(function);
+        }
+
+        let my_inventory = inventory_builder.inventory();
         let config = Config {
-            // add postfix
             dll_name: dll_name.to_string(),
             namespace_mappings: NamespaceMappings::new("Bubbles"),
             use_unsafe: Unsafe::UnsafeKeyword,
@@ -130,22 +129,7 @@ mod tests {
         };
         Generator::new(config, my_inventory)
             .add_overload_writer(Unity::new())
-            //.add_overload_writer(DotNet::new())
             .write_file("Wrapper.cs");
-
-        /*
-        change the
-
-        public const string DllName = "game";
-
-        to:
-
-        #if UNITY_EDITOR
-        public const string DllName = "game_1234";
-        #else
-        public const string DllName = "mandelbrot";
-        #endif
-         */
 
         let mut file = fs::File::open("Wrapper.cs").unwrap();
         let mut contents = String::new();
@@ -155,13 +139,8 @@ mod tests {
         let contents = contents.replace(&stringToReplace, &stringToReplaceWith);
         fs::write("Wrapper.cs", contents).unwrap();
 
-
-
-        // move the build artifacts to unity plugins folder
-        // path to here
         let path = std::env::current_dir().unwrap();
         let path = path.to_str().unwrap();
-        // print path
         println!("path: {}", path);
 
         let path_to_built_dll = format!("{}\\..\\target\\debug\\bargame_lib.dll", path);
@@ -170,7 +149,6 @@ mod tests {
         println!("path_to_unity_plugin_folder: {}", path_to_unity_plugin_folder);
         let path_to_wrapper = format!("{}\\Wrapper.cs", path);
 
-        //delete everything in the unity plugin folder with try catch for each element
         let paths = fs::read_dir(path_to_unity_plugin_folder.clone()).unwrap();
         paths.for_each(|path| {
             let path = path.unwrap().path();
@@ -179,10 +157,22 @@ mod tests {
             fs::remove_file(path).unwrap_or(());
         });
 
-        // copy the dll to the unity plugin folder, add postfix to dll name
         fs::copy(path_to_built_dll, format!("{}\\{}.dll", path_to_unity_plugin_folder, dll_name)).unwrap();
-
-        // copy the wrapper to the unity plugin folder
         fs::copy(path_to_wrapper, format!("{}\\Wrapper.cs", path_to_unity_plugin_folder)).unwrap();
+    }
+
+    // Modify the generate_bindings function to call the new function
+    #[test]
+    fn generate_bindings() {
+        let functions: Vec<Symbol> = vec![
+            function!(add_extern),
+            function!(get_example_array),
+            function!(get_example_list),
+            function!(allocate_native_array),
+            function!(deallocate_native_array),
+            function!(rust_function_with_callback),
+        ];
+
+        generate_bindings_with_functions(functions);
     }
 }
